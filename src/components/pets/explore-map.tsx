@@ -11,7 +11,7 @@ const MapView = dynamic(() => import("./map-view"), {
 
 export function ExploreMap({ listings }: { listings: PetCardListing[] }) {
   return (
-    <Card className="overflow-hidden border-none shadow-lg" id="mapa">
+    <Card className="h-[360px] overflow-hidden border-none shadow-lg md:h-[600px]" id="mapa">
       <MapView listings={listings} />
     </Card>
   );

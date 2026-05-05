@@ -88,7 +88,9 @@ export default function MapView({ listings }: { listings: PetCardListing[] }) {
     });
   };
 
-  if (!L) return null;
+  if (!L) {
+    return <div className="flex h-full w-full items-center justify-center bg-muted text-sm font-semibold text-muted-foreground">Cargando mapa...</div>;
+  }
 
   return (
     <div className="relative h-full w-full">
@@ -106,8 +108,8 @@ export default function MapView({ listings }: { listings: PetCardListing[] }) {
       <MapContainer 
         center={mapView.center} 
         zoom={mapView.zoom} 
-        style={{ height: "100%", width: "100%" }}
-        className="z-0 h-[360px] md:h-[600px]"
+        style={{ width: "100%" }}
+        className="z-0 h-full w-full"
       >
         <MapController center={mapView.center} zoom={mapView.zoom} />
         <TileLayer
