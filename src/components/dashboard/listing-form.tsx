@@ -325,12 +325,12 @@ export function ListingForm({
               <Input id="contactName" {...form.register("contactName")} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="contactPhone">Teléfono +507</Label>
-              <Input id="contactPhone" placeholder="+507 6000 0000" {...form.register("contactPhone")} />
+              <Label htmlFor="contactPhone">Teléfono</Label>
+              <Input id="contactPhone" placeholder="6000 0000" {...form.register("contactPhone")} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="contactWhatsapp">WhatsApp +507</Label>
-              <Input id="contactWhatsapp" placeholder="+507 6000 0000" {...form.register("contactWhatsapp")} />
+              <Label htmlFor="contactWhatsapp">WhatsApp</Label>
+              <Input id="contactWhatsapp" placeholder="6000 0000" {...form.register("contactWhatsapp")} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="contactEmail">Email</Label>

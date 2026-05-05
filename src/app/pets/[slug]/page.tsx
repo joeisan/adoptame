@@ -11,7 +11,7 @@ import { VerifiedBadge } from "@/components/pets/verified-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentUser } from "@/lib/permissions";
-import { formatAge } from "@/lib/utils";
+import { formatAge, formatDate } from "@/lib/utils";
 import { getFavoriteListingIds, getPublicPetContact, getPublicPetListing, requirePublicPetListing } from "@/server/queries/listings";
 import { ReportListingPopup } from "@/components/pets/report-listing-popup";
 import { CATEGORY_COLORS } from "@/lib/constants";
@@ -70,6 +70,7 @@ export default async function PetDetailPage({ params }: { params: Params }) {
                   ) : null}
                   <Badge variant="secondary" className="flex items-center gap-1.5 font-bold px-3">
                     <Calendar className="size-3.5" />
+                    Edad:{" "}
                     {formatAge(pet.ageValue, pet.ageUnit)}
                   </Badge>
                 </div>
@@ -167,6 +168,10 @@ export default async function PetDetailPage({ params }: { params: Params }) {
                 <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Zona</span>
                 <span className="font-bold truncate max-w-full px-1">{pet.sector ?? pet.district ?? pet.province}</span>
               </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2 rounded-xl border bg-muted/30 px-4 py-3 text-sm font-semibold text-muted-foreground">
+              <Calendar className="size-4 text-primary" />
+              Publicado: {formatDate(pet.publishedAt ?? pet.createdAt)}
             </div>
 
             {contact && (

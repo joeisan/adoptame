@@ -6,7 +6,7 @@ import { getBadgeIcon } from "@/components/pets/badge-icon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatAge } from "@/lib/utils";
+import { formatAge, formatDate } from "@/lib/utils";
 import type { PetCardListing } from "@/types/app";
 import { StatusBadge } from "@/components/pets/status-badge";
 import { VerifiedBadge } from "@/components/pets/verified-badge";
@@ -66,6 +66,7 @@ export function PetCard({
               {pet.name}
               <span className="shrink-0 text-xs font-semibold text-muted-foreground bg-muted px-2 py-1 rounded-full flex items-center">
                 <Calendar className="mr-1 size-3.5" />
+                Edad:{" "}
                 {formatAge(pet.ageValue, pet.ageUnit)}
               </span>
             </h3>
@@ -100,20 +101,20 @@ export function PetCard({
           </Link>
         ) : null}
 
-        <div className="flex flex-nowrap gap-1.5 overflow-hidden">
-          <Badge variant="outline" className="flex shrink-0 items-center gap-1 whitespace-nowrap text-xs h-7">
+        <div className="flex min-w-0 flex-nowrap gap-1 overflow-hidden">
+          <Badge variant="outline" className="flex shrink-0 items-center gap-1 whitespace-nowrap px-2 text-[10px] h-6 leading-none">
             <ArrowUpNarrowWide className="size-3.5 text-primary" />
             {pet.size === "small" ? "Pequeño" : pet.size === "medium" ? "Mediano" : pet.size === "large" ? "Grande" : "Cnf."}
           </Badge>
           {pet.badges?.slice(0, 2).map((badge) => (
-            <Badge key={badge} variant="outline" className="flex shrink-0 items-center whitespace-nowrap text-xs h-7">
-              {getBadgeIcon(badge)}
-              {badge}
+            <Badge key={badge} variant="outline" className="flex min-w-0 shrink items-center whitespace-nowrap px-2 text-[10px] h-6 leading-none">
+              {getBadgeIcon(badge, "mr-1 size-2.5 shrink-0")}
+              <span className="truncate">{badge}</span>
             </Badge>
           ))}
           {pet.badges && pet.badges.length > 2 ? (
             <div className="group/tooltip relative z-20 shrink-0">
-              <Badge variant="outline" className="whitespace-nowrap text-primary text-xs h-7 cursor-default">
+              <Badge variant="outline" className="whitespace-nowrap px-2 text-primary text-[10px] h-6 cursor-default leading-none">
                 +{pet.badges.length - 2}
               </Badge>
               <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 w-max max-w-[200px] -translate-x-1/2 rounded bg-popover p-2 text-xs text-popover-foreground opacity-0 shadow-md transition-opacity group-hover/tooltip:opacity-100 z-50">
@@ -128,6 +129,10 @@ export function PetCard({
         </div>
 
         <div className="mt-auto pt-2 flex flex-col gap-3">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
+            <Calendar className="size-4" />
+            <span>Publicado: {formatDate(pet.publishedAt ?? pet.createdAt)}</span>
+          </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
             <MapPin className="size-4" />
             <span className="truncate">{pet.province}{pet.district ? `, ${pet.district}` : ""}</span>

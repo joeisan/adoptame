@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import type { ExploreFilters } from "@/types/app";
 
-const preservedMainFilterKeys = ["district", "sex", "age", "size", "status", "verified", "sort", "location", "lat", "lng"] as const;
+const preservedMainFilterKeys = ["district", "sex", "age", "size", "status", "verified", "location", "lat", "lng"] as const;
 
 function activeExtraFilters(filters: ExploreFilters) {
   return [filters.district, filters.sex, filters.age, filters.size, filters.status, filters.verified, filters.sort && filters.sort !== "recent"]
@@ -123,15 +123,6 @@ function FieldGrid({ filters, includeMainFields = false }: { filters: ExploreFil
           <option value="true">Solo verificadas</option>
         </Select>
       </div>
-      <div className="space-y-2 md:col-span-2">
-        <Label htmlFor="sort">Ordenar</Label>
-        <Select defaultValue={filters.sort ?? "recent"} id="sort" name="sort">
-          <option value="recent">Más recientes</option>
-          <option value="oldest">Más antiguos</option>
-          <option value="az">Nombre A-Z</option>
-          <option value="za">Nombre Z-A</option>
-        </Select>
-      </div>
       {filters.location ? <input name="location" type="hidden" value={filters.location} /> : null}
       {filters.lat ? <input name="lat" type="hidden" value={filters.lat} /> : null}
       {filters.lng ? <input name="lng" type="hidden" value={filters.lng} /> : null}
@@ -180,7 +171,7 @@ export function ExploreFilters({ filters }: { filters: ExploreFilters }) {
   return (
     <>
       <div className="rounded-xl border bg-card p-4 ambient-card md:p-5">
-        <form action="/explore" className="grid gap-3 md:grid-cols-[minmax(260px,1fr)_220px_220px_auto_auto]" method="get">
+        <form action="/explore" className="grid gap-3 md:grid-cols-[minmax(240px,1fr)_180px_180px_170px_auto_auto]" method="get">
           <div className="relative">
             <Label className="sr-only" htmlFor="q">
               Búsqueda
@@ -205,6 +196,17 @@ export function ExploreFilters({ filters }: { filters: ExploreFilters }) {
                   {province}
                 </option>
               ))}
+            </Select>
+          </div>
+          <div>
+            <Label className="sr-only" htmlFor="main-sort">
+              Ordenar
+            </Label>
+            <Select className="h-12 rounded-full bg-muted" defaultValue={filters.sort ?? "recent"} id="main-sort" name="sort">
+              <option value="recent">Más reciente</option>
+              <option value="oldest">Más antiguo</option>
+              <option value="az">A-Z</option>
+              <option value="za">Z-A</option>
             </Select>
           </div>
           <div className="hidden md:block">

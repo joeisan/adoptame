@@ -1,12 +1,12 @@
 import { z } from "zod";
 
-const panamaPhone = z
+const phoneNumber = z
   .string()
   .trim()
   .optional()
   .or(z.literal(""))
-  .refine((value) => !value || /^\+?507[\s-]?\d{4}[\s-]?\d{4}$/.test(value), {
-    message: "Usa un teléfono de Panamá con prefijo +507."
+  .refine((value) => !value || /^\+?(?:507)?[\s-]?\d{4}[\s-]?\d{4}$/.test(value), {
+    message: "Usa un teléfono válido de 8 dígitos."
   });
 
 const plainText = z
@@ -31,8 +31,8 @@ export const listingSchema = z
     healthNotes: plainText.max(1200).optional().or(z.literal("")),
     adoptionRequirements: plainText.max(1200).optional().or(z.literal("")),
     contactName: plainText.max(120).optional().or(z.literal("")),
-    contactPhone: panamaPhone,
-    contactWhatsapp: panamaPhone,
+    contactPhone: phoneNumber,
+    contactWhatsapp: phoneNumber,
     contactEmail: z.string().email("Email inválido.").optional().or(z.literal("")),
     status: z.enum(["published", "adopted"]).optional().default("published"),
     ownerId: z.string().uuid().optional()
