@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Menu, Plus, UserRound, Heart } from "lucide-react";
+import { Menu, Plus, UserRound, Heart, ShieldCheck } from "lucide-react";
 
 import { signOutAction } from "@/server/actions/auth";
 import { getCurrentUser } from "@/lib/permissions";
@@ -97,6 +97,14 @@ export async function SiteHeader() {
                       Dashboard
                     </Link>
                   </Button>
+                  {profile?.role === "super_admin" ? (
+                    <Button asChild variant="secondary" className="justify-start gap-2">
+                      <Link href="/super-admin">
+                        <ShieldCheck className="size-4" />
+                        Super admin
+                      </Link>
+                    </Button>
+                  ) : null}
                   <form action={signOutAction}>
                     <Button className="w-full" type="submit" variant="outline">
                       Salir

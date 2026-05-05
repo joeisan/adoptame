@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Heart, Home, Search } from "lucide-react";
+import { Heart, Home, Search, ShieldCheck } from "lucide-react";
 
 import { getCurrentUser } from "@/lib/permissions";
 
@@ -11,8 +11,12 @@ const guestItems = [
 const userItems = [...guestItems, { href: "/favorites", label: "Favoritos", icon: Heart }];
 
 export async function MobileBottomNav() {
-  const { user } = await getCurrentUser();
-  const items = user ? userItems : guestItems;
+  const { user, profile } = await getCurrentUser();
+  const items = profile?.role === "super_admin"
+    ? [...userItems, { href: "/super-admin", label: "Admin", icon: ShieldCheck }]
+    : user
+      ? userItems
+      : guestItems;
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-50 border-t bg-card/95 px-4 pb-[max(0.85rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-12px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl md:hidden">
