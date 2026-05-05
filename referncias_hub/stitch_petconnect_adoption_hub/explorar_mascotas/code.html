@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pawsitive Path - Explore</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error": "#ba1a1a",
+                      "surface": "#fbf9f8",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed": "#e3e3de",
+                      "on-secondary-container": "#6f4600",
+                      "secondary-fixed": "#ffddb6",
+                      "primary-fixed": "#94f7bb",
+                      "on-error-container": "#93000a",
+                      "surface-bright": "#fbf9f8",
+                      "on-background": "#1b1c1c",
+                      "secondary": "#845400",
+                      "inverse-on-surface": "#f2f0f0",
+                      "background": "#fbf9f8",
+                      "primary-container": "#4bae78",
+                      "primary": "#006d41",
+                      "on-surface": "#1b1c1c",
+                      "on-secondary-fixed-variant": "#643f00",
+                      "surface-dim": "#dbd9d9",
+                      "on-secondary-fixed": "#2a1800",
+                      "on-primary-fixed-variant": "#005230",
+                      "surface-container-low": "#f5f3f3",
+                      "surface-container": "#efeded",
+                      "inverse-primary": "#78daa0",
+                      "surface-container-high": "#eae8e7",
+                      "surface-variant": "#e4e2e2",
+                      "outline-variant": "#becabf",
+                      "inverse-surface": "#303030",
+                      "outline": "#6e7a70",
+                      "on-tertiary": "#ffffff",
+                      "surface-tint": "#006d41",
+                      "on-surface-variant": "#3e4941",
+                      "tertiary": "#5e5f5b",
+                      "tertiary-container": "#9c9c98",
+                      "primary-fixed-dim": "#78daa0",
+                      "tertiary-fixed-dim": "#c7c7c2",
+                      "secondary-fixed-dim": "#ffb95a",
+                      "on-primary-fixed": "#002110",
+                      "on-primary": "#ffffff",
+                      "surface-container-highest": "#e4e2e2",
+                      "on-tertiary-fixed-variant": "#464744",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-container": "#333431",
+                      "on-tertiary-fixed": "#1b1c19",
+                      "on-primary-container": "#003c22",
+                      "on-error": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-container": "#feb246"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1280px",
+                      "stack-lg": "32px",
+                      "unit": "4px",
+                      "stack-sm": "8px",
+                      "stack-md": "16px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "margin-desktop": "48px"
+              },
+              "fontFamily": {
+                      "headline-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-md": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "40px",
+                              {
+                                      "lineHeight": "48px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            },
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: #fbf9f8; /* fallback */
+        }
+        /* Hide scrollbar for horizontal scrolling sections but allow scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen pb-[100px]">
+<!-- TopAppBar -->
+<header class="bg-emerald-50/80 dark:bg-slate-900/80 backdrop-blur-md text-emerald-600 dark:text-emerald-400 font-['Plus_Jakarta_Sans'] antialiased docked full-width top-0 sticky z-40 shadow-sm shadow-emerald-900/5">
+<div class="flex justify-between items-center w-full px-6 py-3 max-w-7xl mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">pets</span>
+<h1 class="text-xl font-bold text-emerald-700 dark:text-emerald-400 tracking-tight">Pawsitive Path</h1>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A small, soft-lit portrait of a smiling person, used as a user profile avatar in a warm, minimalist digital interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8uk7s8m8y2T56L3iKAZnne7UNPikJQPUK8O4eQYzHw94axlDmj-WD3dFRnS5H5SwzE-xL_4yEVhgvl2m66bcPziiY5aUA0ik0VtMLYE2nDOgRC9BEZ19Xl5hMTlBwryr85cyS2jptWXlRjJv6VtttC5vboW45iH1BjaJNS5C8wHZYv1j0FHED_e3isdf66BDiiPjHMRGEd1wOZNrwHEvTpGmD63abx3_M5FzngW0jytLD3AyTHgW59l6k9Q_s-QSuwz_QiCovRg"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-stack-md flex flex-col gap-stack-lg">
+<!-- Search Section -->
+<section class="w-full">
+<div class="relative w-full max-w-2xl mx-auto">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+</div>
+<input class="w-full bg-surface-container-high border-none rounded-full py-4 pl-12 pr-4 text-body-md font-body-md text-on-surface placeholder:text-on-surface-variant focus:ring-2 focus:ring-primary-container shadow-[0_2px_8px_rgba(75,174,120,0.05)] transition-shadow" placeholder="Search for pets, breeds, or shelters..." type="text"/>
+</div>
+</section>
+<!-- Categories Section -->
+<section>
+<h2 class="text-headline-md font-headline-md text-on-surface mb-stack-sm">Categories</h2>
+<div class="flex gap-stack-md overflow-x-auto no-scrollbar snap-x pb-unit">
+<button class="snap-start flex flex-col items-center gap-unit group min-w-[80px]">
+<div class="w-16 h-16 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm shadow-primary/10 group-hover:bg-primary group-hover:text-on-primary transition-colors duration-200">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">pets</span>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant group-hover:text-on-surface transition-colors">Dogs</span>
+</button>
+<button class="snap-start flex flex-col items-center gap-unit group min-w-[80px]">
+<div class="w-16 h-16 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center shadow-sm shadow-primary/5 hover:bg-surface-variant transition-colors duration-200">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">pets</span>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant group-hover:text-on-surface transition-colors">Cats</span>
+</button>
+<button class="snap-start flex flex-col items-center gap-unit group min-w-[80px]">
+<div class="w-16 h-16 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center shadow-sm shadow-primary/5 hover:bg-surface-variant transition-colors duration-200">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">cruelty_free</span>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant group-hover:text-on-surface transition-colors">Birds</span>
+</button>
+<button class="snap-start flex flex-col items-center gap-unit group min-w-[80px]">
+<div class="w-16 h-16 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center shadow-sm shadow-primary/5 hover:bg-surface-variant transition-colors duration-200">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">category</span>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant group-hover:text-on-surface transition-colors">Other</span>
+</button>
+</div>
+</section>
+<!-- Featured Pets Section -->
+<section>
+<div class="flex justify-between items-end mb-stack-sm">
+<h2 class="text-headline-md font-headline-md text-on-surface">Featured Pets</h2>
+<button class="text-label-md font-label-md text-primary font-semibold hover:text-primary-container transition-colors">See all</button>
+</div>
+<div class="flex gap-stack-md overflow-x-auto no-scrollbar snap-x pb-stack-sm">
+<!-- Card 1 -->
+<article class="snap-start min-w-[300px] w-[300px] bg-surface-container-lowest rounded-xl shadow-[0_4px_24px_rgba(75,174,120,0.06)] flex overflow-hidden relative">
+<div class="absolute top-3 right-3 bg-secondary-container text-on-secondary-container px-2 py-1 rounded-lg text-label-sm font-label-sm z-10 font-bold tracking-wide">
+                        NEW
+                    </div>
+<div class="w-2/5 h-36">
+<img alt="Golden Retriever" class="w-full h-full object-cover" data-alt="A bright, joyful photo of a Golden Retriever puppy sitting indoors. The lighting is warm and natural, casting soft shadows. The overall aesthetic is friendly, empathetic, and optimistic, fitting a warm minimalist design system with a soft white and sage green color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5puaeB0oD5KsGCqc6PjJmAAVuCBOSAOpZS-sdGD9p27bhf1YMe8bjtS9pQoJs7KqQ5fJdnEmMRSQhD9WBFfp0wCpd6uqsY5SD3vjCHQ9MZdxwulcOXWQQ1erj66BPJGZjdN_HaEM9AyttWmsUtyzh81eG6qDgPR9ZSOcnEWh4d02NmjStgQRS7fAG9dKNh6vOCsTAYyj-2EkiWovbH57fPX3MGEb4kAeh1gWUhdcQisUi4OWXNm7m6UpBCkKBAjMxa-f13Gu_Pg"/>
+</div>
+<div class="w-3/5 p-4 flex flex-col justify-center">
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-1">Bailey</h3>
+<p class="text-label-md font-label-md text-on-surface-variant mb-2">Golden Retriever</p>
+<div class="flex flex-wrap gap-1 mt-auto">
+<span class="bg-surface-container text-on-surface text-[10px] font-semibold px-2 py-0.5 rounded-md">Puppy</span>
+<span class="bg-surface-container text-on-surface text-[10px] font-semibold px-2 py-0.5 rounded-md">Playful</span>
+</div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="snap-start min-w-[300px] w-[300px] bg-surface-container-lowest rounded-xl shadow-[0_4px_24px_rgba(75,174,120,0.06)] flex overflow-hidden relative">
+<div class="absolute top-3 right-3 bg-secondary-container text-on-secondary-container px-2 py-1 rounded-lg text-label-sm font-label-sm z-10 font-bold tracking-wide">
+                        NEW
+                    </div>
+<div class="w-2/5 h-36">
+<img alt="Persian Cat" class="w-full h-full object-cover" data-alt="A serene photo of a fluffy white Persian cat lounging on a soft knitted blanket. The scene is bathed in bright, diffused natural light, creating a calm and nurturing atmosphere. The color palette emphasizes off-whites, warm greys, and subtle natural tones, aligning with a safe and comforting design aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWnmg9mk7payLbLgk3KPc7xtmR4GPzqgPETiBAC6G6gnBry5c2H0e-93S0ilExT_xk5ur5jUULxfx1Rt8c2h21r5vTI5d7HU7UNevicKiiHmRCJYFo16E7P2BkKDJxxoBmxgYv7_ovOq_86O3fX5qgxHKhIp_YyFJI55zNPcOZf0HdYLKMqCpJ7NCreuqOSrs93sQs29kN_CiFVJHEEsMP799JJ5jrgK2IsH4RAzfenqann_mx0ZQA5SL9qsFnjUjPWV-iJVfmRA"/>
+</div>
+<div class="w-3/5 p-4 flex flex-col justify-center">
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-1">Luna</h3>
+<p class="text-label-md font-label-md text-on-surface-variant mb-2">Persian Mix</p>
+<div class="flex flex-wrap gap-1 mt-auto">
+<span class="bg-surface-container text-on-surface text-[10px] font-semibold px-2 py-0.5 rounded-md">Adult</span>
+<span class="bg-surface-container text-on-surface text-[10px] font-semibold px-2 py-0.5 rounded-md">Calm</span>
+</div>
+</div>
+</article>
+</div>
+</section>
+<!-- Near You Section -->
+<section>
+<h2 class="text-headline-md font-headline-md text-on-surface mb-stack-sm">Near You</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-stack-md">
+<!-- Grid Card 1 -->
+<article class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(75,174,120,0.04)] overflow-hidden flex flex-col hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+<div class="w-full aspect-square md:aspect-[4/3] relative">
+<img alt="Beagle" class="w-full h-full object-cover" data-alt="A candid, close-up portrait of an energetic Beagle mix standing on a lush green lawn. The dog looks happy and curious. The lighting is vibrant outdoor daylight, highlighting the bright green grass and creating a sense of joy and vitality. The image perfectly complements a warm, minimalist digital interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuNTB13saPUCpwJ15x7OZx1t_JWm5XCdJ11zR-HUl93le0vvwoyUaKvjJeb6LCxvk2EY2Rp3mkxp9jVguKm8WHbgrSDhqtwBJ_yttRoiih4zh384vGF1h2I3Ike-yXOIF-YCaT9qL_BfQU4u-4JA26KAhvJseRvL7puGi70Mx3mk8LR91nTgYnw7Vx4EJFqEV4aMzWrzRzeID4zgAy-bGSCpvj2fSCeMNZ8rCkSl8LBUbgFZ6V8tPAmKeAFOMdDDACLvZpS55WLA"/>
+<button class="absolute top-2 right-2 w-8 h-8 bg-surface/80 backdrop-blur-sm rounded-full flex items-center justify-center text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="p-3 flex flex-col gap-1">
+<h3 class="text-headline-sm font-headline-sm text-on-surface truncate">Charlie</h3>
+<p class="text-label-md font-label-md text-on-surface-variant truncate">Beagle Mix</p>
+<div class="flex items-center gap-1 mt-1 text-outline">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span class="text-label-sm font-label-sm">2.4 miles away</span>
+</div>
+</div>
+</article>
+<!-- Grid Card 2 -->
+<article class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(75,174,120,0.04)] overflow-hidden flex flex-col hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+<div class="w-full aspect-square md:aspect-[4/3] relative">
+<img alt="Tabby Cat" class="w-full h-full object-cover" data-alt="A close-up portrait of a domestic shorthair tabby cat with bright green eyes looking directly at the camera. The setting is clean and softly lit with natural indoor light, creating a gentle and endearing mood that fits perfectly within a warm, empathetic digital design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNI5rh9zY11Ckm_Pl5WfwNd7H_m7sfOLIjuN8RFuugXwP4nQxWa0YxC-7h5b9hAuM0zqVJzQt0gokTIK-DSWVw4PAKSJ1Vlf5oRXaBr6a7HnPRbQhuvNcTsayF7a3hTVpdVR_W5mA16nH11DbzXoARuja9P-COtuj4k1dBbK9CDRqmvAdOnkbKIfBugtPh7HS_iiX1X1kRqTbUoSOOlE6qm9gkROOPEJLJvj0H1gxw7noGDaA3lcDAfrrwnwd905xoNLjW9ewLfQ"/>
+<button class="absolute top-2 right-2 w-8 h-8 bg-surface/80 backdrop-blur-sm rounded-full flex items-center justify-center text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="p-3 flex flex-col gap-1">
+<h3 class="text-headline-sm font-headline-sm text-on-surface truncate">Milo</h3>
+<p class="text-label-md font-label-md text-on-surface-variant truncate">Domestic Shorthair</p>
+<div class="flex items-center gap-1 mt-1 text-outline">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span class="text-label-sm font-label-sm">3.1 miles away</span>
+</div>
+</div>
+</article>
+<!-- Grid Card 3 -->
+<article class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(75,174,120,0.04)] overflow-hidden flex flex-col hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+<div class="w-full aspect-square md:aspect-[4/3] relative">
+<img alt="French Bulldog" class="w-full h-full object-cover" data-alt="A charming photo of a small French Bulldog sitting politely. The background is a clean, out-of-focus interior space painted in soft neutral tones. The bright and clear lighting emphasizes the dog's adorable features, perfectly matching a brand personality rooted in empathy and joy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXTTewvAZPlNvT_ATVwQUGiNLTITfnT7Ieswzafm01Gs5b6jW2OIpBCCr3eU7NNiSayQzLv-E2CAs7tRRJxJNjioCR9S8SiEyvB_Uej6rM_msiFr6Te02-9AgfWdBZJgpMRcJ9Vp_AL49B1p1Y0Tq5NSpDncRXZTu3X4dEvhtzKrKuey15O52ZsR6rRbjyGZQJZ4w-aGRi-RUWqrmRXpHINMkcLQ9Bm4pZYDWIW1HQ6CyKKsVhyqGc2oMVrl8BYQBaTY50JDOeJQ"/>
+<button class="absolute top-2 right-2 w-8 h-8 bg-surface/80 backdrop-blur-sm rounded-full flex items-center justify-center text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="p-3 flex flex-col gap-1">
+<h3 class="text-headline-sm font-headline-sm text-on-surface truncate">Oliver</h3>
+<p class="text-label-md font-label-md text-on-surface-variant truncate">French Bulldog</p>
+<div class="flex items-center gap-1 mt-1 text-outline">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span class="text-label-sm font-label-sm">5.0 miles away</span>
+</div>
+</div>
+</article>
+<!-- Grid Card 4 -->
+<article class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(75,174,120,0.04)] overflow-hidden flex flex-col hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+<div class="w-full aspect-square md:aspect-[4/3] relative">
+<img alt="Small Dog" class="w-full h-full object-cover" data-alt="A fluffy small white dog, possibly a Maltese or Bichon mix, looking playfully at the camera. The setting is bright and cheerful with soft, ambient lighting. The overall feel is soft, approachable, and minimal, designed to evoke a strong emotional connection and sense of trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8-mgq9tf-FRxbaoDebfQPHKHH6mzc8TIpXzKW74a8H03TfauCho_LvVqsqUwm5Lvau4PMXJ8Ijh38v7sUsDo6R6Ychw-dkZ1AqVF4IvZSL2Q0X--USZFlLyGbQF9LNsublBi0C67hCT7Za_KaCsPLPTRrAx-l3CwNqfnId77vPzaYuZ_RRSi7m5RV0By-LUjoGylFQzGRX5D_UNaXWcRj6I5p9VqGNKfSj-U7mmgZX4tyiqmW6_QE8M3Yu96nMLsctNAcvewyjQ"/>
+<button class="absolute top-2 right-2 w-8 h-8 bg-surface/80 backdrop-blur-sm rounded-full flex items-center justify-center text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="p-3 flex flex-col gap-1">
+<h3 class="text-headline-sm font-headline-sm text-on-surface truncate">Daisy</h3>
+<p class="text-label-md font-label-md text-on-surface-variant truncate">Terrier Mix</p>
+<div class="flex items-center gap-1 mt-1 text-outline">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span class="text-label-sm font-label-sm">6.2 miles away</span>
+</div>
+</div>
+</article>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only as per fluid rules) -->
+<nav class="md:hidden bg-white/90 dark:bg-slate-950/90 backdrop-blur-lg fixed bottom-0 w-full z-50 rounded-t-3xl border-t border-emerald-100/20 shadow-[0_-4px_20px_rgba(75,174,120,0.08)]">
+<div class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-3 pb-6">
+<!-- Active Tab: Home -->
+<button class="flex flex-col items-center justify-center bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-200 rounded-2xl px-5 py-1.5 transition-all">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="text-[11px] font-semibold uppercase tracking-wider mt-1">Home</span>
+</button>
+<!-- Inactive Tab: Explore -->
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-1.5 hover:text-emerald-500 transition-colors">
+<span class="material-symbols-outlined text-[24px]">explore</span>
+<span class="text-[11px] font-semibold uppercase tracking-wider mt-1">Explore</span>
+</button>
+<!-- Inactive Tab: Favorites -->
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-1.5 hover:text-emerald-500 transition-colors">
+<span class="material-symbols-outlined text-[24px]">favorite</span>
+<span class="text-[11px] font-semibold uppercase tracking-wider mt-1">Favorites</span>
+</button>
+<!-- Inactive Tab: Profile -->
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-1.5 hover:text-emerald-500 transition-colors">
+<span class="material-symbols-outlined text-[24px]">person</span>
+<span class="text-[11px] font-semibold uppercase tracking-wider mt-1">Profile</span>
+</button>
+</div>
+</nav>
+</body></html>

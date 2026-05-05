@@ -1,0 +1,17 @@
+.next
+.vercel
+node_modules
+.env
+.env*.local
+!.env.example
+dist
+coverage
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dev-server*.log
+start-server*.log
+supabase/.temp
+
+.vercel

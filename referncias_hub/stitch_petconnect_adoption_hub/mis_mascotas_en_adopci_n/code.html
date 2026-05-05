@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mis Mascotas en Adopción</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#becabf",
+                        "inverse-on-surface": "#f2f0f0",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e4e2e2",
+                        "primary-fixed-dim": "#78daa0",
+                        "tertiary-fixed-dim": "#c7c7c2",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-container": "#efeded",
+                        "on-primary-fixed-variant": "#005230",
+                        "primary-fixed": "#94f7bb",
+                        "secondary": "#845400",
+                        "tertiary-container": "#9c9c98",
+                        "background": "#fbf9f8",
+                        "secondary-fixed": "#ffddb6",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#1b1c19",
+                        "inverse-primary": "#78daa0",
+                        "on-primary-container": "#003c22",
+                        "surface-container-highest": "#e4e2e2",
+                        "surface-container-low": "#f5f3f3",
+                        "on-background": "#1b1c1c",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#4bae78",
+                        "secondary-container": "#feb246",
+                        "on-surface-variant": "#3e4941",
+                        "on-secondary": "#ffffff",
+                        "outline": "#6e7a70",
+                        "on-secondary-fixed": "#2a1800",
+                        "surface-dim": "#dbd9d9",
+                        "primary": "#006d41",
+                        "on-primary-fixed": "#002110",
+                        "surface-tint": "#006d41",
+                        "secondary-fixed-dim": "#ffb95a",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-container": "#333431",
+                        "surface": "#fbf9f8",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#643f00",
+                        "on-secondary-container": "#6f4600",
+                        "inverse-surface": "#303030",
+                        "tertiary-fixed": "#e3e3de",
+                        "on-tertiary-fixed-variant": "#464744",
+                        "surface-container-high": "#eae8e7",
+                        "on-surface": "#1b1c1c",
+                        "tertiary": "#5e5f5b",
+                        "surface-bright": "#fbf9f8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "container-max": "1280px",
+                        "stack-sm": "8px",
+                        "unit": "4px",
+                        "stack-lg": "32px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "stack-md": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="docked full-width top-0 sticky z-50 border-b border-emerald-100/20 dark:border-slate-800 shadow-sm bg-slate-50/95 dark:bg-slate-900/95 flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400">menu</span>
+<h1 class="font-['Plus_Jakarta_Sans'] font-semibold text-lg text-emerald-700 dark:text-emerald-300 font-bold">Mis Mascotas en Adopción</h1>
+</div>
+<button class="bg-primary-container text-on-primary font-label-md text-label-md px-4 py-2 rounded-xl hover:bg-primary transition-colors flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined">add</span>
+<span class="hidden md:inline">Agregar Nueva Mascota</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg">
+<!-- Mobile Add Button (Visible only on small screens) -->
+<div class="md:hidden mb-stack-md flex justify-end">
+<button class="bg-primary-container text-on-primary font-label-md text-label-md px-4 py-2 rounded-xl hover:bg-primary transition-colors flex items-center gap-2 shadow-sm w-full justify-center">
+<span class="material-symbols-outlined">add</span>
+                Agregar Nueva Mascota
+            </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Pet Card 1 -->
+<article class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(75,174,120,0.06)] p-6 flex flex-col gap-4 border border-surface-variant transition-transform hover:-translate-y-1 duration-300">
+<div class="flex items-start gap-4">
+<img alt="Luna" class="w-20 h-20 rounded-full object-cover border-2 border-primary-container/20" data-alt="A close-up portrait of a friendly Beagle dog looking directly at the camera with soft, soulful eyes. The dog is positioned in a bright, modern studio setting with high-key lighting that creates a clean, warm minimalist aesthetic. The background is a soft, diffused white, emphasizing the dog's warm brown and white coat. The overall mood is nurturing, joyful, and optimistic, perfectly suited for an adoption profile." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLTw38O029_x1wee3kjhbZc0jx86e-AsmL-AwkUOMTMBQKMMnyCPpy_-iR2FEzzEW_vfqvBsK7Q4u_Qjrsh1sQtTzgQmuQrZgwmiRww1tZL1Y7ce9voGGnNedgEcCUSxvEqDr0VcqwwJcu3ItgxeqXfm65VGkO1kWgoaaYyJy2zm3ach95Y32AouATL9pVxzHM8uY-lIvy8ROzTG6H6HklX1yNPivmD-mBiztvlXFWO0ZSfrALFxDp6domet8SM5rdOnFVKYtUsg"/>
+<div class="flex-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-1">Luna</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Beagle • 2 Años</p>
+<p class="font-label-sm text-label-sm text-outline mt-1">Tricolor • 12 kg</p>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-headline-md text-headline-md text-primary-container">96%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant text-right">Adoptabilidad</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-4 mt-2">
+<h3 class="font-label-md text-label-md text-on-surface mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+                        Estado de Salud
+                    </h3>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center gap-1 bg-primary-fixed/30 text-on-primary-fixed-variant px-3 py-1.5 rounded-lg font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                            Vacunado
+                        </span>
+<span class="inline-flex items-center gap-1 bg-secondary-fixed/30 text-on-secondary-fixed-variant px-3 py-1.5 rounded-lg font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">content_cut</span>
+                            Esterilizado
+                        </span>
+<span class="inline-flex items-center gap-1 bg-tertiary-fixed/50 text-on-tertiary-fixed-variant px-3 py-1.5 rounded-lg font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">bug_report</span>
+                            Desparasitado
+                        </span>
+</div>
+</div>
+</article>
+<!-- Pet Card 2 -->
+<article class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(75,174,120,0.06)] p-6 flex flex-col gap-4 border border-surface-variant transition-transform hover:-translate-y-1 duration-300">
+<div class="flex items-start gap-4">
+<img alt="Milo" class="w-20 h-20 rounded-full object-cover border-2 border-primary-container/20" data-alt="A charming portrait of an orange tabby cat sitting attentively. The cat is bathed in soft, natural sunlight that highlights its golden fur, set against a pristine, light-mode minimal background. The lighting is bright and cheerful, evoking a sense of safety and calm reassurance. The overall aesthetic is warm minimalism, designed to create an emotional connection with potential adopters." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4nuXvG7cWx1dmrc2H391VNjBZaoYJK-ml15NwAmfTYwotrmYp24GnFVW8jTYjPNS9Fs6dQuf2Ms47c4yRI3gmQJGIi_8lrtttd5Szx8GB9UHfG9OiADQJDlXlE7oY4jjO5Uerzmlx9ipPDbB38aAe-R5H2nkUtpz0TTQcvaqm3qfy6BYU-D5W0PStLnAen0tVBWQf07pI7Lmn3LkgRcKDubglZX6KqYnv-FZsbV84zsCJgXYpU4rgGY6XLekcAGKrGaqd5gjAcA"/>
+<div class="flex-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-1">Milo</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Gato Doméstico • 1 Año</p>
+<p class="font-label-sm text-label-sm text-outline mt-1">Naranja • 4.5 kg</p>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-headline-md text-headline-md text-primary-container">88%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant text-right">Adoptabilidad</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-4 mt-2">
+<h3 class="font-label-md text-label-md text-on-surface mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+                        Estado de Salud
+                    </h3>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center gap-1 bg-primary-fixed/30 text-on-primary-fixed-variant px-3 py-1.5 rounded-lg font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                            Vacunado
+                        </span>
+<span class="inline-flex items-center gap-1 bg-surface-dim text-on-surface-variant px-3 py-1.5 rounded-lg font-label-sm text-label-sm opacity-60">
+<span class="material-symbols-outlined text-[16px]">pending</span>
+                            Esterilizado
+                        </span>
+<span class="inline-flex items-center gap-1 bg-tertiary-fixed/50 text-on-tertiary-fixed-variant px-3 py-1.5 rounded-lg font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">bug_report</span>
+                            Desparasitado
+                        </span>
+</div>
+</div>
+</article>
+<!-- Pet Card 3 -->
+<article class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(75,174,120,0.06)] p-6 flex flex-col gap-4 border border-surface-variant transition-transform hover:-translate-y-1 duration-300">
+<div class="flex items-start gap-4">
+<img alt="Rocky" class="w-20 h-20 rounded-full object-cover border-2 border-primary-container/20" data-alt="A joyful portrait of a Golden Retriever mix dog panting happily with its tongue out. The dog is positioned in a bright, modern studio setting with high-key lighting that creates a clean, warm minimalist aesthetic. The background is a soft, diffused white, emphasizing the dog's golden coat. The overall mood is nurturing, joyful, and optimistic, perfectly suited for an adoption profile." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSw922B6yaUIyemlu4rQmNfPFMoDB7v9lWTXnO_YtlnpyIOd9a9N2Uhz2_mltDdsrtniPyFXU2_aoK0bYXUSZY-XR9bEV3UWnlukxUucFYqxpznFfDRf1SVD2oW9pFTHpGud2S4FMqAYEXUr0WRFUlmmF7bCR1gIXganf73c3ORI3LgQHnPVzL4JCIXRSuvgR1fqYwtMPC0cL4EPjwt6THq5DraFtD8tb9JdiUk0-GAvD4_XPPXcXy86U3jcUdXcIR3qh9rHb-tQ"/>
+<div class="flex-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-1">Rocky</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Mestizo • 3 Meses</p>
+<p class="font-label-sm text-label-sm text-outline mt-1">Dorado • 5 kg</p>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-headline-md text-headline-md text-secondary-container">92%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant text-right">Adoptabilidad</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-4 mt-2">
+<h3 class="font-label-md text-label-md text-on-surface mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+                        Estado de Salud
+                    </h3>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center gap-1 bg-surface-dim text-on-surface-variant px-3 py-1.5 rounded-lg font-label-sm text-label-sm opacity-60">
+<span class="material-symbols-outlined text-[16px]">pending</span>
+                            Vacunado
+                        </span>
+<span class="inline-flex items-center gap-1 bg-surface-dim text-on-surface-variant px-3 py-1.5 rounded-lg font-label-sm text-label-sm opacity-60">
+<span class="material-symbols-outlined text-[16px]">pending</span>
+                            Esterilizado
+                        </span>
+<span class="inline-flex items-center gap-1 bg-tertiary-fixed/50 text-on-tertiary-fixed-variant px-3 py-1.5 rounded-lg font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">bug_report</span>
+                            Desparasitado
+                        </span>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar (Visible on Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 shadow-[0_-8px_30px_rgba(75,174,120,0.08)] z-50 rounded-t-3xl">
+<button class="flex flex-col items-center justify-center bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-100 rounded-2xl px-5 py-2 scale-up-on-tap transition-transform duration-300">
+<span class="material-symbols-outlined text-[24px]">pets</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-medium mt-1">Mis Mascotas</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-emerald-500 transition-all scale-up-on-tap transition-transform duration-300">
+<span class="material-symbols-outlined text-[24px]">search</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-medium mt-1">Explorar</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-emerald-500 transition-all scale-up-on-tap transition-transform duration-300">
+<span class="material-symbols-outlined text-[24px]">chat_bubble</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-medium mt-1">Mensajes</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-emerald-500 transition-all scale-up-on-tap transition-transform duration-300">
+<span class="material-symbols-outlined text-[24px]">person</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-medium mt-1">Perfil</span>
+</button>
+</nav>
+</body></html>

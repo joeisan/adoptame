@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Luna - Pawsitive Path</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#ba1a1a",
+                    "surface": "#fbf9f8",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#e3e3de",
+                    "on-secondary-container": "#6f4600",
+                    "secondary-fixed": "#ffddb6",
+                    "primary-fixed": "#94f7bb",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#fbf9f8",
+                    "on-background": "#1b1c1c",
+                    "secondary": "#845400",
+                    "inverse-on-surface": "#f2f0f0",
+                    "background": "#fbf9f8",
+                    "primary-container": "#4bae78",
+                    "primary": "#006d41",
+                    "on-surface": "#1b1c1c",
+                    "on-secondary-fixed-variant": "#643f00",
+                    "surface-dim": "#dbd9d9",
+                    "on-secondary-fixed": "#2a1800",
+                    "on-primary-fixed-variant": "#005230",
+                    "surface-container-low": "#f5f3f3",
+                    "surface-container": "#efeded",
+                    "inverse-primary": "#78daa0",
+                    "surface-container-high": "#eae8e7",
+                    "surface-variant": "#e4e2e2",
+                    "outline-variant": "#becabf",
+                    "inverse-surface": "#303030",
+                    "outline": "#6e7a70",
+                    "on-tertiary": "#ffffff",
+                    "surface-tint": "#006d41",
+                    "on-surface-variant": "#3e4941",
+                    "tertiary": "#5e5f5b",
+                    "tertiary-container": "#9c9c98",
+                    "primary-fixed-dim": "#78daa0",
+                    "tertiary-fixed-dim": "#c7c7c2",
+                    "secondary-fixed-dim": "#ffb95a",
+                    "on-primary-fixed": "#002110",
+                    "on-primary": "#ffffff",
+                    "surface-container-highest": "#e4e2e2",
+                    "on-tertiary-fixed-variant": "#464744",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-container": "#333431",
+                    "on-tertiary-fixed": "#1b1c19",
+                    "on-primary-container": "#003c22",
+                    "on-error": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-container": "#feb246"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-max": "1280px",
+                    "stack-lg": "32px",
+                    "unit": "4px",
+                    "stack-sm": "8px",
+                    "stack-md": "16px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "margin-desktop": "48px"
+            },
+            "fontFamily": {
+                    "headline-sm": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "label-sm": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-md": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-lg": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-lg": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-md": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "label-md": [
+                            "Plus Jakarta Sans"
+                    ]
+            },
+            "fontSize": {
+                    "headline-sm": [
+                            "20px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-lg": [
+                            "40px",
+                            {
+                                    "lineHeight": "48px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-md": [
+                            "28px",
+                            {
+                                    "lineHeight": "36px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased min-h-screen pb-32">
+<!-- Hero Image Section -->
+<div class="relative w-full h-[442px] md:h-[530px] lg:h-[618px]">
+<img alt="Luna" class="w-full h-full object-cover rounded-b-[2.5rem] shadow-sm shadow-emerald-900/5" data-alt="A high-quality, professional photograph of a beautiful, friendly Golden Retriever dog sitting outdoors. The lighting is soft and natural, creating a warm, inviting atmosphere consistent with a minimalist, trusting brand identity. The dog looks happy and engaging, set against a softly blurred, natural background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDefpb8MrlfjoP2CzuRg74RiRImbXc28QyhfshktEy9eu3hvfoumU0flD8SgxvehToqddzwVumdLTvqSfruDwf6egmNT36q5_jZi0W0oaScqXwAvxsqTBe84EJ-6cWb93g1EQxanzkvCtr_TuYKrSl9EP1-UvZPnJI2ye1gJ7PbAyxyxcAgy-sH69H6q7gzC-eqNqIjGlYNuxl5pyh-OoCez1gb4MOGSY515bW49ZMtJ4HGJE9C566JnNLKvGjWZzI1nE-gWqtfZg"/>
+<!-- Back Button Overlay -->
+<button aria-label="Go back" class="absolute top-6 left-6 w-12 h-12 bg-surface/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-sm shadow-emerald-900/5 hover:bg-surface transition-colors z-10">
+<span class="material-symbols-outlined text-on-surface" data-icon="arrow_back">arrow_back</span>
+</button>
+</div>
+<!-- Main Content Container -->
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop -mt-8 relative z-20">
+<!-- Header Info Card -->
+<div class="bg-surface-container-lowest rounded-xl p-stack-md md:p-stack-lg shadow-[0_8px_30px_rgba(75,174,120,0.06)] border border-surface-variant flex flex-col md:flex-row justify-between items-start md:items-center gap-stack-md mb-stack-lg">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Luna</h1>
+<span class="material-symbols-outlined text-primary-container text-3xl" data-icon="female">female</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Golden Retriever • San Francisco, CA</p>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md px-4 py-2 rounded-lg">Good with kids</span>
+<span class="bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md px-4 py-2 rounded-lg">Playful</span>
+</div>
+</div>
+<!-- Details Grid -->
+<div class="grid grid-cols-3 gap-stack-md mb-stack-lg">
+<div class="bg-surface-container rounded-xl p-stack-md text-center shadow-sm shadow-emerald-900/5">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Age</p>
+<p class="font-headline-sm text-headline-sm text-on-surface">2 Years</p>
+</div>
+<div class="bg-surface-container rounded-xl p-stack-md text-center shadow-sm shadow-emerald-900/5">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Sex</p>
+<p class="font-headline-sm text-headline-sm text-on-surface">Female</p>
+</div>
+<div class="bg-surface-container rounded-xl p-stack-md text-center shadow-sm shadow-emerald-900/5">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">Weight</p>
+<p class="font-headline-sm text-headline-sm text-on-surface">25 kg</p>
+</div>
+</div>
+<!-- Story Section -->
+<section class="mb-stack-lg">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-stack-md">About Luna</h2>
+<div class="bg-surface-container-lowest rounded-xl p-stack-md md:p-stack-lg shadow-sm shadow-emerald-900/5 border border-surface-variant">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    Luna is a bright, energetic Golden Retriever with a heart full of love. She thrives on outdoor adventures and loves playing fetch more than anything. Despite her playful nature, she's incredibly gentle and forms strong bonds with her humans quickly. She's fully house-trained, knows basic commands, and is eagerly waiting for a family to call her own.
+                </p>
+</div>
+</section>
+<!-- Location Section -->
+<section class="mb-stack-lg">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-stack-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="location_on">location_on</span>
+                Location
+            </h2>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm shadow-emerald-900/5 border border-surface-variant h-48 relative">
+<img alt="Map location" class="w-full h-full object-cover" data-alt="A clean, minimalist style map interface showing a location marker in San Francisco. The map uses a soft, light-mode color palette with subtle greens and off-whites, consistent with a modern app design. The marker is clearly visible, providing a reassuring sense of place." data-location="San Francisco" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjLLqByDvNtVbmoBvQPiO3KcTD2pDFjmq2cIvvYtWFQ6RbIYRPUiWaCq93DS1B-TUPZEZ63-Zp0KrFkpYznuyVB-34uvzm03ceWN9i2-bZ1s626AEPrpHEWFi4hiXcKdQtXKYCsdp8qWBQ7WeSJHbGPn4CbUYYir9jEb-1ds4QzQH6_PFUoHthgh3Q6XrfkOkf-P0wQNuwbMEvfOJO9Q5VFpzbhJCQmoJMB3lizBl7j5m3vw_jslANVz1tPIlzSskTmeq9vmSRlA"/>
+<div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-surface/90 to-transparent p-4">
+<p class="font-label-md text-label-md text-on-surface">Pawsitive Rescue Center</p>
+<p class="font-body-md text-body-md text-on-surface-variant">123 Golden Gate Ave, San Francisco, CA</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Fixed Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-lowest/90 backdrop-blur-lg border-t border-surface-variant p-margin-mobile md:px-margin-desktop md:py-stack-md z-50 shadow-[0_-4px_20px_rgba(75,174,120,0.08)] flex justify-center">
+<button class="w-full max-w-md bg-primary-container text-on-primary-container font-headline-sm text-headline-sm py-4 px-8 rounded-full hover:bg-primary-fixed hover:text-on-primary-fixed transition-all duration-200 shadow-sm shadow-emerald-900/5 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+            Adopt Me
+        </button>
+</div>
+</body></html>
