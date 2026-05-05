@@ -24,7 +24,7 @@ export function ViewToggle() {
       <TabsList className="grid w-full grid-cols-2 sm:w-[200px]">
         <TabsTrigger value="grid" className="flex items-center gap-2">
           <LayoutGrid className="size-4" />
-          <span>Gilla</span>
+          <span>Grilla</span>
         </TabsTrigger>
         <TabsTrigger value="map" className="flex items-center gap-2">
           <MapIcon className="size-4" />

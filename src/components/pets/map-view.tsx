@@ -43,6 +43,7 @@ export default function MapView({ listings }: { listings: PetCardListing[] }) {
 
   const handleLocate = useCallback(() => {
     if (!navigator.geolocation) return;
+    document.getElementById("mapa")?.scrollIntoView({ behavior: "smooth", block: "start" });
     
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -105,8 +106,8 @@ export default function MapView({ listings }: { listings: PetCardListing[] }) {
       <MapContainer 
         center={mapView.center} 
         zoom={mapView.zoom} 
-        style={{ height: "600px", width: "100%" }}
-        className="z-0"
+        style={{ height: "100%", width: "100%" }}
+        className="z-0 h-[360px] md:h-[600px]"
       >
         <MapController center={mapView.center} zoom={mapView.zoom} />
         <TileLayer

@@ -5,6 +5,7 @@ import { signOutAction } from "@/server/actions/auth";
 import { getCurrentUser } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/layout/logo";
+import { MobileMenuShell } from "@/components/layout/mobile-menu-shell";
 
 const links = [
   { href: "/", label: "Inicio" },
@@ -67,7 +68,7 @@ export async function SiteHeader() {
             </>
           )}
         </div>
-        <details className="group relative md:hidden">
+        <MobileMenuShell>
           <summary className="flex size-11 list-none items-center justify-center rounded-full border bg-card">
             <Menu className="size-5" />
           </summary>
@@ -114,7 +115,7 @@ export async function SiteHeader() {
               )}
             </div>
           </div>
-        </details>
+        </MobileMenuShell>
       </div>
     </header>
   );

@@ -155,9 +155,13 @@ export function ExploreFilters({ filters }: { filters: ExploreFilters }) {
           params.set("location", "nearby");
           params.set("lat", latitude.toFixed(5));
           params.set("lng", longitude.toFixed(5));
+          params.set("view", "map");
           params.delete("page");
 
-          router.push(`/explore?${params.toString()}`);
+          router.push(`/explore?${params.toString()}#mapa`);
+          setTimeout(() => {
+            document.getElementById("mapa")?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 250);
           toast.success(`Mostrando mascotas cerca de ${nearest.province}.`);
         },
         () => {
