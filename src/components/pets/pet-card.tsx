@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, MapPin, Mars, Venus, ArrowUpNarrowWide } from "lucide-react";
+import { Calendar, MapPin, Mars, Venus, ArrowUpNarrowWide, User } from "lucide-react";
 import { getBadgeIcon } from "@/components/pets/badge-icon";
 
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +28,7 @@ export function PetCard({
   const categoryColorClass = pet.category?.slug ? CATEGORY_COLORS[pet.category.slug] : "";
 
   return (
-    <Card className="group relative flex flex-col overflow-hidden transition-shadow hover:shadow-md h-full">
+    <Card className="group relative flex flex-col transition-shadow hover:shadow-md h-full bg-card border rounded-[var(--radius)]">
       {/* Main card link */}
       <Link 
         href={`/pets/${pet.slug}`} 
@@ -36,7 +36,7 @@ export function PetCard({
         aria-label={`Ver detalles de ${pet.name}`} 
       />
       
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-t-[calc(var(--radius)-1px)]">
         <Image
           alt={pet.image?.altText ?? `${pet.name} en adopción`}
           className="object-cover transition duration-500 group-hover:scale-105"
@@ -57,9 +57,16 @@ export function PetCard({
             <FavoriteButton isFavorited={isFavorited} listingId={pet.id} />
           </div>
         ) : null}
+        {pet.status === "adopted" && (
+          <div className="absolute bottom-0 right-0 z-30 h-16 w-16 overflow-hidden rounded-br-[calc(var(--radius)-1px)]">
+            <div className="absolute bottom-[10px] right-[-18px] w-[80px] -rotate-45 bg-secondary px-1 py-0.5 text-center text-[9px] font-black uppercase tracking-tighter text-secondary-foreground shadow-sm">
+              Adoptado
+            </div>
+          </div>
+        )}
       </div>
 
-      <CardContent className="flex flex-1 flex-col gap-4 p-5">
+      <CardContent className="flex flex-1 flex-col gap-4 p-5 rounded-b-[var(--radius)]">
         <div className="space-y-1">
           <div className="flex items-center justify-between gap-3">
             <h3 className="text-2xl font-black flex items-center gap-2 truncate">
@@ -91,38 +98,42 @@ export function PetCard({
           <p className="text-base font-medium text-muted-foreground truncate">{pet.breed || pet.category?.name || "Mascota"}</p>
         </div>
 
-        {pet.organization ? (
+        {pet.ownerSlug ? (
           <Link 
-            href={`/perfil/${pet.organization.slug}`} 
+            href={`/perfil/${pet.ownerSlug}`} 
             className="z-20 flex w-max items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors"
           >
-            {pet.organization.name}
-            {pet.organization.isVerified ? <VerifiedBadge /> : null}
+            <User className="size-3.5" />
+            {pet.ownerName || "Publicante"}
+            {pet.organization?.isVerified ? <VerifiedBadge /> : null}
           </Link>
         ) : null}
 
-        <div className="flex min-w-0 flex-nowrap gap-1 overflow-hidden">
+        <div className="flex flex-nowrap gap-1 py-0.5">
           <Badge variant="outline" className="flex shrink-0 items-center gap-1 whitespace-nowrap px-2 text-[10px] h-6 leading-none">
             <ArrowUpNarrowWide className="size-3.5 text-primary" />
             {pet.size === "small" ? "Pequeño" : pet.size === "medium" ? "Mediano" : pet.size === "large" ? "Grande" : "Cnf."}
           </Badge>
           {pet.badges?.slice(0, 2).map((badge) => (
-            <Badge key={badge} variant="outline" className="flex min-w-0 shrink items-center whitespace-nowrap px-2 text-[10px] h-6 leading-none">
+            <Badge key={badge} variant="outline" className="flex shrink-0 items-center whitespace-nowrap px-2 text-[10px] h-6 leading-none">
               {getBadgeIcon(badge, "mr-1 size-2.5 shrink-0")}
-              <span className="truncate">{badge}</span>
+              <span>{badge}</span>
             </Badge>
           ))}
           {pet.badges && pet.badges.length > 2 ? (
             <div className="group/tooltip relative z-20 shrink-0">
-              <Badge variant="outline" className="whitespace-nowrap px-2 text-primary text-[10px] h-6 cursor-default leading-none">
+              <Badge variant="outline" className="whitespace-nowrap px-2 text-primary text-[10px] h-6 cursor-default leading-none border-primary/30 bg-primary/5">
                 +{pet.badges.length - 2}
               </Badge>
-              <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 w-max max-w-[200px] -translate-x-1/2 rounded bg-popover p-2 text-xs text-popover-foreground opacity-0 shadow-md transition-opacity group-hover/tooltip:opacity-100 z-50">
-                <div className="flex flex-wrap gap-1 justify-center">
+              <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 w-max max-w-[200px] -translate-x-1/2 rounded-lg bg-white p-2 text-[11px] text-foreground opacity-0 shadow-[0_10px_30px_rgba(0,0,0,0.15)] transition-all duration-200 group-hover/tooltip:opacity-100 group-hover/tooltip:translate-y-[-4px] z-50 border">
+                <div className="flex flex-col gap-1">
                   {pet.badges.slice(2).map((b) => (
-                    <span key={b} className="whitespace-nowrap bg-muted px-1.5 py-0.5 rounded">{b}</span>
+                    <div key={b} className="flex items-center gap-1.5 py-0.5 border-b last:border-0 border-muted/50">
+                      <span>{b}</span>
+                    </div>
                   ))}
                 </div>
+                <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-[6px] border-transparent border-t-white" />
               </div>
             </div>
           ) : null}

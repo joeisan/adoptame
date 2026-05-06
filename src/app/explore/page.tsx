@@ -70,7 +70,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
       <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <p className="text-sm font-bold uppercase text-primary">Catálogo</p>
-          <h1 className="mt-2 text-4xl font-black">Explorar mascotas</h1>
+          <h1 className="mt-2 text-2xl md:text-4xl font-black">Explorar mascotas</h1>
           <p className="mt-2 text-muted-foreground">
             {result.count} resultado{result.count === 1 ? "" : "s"} encontrado{result.count === 1 ? "" : "s"}
           </p>
@@ -93,7 +93,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
             <ExploreMap listings={result.listings} />
           ) : (
             <>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {result.listings.map((pet) => (
                   <PetCard canFavorite={Boolean(user)} isFavorited={favoriteIds.has(pet.id)} key={pet.id} pet={pet} />
                 ))}

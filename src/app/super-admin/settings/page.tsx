@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updateAppSettingsAction, toggleCategoryAction, createCategoryAction } from "@/server/actions/admin";
+import { updateAppSettingsAction, createCategoryAction } from "@/server/actions/admin";
 
 import { CategoryToggle } from "@/components/admin/category-toggle";
 
@@ -27,9 +27,9 @@ export default async function AdminSettingsPage() {
     supabase.from("categories").select("*").order("name")
   ]);
 
-  const getSetting = (key: string, defaultValue: any) => {
+  const getSetting = (key: string, defaultValue: string | number) => {
     const s = appSettings?.find(s => s.key === key);
-    return s ? s.value : defaultValue;
+    return typeof s?.value === "string" || typeof s?.value === "number" ? s.value : defaultValue;
   };
 
   return (
@@ -92,6 +92,37 @@ export default async function AdminSettingsPage() {
                   placeholder="admin@ejemplo.com" 
                   defaultValue={getSetting("admin_contact_email", "")} 
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="admin_contact_phone">Teléfono de contacto</Label>
+                <Input
+                  id="admin_contact_phone"
+                  name="admin_contact_phone"
+                  placeholder="+507 6000-0000"
+                  defaultValue={getSetting("admin_contact_phone", SITE_CONFIG.supportPhone)}
+                />
+              </div>
+              <div className="grid gap-4 border-t pt-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="social_instagram">Instagram</Label>
+                  <Input id="social_instagram" name="social_instagram" type="url" placeholder="https://instagram.com/..." defaultValue={getSetting("social_instagram", "")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="social_facebook">Facebook</Label>
+                  <Input id="social_facebook" name="social_facebook" type="url" placeholder="https://facebook.com/..." defaultValue={getSetting("social_facebook", "")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="social_tiktok">TikTok</Label>
+                  <Input id="social_tiktok" name="social_tiktok" type="url" placeholder="https://tiktok.com/@..." defaultValue={getSetting("social_tiktok", "")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="social_youtube">YouTube</Label>
+                  <Input id="social_youtube" name="social_youtube" type="url" placeholder="https://youtube.com/..." defaultValue={getSetting("social_youtube", "")} />
+                </div>
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="social_x">X</Label>
+                  <Input id="social_x" name="social_x" type="url" placeholder="https://x.com/..." defaultValue={getSetting("social_x", "")} />
+                </div>
               </div>
               <div className="pt-4">
                 <Button type="submit" className="w-full font-bold" variant="secondary">Actualizar Contacto</Button>

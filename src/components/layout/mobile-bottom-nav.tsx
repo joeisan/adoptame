@@ -19,18 +19,18 @@ export async function MobileBottomNav() {
       : guestItems;
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t bg-card/95 px-4 pb-[max(0.85rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-12px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t bg-card/95 px-2 pb-[max(0.45rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_22px_rgba(0,0,0,0.08)] backdrop-blur-xl md:hidden">
       <div className="mx-auto grid max-w-sm" style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}>
         {items.map((item) => {
           const Icon = item.icon;
 
           return (
             <Link
-              className="flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl text-xs font-bold text-muted-foreground transition hover:bg-muted hover:text-primary"
+              className="flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-lg text-[10px] font-bold leading-none text-muted-foreground transition hover:bg-muted hover:text-primary"
               href={item.href}
               key={item.href}
             >
-              <Icon className="size-5" />
+              <Icon className="size-4" />
               <span>{item.label}</span>
             </Link>
           );

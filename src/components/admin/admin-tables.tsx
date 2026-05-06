@@ -10,7 +10,8 @@ import {
   UserPlus, 
   Search, 
   Check, 
-  X 
+  X,
+  Key
 } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
@@ -26,7 +27,8 @@ import {
   unbanUserAction,
   setOrganizationVerificationAction,
   setOrganizationLimitAction,
-  changeListingOwnerAction
+  changeListingOwnerAction,
+  adminResetPasswordAction
 } from "@/server/actions/admin";
 import { cn } from "@/lib/utils";
 import { StatusBadge } from "@/components/pets/status-badge";
@@ -263,20 +265,20 @@ export function UsersTable({ data }: { data: AdminRow[] }) {
       cell: ({ row }) => (
         <div className="flex flex-col">
           <span className="font-bold">{text(row.original.display_name || row.original.full_name)}</span>
-          <span className="text-xs text-muted-foreground">{text(row.original.email)}</span>
+          <span className="text-[10px] text-muted-foreground">{text(row.original.email)}</span>
         </div>
       )
     },
     {
       header: "Rol",
       cell: ({ row }) => (
-        <form action={formAction(changeUserRoleAction)}>
+        <form action={formAction(changeUserRoleAction)} className="flex items-center gap-2">
           <input name="userId" type="hidden" value={text(row.original.id)} />
-          <Select name="role" defaultValue={text(row.original.role)} className="h-8 w-32 text-xs">
+          <Select name="role" defaultValue={text(row.original.role)} className="h-8 w-28 text-xs">
             <option value="user">Usuario</option>
             <option value="super_admin">Admin</option>
           </Select>
-          <Button size="sm" type="submit" variant="outline" className="h-8 mt-1 w-full">Cambiar</Button>
+          <Button size="sm" type="submit" variant="outline" className="h-8">Cambiar</Button>
         </form>
       )
     },
@@ -296,21 +298,35 @@ export function UsersTable({ data }: { data: AdminRow[] }) {
     },
     {
       header: "Acciones",
-      cell: ({ row }) => (
-        <div className="flex gap-2">
-          {text(row.original.status) === "active" ? (
-            <form action={formAction(banUserAction)}>
+      cell: ({ row }) => {
+        const isSuperAdmin = text(row.original.role) === "super_admin";
+        return (
+          <div className="flex gap-2">
+            {text(row.original.status) === "active" ? (
+              <form action={formAction(banUserAction)}>
+                <input name="userId" type="hidden" value={text(row.original.id)} />
+                <Button size="sm" type="submit" variant="destructive" className="h-8" disabled={isSuperAdmin} title={isSuperAdmin ? "No se puede banear a un administrador" : ""}>Banear</Button>
+              </form>
+            ) : (
+              <form action={formAction(unbanUserAction)}>
+                <input name="userId" type="hidden" value={text(row.original.id)} />
+                <Button size="sm" type="submit" variant="outline" className="h-8">Desbanear</Button>
+              </form>
+            )}
+            <form action={async (fd) => {
+              if(!confirm("¿Resetear contraseña a 'Adoptame123!'?")) return;
+              const res = await adminResetPasswordAction(fd);
+              if (res.error) toast.error(res.error);
+              else toast.success(res.message || "Contraseña reseteada");
+            }}>
               <input name="userId" type="hidden" value={text(row.original.id)} />
-              <Button size="sm" type="submit" variant="destructive" className="h-8">Banear</Button>
+              <Button size="sm" type="submit" variant="ghost" className="h-8 w-8 p-0" title="Resetear contraseña">
+                <Key className="size-4 text-orange-500" />
+              </Button>
             </form>
-          ) : (
-            <form action={formAction(unbanUserAction)}>
-              <input name="userId" type="hidden" value={text(row.original.id)} />
-              <Button size="sm" type="submit" variant="outline" className="h-8">Desbanear</Button>
-            </form>
-          )}
-        </div>
-      )
+          </div>
+        );
+      }
     }
   ];
 

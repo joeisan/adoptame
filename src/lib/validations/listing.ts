@@ -36,10 +36,6 @@ export const listingSchema = z
     contactEmail: z.string().email("Email inválido.").optional().or(z.literal("")),
     status: z.enum(["published", "adopted"]).optional().default("published"),
     ownerId: z.string().uuid().optional()
-  })
-  .refine((data) => Boolean(data.contactPhone || data.contactWhatsapp || data.contactEmail), {
-    message: "Agrega al menos un método de contacto.",
-    path: ["contactEmail"]
   });
 
 export type ListingFormValues = z.infer<typeof listingSchema>;

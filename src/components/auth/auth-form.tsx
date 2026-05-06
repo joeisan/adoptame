@@ -4,9 +4,9 @@ import { useMemo, useTransition, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Eye, EyeOff, HeartHandshake, Search } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
-import { signInAction, signUpAction } from "@/server/actions/auth";
+import { signInAction, signInWithGoogleAction, signUpAction } from "@/server/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,8 @@ type AuthValues = {
   password: string;
   redirect?: string;
   fullName?: string;
+  phone?: string;
+  whatsapp?: string;
   isOrganization?: boolean;
 };
 
@@ -32,7 +34,7 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
       email: "",
       password: "",
       redirect: redirectTo,
-      ...(mode === "register" ? { fullName: "" } : {})
+      ...(mode === "register" ? { fullName: "", phone: "", whatsapp: "" } : {})
     }
   });
 
@@ -51,6 +53,23 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
     });
   }
 
+  function onGoogleSignIn() {
+    const formData = new FormData();
+    if (redirectTo) formData.set("redirect", redirectTo);
+
+    startTransition(async () => {
+      const result = await signInWithGoogleAction(formData);
+      if (result?.error) {
+        toast.error(result.error);
+        return;
+      }
+
+      if (result?.url) {
+        window.location.href = result.url;
+      }
+    });
+  }
+
   return (
     <Card className="mx-auto w-full max-w-md">
       <CardHeader>
@@ -62,6 +81,15 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
         </CardDescription>
       </CardHeader>
       <CardContent>
+        <Button className="mb-4 w-full" disabled={pending} onClick={onGoogleSignIn} type="button" variant="outline">
+          <span className="mr-2 inline-flex size-4 items-center justify-center rounded-full text-xs font-black">G</span>
+          Continuar con Google
+        </Button>
+        <div className="mb-4 flex items-center gap-3 text-xs font-semibold uppercase text-muted-foreground">
+          <span className="h-px flex-1 bg-border" />
+          <span>Email</span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
         <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
           {mode === "register" ? (
             <>
@@ -69,6 +97,18 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
                 <Label htmlFor="fullName">Nombre</Label>
                 <Input id="fullName" {...form.register("fullName")} autoComplete="name" />
                 <p className="text-sm text-destructive">{form.formState.errors.fullName?.message}</p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Teléfono</Label>
+                  <Input id="phone" placeholder="6000 0000" {...form.register("phone")} />
+                  <p className="text-sm text-destructive">{form.formState.errors.phone?.message}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="whatsapp">WhatsApp</Label>
+                  <Input id="whatsapp" placeholder="6000 0000" {...form.register("whatsapp")} />
+                  <p className="text-sm text-destructive">{form.formState.errors.whatsapp?.message}</p>
+                </div>
               </div>
               <div className="space-y-3">
                 <div className="flex items-start space-x-2">

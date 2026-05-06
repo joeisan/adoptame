@@ -9,10 +9,10 @@ DECLARE
     gato_cat_id UUID;
 BEGIN
     -- 1. Obtener el ID del administrador (ajusta el email si es diferente)
-    SELECT id INTO admin_id FROM auth.users WHERE email = 'admin@adoptame.com' LIMIT 1;
-    
+    SELECT id INTO admin_id FROM auth.users WHERE email = 'beardclick@gmail.com' LIMIT 1;
+
     IF admin_id IS NULL THEN
-        RAISE NOTICE 'No se encontró el usuario admin@adoptame.com. Asegúrate de estar registrado.';
+        RAISE NOTICE 'No se encontró el usuario beardclick@gmail.com. Asegúrate de estar registrado.';
         RETURN;
     END IF;
 
@@ -40,7 +40,7 @@ BEGIN
         status, province, district, latitude, longitude, description, category_id, organization_id, badges, contact_name, contact_phone, contact_whatsapp, contact_email
     )
     VALUES 
-    (admin_id, 'buddy-labrador', 'Buddy Real', 'Perro', 'Labrador', 2, 'years', 'male', 'large', 'published', 'Panamá', 'Bella Vista', 8.9833, -79.5167, 'Buddy es un perro real guardado en la base de datos.', perro_cat_id, org_id, ARRAY['Vacunado', 'Desparasitado'], 'Admin', '6000-0000', '6000-0000', 'admin@adoptame.com')
+    (admin_id, 'buddy-labrador', 'Buddy Real', 'Perro', 'Labrador', 2, 'years', 'male', 'large', 'published', 'Panamá', 'Bella Vista', 8.9833, -79.5167, 'Buddy es un perro real guardado en la base de datos.', perro_cat_id, org_id, ARRAY['Vacunado', 'Desparasitado'], 'Admin', '6000-0000', '6000-0000', 'beardclick@gmail.com')
     ON CONFLICT (slug) DO NOTHING;
 
     -- Luna
@@ -49,7 +49,7 @@ BEGIN
         status, province, district, latitude, longitude, description, category_id, organization_id, badges, contact_name, contact_phone, contact_whatsapp, contact_email
     )
     VALUES 
-    (admin_id, 'luna-gatita-real', 'Luna Real', 'Gato', 'Común', 6, 'months', 'female', 'small', 'published', 'Chiriquí', 'David', 8.4333, -82.4333, 'Luna es una gatita real guardada en la base de datos.', gato_cat_id, null, ARRAY['Desparasitada', 'Cariñosa'], 'Admin', '6000-0000', '6000-0000', 'admin@adoptame.com')
+    (admin_id, 'luna-gatita-real', 'Luna Real', 'Gato', 'Común', 6, 'months', 'female', 'small', 'published', 'Chiriquí', 'David', 8.4333, -82.4333, 'Luna es una gatita real guardada en la base de datos.', gato_cat_id, null, ARRAY['Desparasitada', 'Cariñosa'], 'Admin', '6000-0000', '6000-0000', 'beardclick@gmail.com')
     ON CONFLICT (slug) DO NOTHING;
 
     -- Max
@@ -58,7 +58,7 @@ BEGIN
         status, province, district, latitude, longitude, description, category_id, organization_id, badges, contact_name, contact_phone, contact_whatsapp, contact_email
     )
     VALUES 
-    (admin_id, 'max-golden-real', 'Max Real', 'Perro', 'Golden Retriever', 1, 'years', 'male', 'medium', 'published', 'Colón', 'Colón', 9.35, -79.9, 'Max es un perro real guardado en la base de datos.', perro_cat_id, org_id, ARRAY['Sano', 'Juguetón'], 'Admin', '6000-0000', '6000-0000', 'admin@adoptame.com')
+    (admin_id, 'max-golden-real', 'Max Real', 'Perro', 'Golden Retriever', 1, 'years', 'male', 'medium', 'published', 'Colón', 'Colón', 9.35, -79.9, 'Max es un perro real guardado en la base de datos.', perro_cat_id, org_id, ARRAY['Sano', 'Juguetón'], 'Admin', '6000-0000', '6000-0000', 'beardclick@gmail.com')
     ON CONFLICT (slug) DO NOTHING;
 
     RAISE NOTICE 'Datos de prueba insertados correctamente.';

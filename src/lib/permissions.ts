@@ -19,7 +19,7 @@ export async function getCurrentUser() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id,full_name,display_name,role,status,banned_until")
+    .select("id,full_name,display_name,slug,email,phone,whatsapp,role,status,banned_until")
     .eq("id", user.id)
     .maybeSingle();
   const row = profile as unknown as
@@ -27,6 +27,10 @@ export async function getCurrentUser() {
         id: string;
         full_name: string | null;
         display_name: string | null;
+        slug: string | null;
+        email: string | null;
+        phone: string | null;
+        whatsapp: string | null;
         role: ProfileSummary["role"];
         status: ProfileSummary["status"];
         banned_until: string | null;
@@ -40,12 +44,21 @@ export async function getCurrentUser() {
           id: row.id,
           fullName: row.full_name,
           displayName: row.display_name,
+          slug: row.slug,
+          email: row.email,
+          phone: row.phone,
+          whatsapp: row.whatsapp,
           role: row.role,
           status: row.status,
           bannedUntil: row.banned_until
         } satisfies ProfileSummary)
       : null
   };
+}
+
+export function isProfileComplete(profile: Pick<ProfileSummary, "displayName" | "fullName" | "phone" | "whatsapp"> | null) {
+  if (!profile) return false;
+  return Boolean((profile.displayName || profile.fullName)?.trim() && profile.phone?.trim() && profile.whatsapp?.trim());
 }
 
 export function isBanActive(profile: Pick<ProfileSummary, "status" | "bannedUntil"> | null) {

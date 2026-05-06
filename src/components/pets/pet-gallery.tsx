@@ -7,7 +7,7 @@ import { ZoomIn, X } from "lucide-react";
 
 import type { PetImage } from "@/types/app";
 
-export function PetGallery({ images, name }: { images: PetImage[]; name: string }) {
+export function PetGallery({ images, name, isAdopted = false }: { images: PetImage[]; name: string; isAdopted?: boolean }) {
   const safeImages = images.length
     ? images
     : [{ publicUrl: "/reference/hero-adoptame-panama.png", altText: `${name} en adopción`, sortOrder: 0 }];
@@ -19,7 +19,7 @@ export function PetGallery({ images, name }: { images: PetImage[]; name: string 
     <>
       <div className="grid gap-4 md:grid-cols-[1fr_auto]">
         <div 
-          className="group/gallery relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted shadow-lg md:aspect-auto md:h-[600px] cursor-zoom-in"
+          className="group/gallery relative aspect-[16/9] overflow-hidden rounded-2xl bg-muted shadow-lg md:aspect-auto md:h-[380px] lg:h-[500px] cursor-zoom-in"
           onClick={() => setIsLightboxOpen(true)}
         >
           <Image
@@ -35,6 +35,14 @@ export function PetGallery({ images, name }: { images: PetImage[]; name: string 
           <div className="absolute right-4 top-4 rounded-full bg-white/90 p-3 text-primary shadow-xl backdrop-blur-md transition-transform group-hover/gallery:scale-110">
             <ZoomIn className="size-6" />
           </div>
+
+          {isAdopted && (
+            <div className="absolute bottom-0 right-0 z-30 h-24 w-24 overflow-hidden rounded-br-2xl">
+              <div className="absolute bottom-[18px] right-[-24px] w-[110px] -rotate-45 bg-secondary px-1 py-1.5 text-center text-xs font-black uppercase tracking-widest text-secondary-foreground shadow-lg">
+                Adoptado
+              </div>
+            </div>
+          )}
         </div>
         
         <div className="flex flex-row gap-3 overflow-x-auto pb-2 md:flex-col md:overflow-x-visible md:pb-0">
@@ -64,33 +72,37 @@ export function PetGallery({ images, name }: { images: PetImage[]; name: string 
       {/* Simple Lightbox */}
       {isLightboxOpen && (
         <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm animate-in fade-in duration-300"
+          className="fixed inset-0 z-[110] flex items-center justify-center bg-black/95 backdrop-blur-sm animate-in fade-in duration-300"
           onClick={() => setIsLightboxOpen(false)}
         >
+          {/* Close button with high z-index and large hit area */}
           <button 
-            className="absolute right-6 top-6 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
+            className="absolute right-4 top-4 md:right-8 md:top-8 z-[120] rounded-full bg-white/10 p-3 text-white hover:bg-white/20 transition-all active:scale-95"
             onClick={(e) => {
               e.stopPropagation();
               setIsLightboxOpen(false);
             }}
+            aria-label="Cerrar galería"
           >
             <X className="size-8" />
           </button>
           
-          <div className="relative h-[90vh] w-[95vw] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+          <div className="relative h-[85vh] w-[90vw] flex items-center justify-center">
             <Image
               alt={activeImage?.altText ?? name}
-              className="object-contain"
+              className="object-contain select-none pointer-events-none"
               fill
               src={activeImage?.publicUrl ?? "/reference/hero-adoptame-panama.png"}
-              sizes="95vw"
+              sizes="90vw"
               priority
             />
           </div>
           
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white text-center">
-            <p className="text-xl font-bold">{name}</p>
-            <p className="text-sm opacity-70">{activeImage?.altText}</p>
+          <div className="absolute bottom-6 left-0 right-0 px-4 text-white text-center pointer-events-none">
+            <p className="text-lg md:text-xl font-bold drop-shadow-md">{name}</p>
+            {activeImage?.altText && (
+              <p className="text-sm opacity-70 drop-shadow-sm">{activeImage.altText}</p>
+            )}
           </div>
         </div>
       )}

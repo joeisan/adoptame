@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CalendarDays, HeartPulse, MapPin, Mars, Venus, Calendar, ArrowUpNarrowWide, Mail, Phone, UserRound, ScrollText } from "lucide-react";
 import { getBadgeIcon } from "@/components/pets/badge-icon";
+import { BadgeScroller } from "@/components/pets/badge-scroller";
 
 import { ContactPanel } from "@/components/pets/contact-panels";
 import { OwnerListingActions } from "@/components/pets/owner-listing-actions";
@@ -54,11 +55,11 @@ export default async function PetDetailPage({ params }: { params: Params }) {
   const categoryColorClass = pet.category?.slug ? CATEGORY_COLORS[pet.category.slug] : "";
 
   return (
-    <section className="container-shell py-10">
-      <PetGallery images={pet.images} name={pet.name} />
-      <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
-        <div className="space-y-8">
-          <div className="rounded-xl border bg-card p-6 ambient-card">
+    <section className="container-shell py-6 md:py-10 overflow-hidden">
+      <PetGallery images={pet.images} name={pet.name} isAdopted={pet.status === "adopted"} />
+      <div className="mt-6 md:mt-8 grid gap-6 md:gap-8 lg:grid-cols-[1fr_360px]">
+        <div className="min-w-0 space-y-6 md:space-y-8">
+          <div className="rounded-xl border bg-card p-4 md:p-6 ambient-card">
             <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
               <div className="flex-1">
                 <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -75,18 +76,18 @@ export default async function PetDetailPage({ params }: { params: Params }) {
                   </Badge>
                 </div>
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
-                  <h1 className="flex items-center gap-2 text-4xl font-black">
+                  <h1 className="flex items-center gap-2 text-2xl md:text-4xl font-black">
                     {pet.name}
                     {pet.sex === "female" ? (
                       <div className="group/sex relative inline-flex">
-                        <Venus className="size-8 text-sage" />
+                        <Venus className="size-6 md:size-8 text-sage" />
                         <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 w-max -translate-x-1/2 rounded bg-popover px-2 py-1 text-xs font-medium text-popover-foreground opacity-0 shadow-md transition-opacity group-hover/sex:opacity-100">
                           Hembra
                         </span>
                       </div>
                     ) : pet.sex === "male" ? (
                       <div className="group/sex relative inline-flex">
-                        <Mars className="size-8 text-primary" />
+                        <Mars className="size-6 md:size-8 text-primary" />
                         <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 w-max -translate-x-1/2 rounded bg-popover px-2 py-1 text-xs font-medium text-popover-foreground opacity-0 shadow-md transition-opacity group-hover/sex:opacity-100">
                           Macho
                         </span>
@@ -103,12 +104,13 @@ export default async function PetDetailPage({ params }: { params: Params }) {
                     </div>
                   )}
                 </div>
-                <p className="mt-2 text-muted-foreground">
+                <p className="mt-2 text-muted-foreground flex items-center gap-1.5 font-medium">
+                  <MapPin className="size-4 text-primary" />
                   {pet.breed || pet.category?.name || "Mascota"} en {pet.province}
                   {pet.district ? `, ${pet.district}` : ""}
                 </p>
               </div>
-              <div className="text-sm text-muted-foreground flex items-center gap-1.5 bg-muted/50 p-3 rounded-lg border border-border">
+              <div className="text-sm text-muted-foreground flex flex-wrap items-center gap-1.5 bg-muted/50 p-3 rounded-lg border border-border">
                 Publicante: 
                 {pet.organization ? (
                   <Link 
@@ -118,6 +120,13 @@ export default async function PetDetailPage({ params }: { params: Params }) {
                     {pet.organization.name}
                     {pet.organization.isVerified ? <VerifiedBadge /> : null}
                   </Link>
+                ) : pet.ownerSlug ? (
+                  <Link 
+                    href={`/perfil/${pet.ownerSlug}`} 
+                    className="font-semibold text-foreground hover:underline flex items-center gap-1.5"
+                  >
+                    {pet.ownerName ?? "Rescatista"}
+                  </Link>
                 ) : (
                   <span className="font-semibold text-foreground">{pet.ownerName ?? "Rescatista"}</span>
                 )}
@@ -125,7 +134,7 @@ export default async function PetDetailPage({ params }: { params: Params }) {
             </div>
             
             {pet.badges && pet.badges.length > 0 ? (
-              <div className="mt-6 flex flex-nowrap gap-2 overflow-x-auto pb-1 no-scrollbar">
+              <BadgeScroller>
                 {pet.badges.map((badge) => {
                   const isMain = ["Vacunado", "Desparasitado", "Esterilizado"].includes(badge);
                   return (
@@ -144,10 +153,10 @@ export default async function PetDetailPage({ params }: { params: Params }) {
                     </Badge>
                   );
                 })}
-              </div>
+              </BadgeScroller>
             ) : null}
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-6 grid gap-3 grid-cols-2 lg:grid-cols-4">
               <div className="flex flex-col items-center justify-center p-4 rounded-xl border bg-muted/30 gap-2">
                 <CalendarDays className="size-5 text-primary" />
                 <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Edad</span>
@@ -166,7 +175,7 @@ export default async function PetDetailPage({ params }: { params: Params }) {
               <div className="flex flex-col items-center justify-center p-4 rounded-xl border bg-muted/30 gap-2 text-center">
                 <MapPin className="size-5 text-primary" />
                 <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Zona</span>
-                <span className="font-bold truncate max-w-full px-1">{pet.sector ?? pet.district ?? pet.province}</span>
+                <span className="font-bold truncate max-w-full px-1 text-sm">{pet.sector ?? pet.district ?? pet.province}</span>
               </div>
             </div>
             <div className="mt-4 flex items-center gap-2 rounded-xl border bg-muted/30 px-4 py-3 text-sm font-semibold text-muted-foreground">
@@ -175,14 +184,20 @@ export default async function PetDetailPage({ params }: { params: Params }) {
             </div>
 
             {contact && (
-              <div className="mt-8 grid gap-4 p-5 rounded-xl border border-primary/20 bg-primary/5">
+              <div className="mt-6 md:mt-8 grid gap-4 p-4 md:p-5 rounded-xl border border-primary/20 bg-primary/5">
                 <h3 className="font-bold text-lg flex items-center gap-2 text-primary">
                   <UserRound className="size-5" />
                   Contacto del publicante
                 </h3>
-                <div className="flex flex-wrap gap-6 text-sm">
+                <div className="flex flex-wrap gap-3 md:gap-6 text-sm">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-foreground">{contact.contactName || "Publicante"}</span>
+                    {pet.ownerSlug || pet.organization ? (
+                      <Link href={`/perfil/${pet.organization?.slug || pet.ownerSlug}`} className="font-semibold text-foreground hover:underline">
+                        {contact.contactName || "Publicante"}
+                      </Link>
+                    ) : (
+                      <span className="font-semibold text-foreground">{contact.contactName || "Publicante"}</span>
+                    )}
                   </div>
                   {contact.contactPhone && (
                     <div className="flex items-center gap-2 text-muted-foreground">
@@ -208,7 +223,7 @@ export default async function PetDetailPage({ params }: { params: Params }) {
               </CardTitle>
             </CardHeader>
             <CardContent className="px-0">
-              <p className="whitespace-pre-line leading-relaxed text-lg text-muted-foreground">{pet.description}</p>
+              <p className="whitespace-pre-line leading-relaxed text-base md:text-lg text-muted-foreground break-words">{pet.description}</p>
             </CardContent>
           </Card>
           <div className="grid gap-6 md:grid-cols-2">

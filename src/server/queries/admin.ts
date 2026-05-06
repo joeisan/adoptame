@@ -111,8 +111,9 @@ export async function getAdminTableData() {
   if (!supabase) return { users: [], listings: [], reports: [], organizations: [] };
 
   // Cargamos todo con el cliente de administración para saltar RLS
-  const [usersRes, listingsRes, reportsRes, organizationsRes] = await Promise.all([
+  const [usersRes, authUsersRes, listingsRes, reportsRes, organizationsRes] = await Promise.all([
     supabase.from("profiles").select("id,display_name,full_name,role,status,created_at,banned_until").limit(200),
+    supabase.auth.admin.listUsers({ perPage: 200 }),
     supabase
       .from("pet_listings")
       .select(`
@@ -134,7 +135,17 @@ export async function getAdminTableData() {
     supabase.from("organizations").select("id,name,is_verified,listing_limit,created_at,owner:profiles(display_name,full_name)").limit(100)
   ]);
 
-  const users = (usersRes.data ?? []) as Array<{ id: string; display_name?: string | null; full_name?: string | null }>;
+  const authUsers = authUsersRes.data?.users || [];
+  const rawUsers = (usersRes.data ?? []) as Array<{ id: string; display_name?: string | null; full_name?: string | null; email?: string | null }>;
+  
+  const users = rawUsers.map(u => {
+    const authUser = authUsers.find(au => au.id === u.id);
+    return {
+      ...u,
+      email: authUser?.email || "Sin correo"
+    };
+  });
+
   const rawListings = (listingsRes.data ?? []) as Array<Record<string, any> & { owner_id: string }>;
 
   // Unión manual usando la lista de usuarios ya cargada

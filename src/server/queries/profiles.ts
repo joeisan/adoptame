@@ -16,6 +16,11 @@ export type PublicProfile = {
   website?: string | null;
   facebook?: string | null;
   instagram?: string | null;
+  youtube?: string | null;
+  linkedin?: string | null;
+  telegram?: string | null;
+  province?: string | null;
+  district?: string | null;
   isVerified?: boolean;
 };
 
@@ -59,6 +64,18 @@ export async function getPublicProfileBySlug(slug: string): Promise<PublicProfil
       isOrganization: false,
       name: profile.display_name ?? profile.full_name ?? "Usuario",
       slug: profile.slug ?? slug,
+      description: profile.description,
+      phone: profile.phone,
+      whatsapp: profile.whatsapp,
+      email: profile.email,
+      website: profile.website_url,
+      facebook: profile.facebook_url,
+      instagram: profile.instagram_url,
+      youtube: profile.youtube_url,
+      linkedin: profile.linkedin_url,
+      telegram: profile.telegram_url,
+      province: profile.province,
+      district: profile.district
     };
   }
 
@@ -116,6 +133,8 @@ export async function getProfileActiveListings(profile: PublicProfile): Promise<
         longitude: null,
         image: { publicUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1000&auto=format&fit=crop", altText: "Buddy", id: "dummy-img-1", sortOrder: 0 },
         category: { name: "Perros", slug: "perros" },
+        ownerName: "Rescate Animal",
+        ownerSlug: "rescate-animal",
         organization: { name: "Rescate Animal", slug: "rescate-animal", isVerified: true }
       }
     ];
@@ -144,6 +163,8 @@ export async function getProfileActiveListings(profile: PublicProfile): Promise<
         longitude: null,
         image: { publicUrl: "https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=1000&auto=format&fit=crop", altText: "Max", id: "dummy-img-3", sortOrder: 0 },
         category: { name: "Perros", slug: "perros" },
+        ownerName: "Fundación Peludos",
+        ownerSlug: "fundacion-peludos",
         organization: { name: "Fundación Peludos", slug: "fundacion-peludos", isVerified: false }
       }
     ];

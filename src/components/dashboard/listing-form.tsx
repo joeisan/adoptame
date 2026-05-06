@@ -319,25 +319,7 @@ export function ListingForm({
             <Label htmlFor="adoptionRequirements">Requisitos de adopción</Label>
             <Textarea id="adoptionRequirements" {...form.register("adoptionRequirements")} />
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="contactName">Nombre de contacto</Label>
-              <Input id="contactName" {...form.register("contactName")} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="contactPhone">Teléfono</Label>
-              <Input id="contactPhone" placeholder="6000 0000" {...form.register("contactPhone")} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="contactWhatsapp">WhatsApp</Label>
-              <Input id="contactWhatsapp" placeholder="6000 0000" {...form.register("contactWhatsapp")} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="contactEmail">Email</Label>
-              <Input id="contactEmail" type="email" {...form.register("contactEmail")} />
-              <p className="text-sm text-destructive">{error("contactEmail")}</p>
-            </div>
-          </div>
+
           <div className="space-y-2">
             <Label htmlFor="images">Imágenes {listingId && "(Añadir nuevas)"}</Label>
             <Input accept="image/png,image/jpeg,image/webp" id="images" multiple name="images" type="file" />

@@ -72,7 +72,7 @@ export async function SiteHeader() {
           <summary className="flex size-11 list-none items-center justify-center rounded-full border bg-card">
             <Menu className="size-5" />
           </summary>
-          <div className="absolute right-0 mt-3 w-72 rounded-xl border bg-card p-3 shadow-xl">
+          <div className="absolute right-0 mt-3 w-72 z-50 rounded-xl border bg-card p-3 shadow-xl">
             {links.map((link) => (
               <Link className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-muted" href={link.href} key={link.href}>
                 {link.label}

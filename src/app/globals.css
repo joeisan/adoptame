@@ -60,7 +60,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; removed due to Next.js navigation bugs */
 }
 
 body {

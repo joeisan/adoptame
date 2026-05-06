@@ -65,6 +65,7 @@ type RawPet = {
   contact_whatsapp?: string | null;
   contact_email?: string | null;
   badges?: string[] | null;
+  owner?: { display_name?: string | null; full_name?: string | null; slug?: string | null; } | null;
 };
 
 const LISTING_SELECT = `
@@ -93,7 +94,8 @@ const LISTING_SELECT = `
   badges,
   pet_images(id, public_url, storage_path, alt_text, sort_order),
   categories!inner(name, slug),
-  organizations(name, slug, is_verified)
+  organizations(name, slug, is_verified),
+  owner:profiles!pet_listings_owner_id_fkey(display_name, full_name, slug)
 `;
 
 function publicUrlForImage(image: RawImage | null | undefined): string {
@@ -148,7 +150,9 @@ export function mapPetCard(row: RawPet): PetCardListing {
     image: images[0] ?? null,
     badges: row.badges ?? [],
     latitude: row.latitude ?? null,
-    longitude: row.longitude ?? null
+    longitude: row.longitude ?? null,
+    ownerName: row.organizations?.name ?? row.owner?.display_name ?? row.owner?.full_name ?? "Publicante",
+    ownerSlug: row.organizations?.slug ?? row.owner?.slug ?? null
   };
 }
 
@@ -160,7 +164,6 @@ function mapPetDetail(row: RawPet): PublicPetDetail {
     healthNotes: row.health_notes ?? null,
     adoptionRequirements: row.adoption_requirements ?? null,
     sector: row.sector ?? null,
-    ownerName: row.organizations?.name ?? "Publicante",
     images: mapImages(row.pet_images, row.name),
     contactName: row.contact_name ?? null,
     contactPhone: row.contact_phone ?? null,
@@ -215,6 +218,8 @@ const DUMMY_LISTINGS: PetCardListing[] = [
     publishedAt: new Date().toISOString(),
     createdAt: new Date().toISOString(),
     category: { name: "Perros", slug: "perros" },
+    ownerName: "Juan Pérez",
+    ownerSlug: "juan-perez",
     organization: { name: "Rescate Animal", slug: "rescate-animal", isVerified: true },
     image: { publicUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1000&auto=format&fit=crop", altText: "Buddy", sortOrder: 0, id: "img-1" },
     badges: ["Vacunado", "Desparasitado"]
@@ -238,6 +243,8 @@ const DUMMY_LISTINGS: PetCardListing[] = [
     publishedAt: new Date().toISOString(),
     createdAt: new Date().toISOString(),
     category: { name: "Gatos", slug: "gatos" },
+    ownerName: "María García",
+    ownerSlug: "maria-garcia",
     organization: null,
     image: { publicUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1000&auto=format&fit=crop", altText: "Luna", sortOrder: 0, id: "img-2" },
     badges: ["Desparasitado", "Cariñosa"]
@@ -261,6 +268,8 @@ const DUMMY_LISTINGS: PetCardListing[] = [
     publishedAt: new Date().toISOString(),
     createdAt: new Date().toISOString(),
     category: { name: "Perros", slug: "perros" },
+    ownerName: "Fundación Peludos",
+    ownerSlug: "fundacion-peludos",
     organization: { name: "Fundación Peludos", slug: "fundacion-peludos", isVerified: false },
     image: { publicUrl: "https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=1000&auto=format&fit=crop", altText: "Max", sortOrder: 0, id: "img-3" },
     badges: ["Vacunado", "Esterilizado", "Juguetón"]
@@ -278,6 +287,7 @@ export function getDummyPetDetail(slug: string): PublicPetDetail | null {
     adoptionRequirements: "Se busca una familia responsable, con espacio adecuado. Firma de contrato de adopción y seguimiento.",
     sector: "Centro",
     ownerName: dummy.organization?.name ?? "Publicante",
+    ownerSlug: dummy.organization?.slug ?? null,
     images: dummy.image ? [dummy.image] : [],
     contactName: null,
     contactPhone: null,
@@ -559,7 +569,11 @@ export async function getPublicPetContact(slug: string): Promise<PetContact | nu
 
   const { data, error } = await supabase
     .from("pet_listings")
-    .select("contact_name, contact_phone, contact_whatsapp, contact_email")
+    .select(`
+      contact_name, contact_phone, contact_whatsapp, contact_email,
+      owner:profiles!pet_listings_owner_id_fkey(display_name, full_name, phone, whatsapp),
+      organization:organizations(name, phone, whatsapp, email)
+    `)
     .eq("slug", slug)
     .in("status", PUBLIC_LISTING_STATUSES)
     .is("deleted_at", null)
@@ -567,11 +581,20 @@ export async function getPublicPetContact(slug: string): Promise<PetContact | nu
 
   if (error || !data) return null;
 
+  const d = data as any;
+  const org = d.organization as Record<string, string> | null;
+  const profile = d.owner as Record<string, string> | null;
+
+  const name = org?.name || profile?.display_name || profile?.full_name || d.contact_name;
+  const phone = org?.phone || profile?.phone || d.contact_phone;
+  const whatsapp = org?.whatsapp || profile?.whatsapp || d.contact_whatsapp;
+  const email = org?.email || d.contact_email;
+
   return {
-    contactName: data.contact_name,
-    contactPhone: data.contact_phone,
-    contactWhatsapp: data.contact_whatsapp,
-    contactEmail: data.contact_email
+    contactName: name,
+    contactPhone: phone,
+    contactWhatsapp: whatsapp,
+    contactEmail: email
   };
 }
 

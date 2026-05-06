@@ -162,7 +162,18 @@ export async function updateAppSettingsAction(formData: FormData) {
   const admin = await requireSuperAdmin();
   if (!admin) return { error: "No autorizado." };
 
-  const keys = ["regular_listing_limit", "max_images_per_listing", "admin_contact_whatsapp", "admin_contact_email"];
+  const keys = [
+    "regular_listing_limit",
+    "max_images_per_listing",
+    "admin_contact_whatsapp",
+    "admin_contact_email",
+    "admin_contact_phone",
+    "social_instagram",
+    "social_facebook",
+    "social_tiktok",
+    "social_youtube",
+    "social_x"
+  ];
   
   for (const key of keys) {
     const value = formData.get(key);
@@ -183,6 +194,7 @@ export async function updateAppSettingsAction(formData: FormData) {
 
   await audit(admin.user.id, "update_app_settings", { keys });
   revalidatePath("/super-admin/settings");
+  revalidatePath("/", "layout");
   return { ok: true };
 }
 
@@ -227,4 +239,22 @@ export async function createCategoryAction(formData: FormData) {
   revalidatePath("/super-admin/settings");
   revalidatePath("/explore");
   return { ok: true };
+}
+export async function adminResetPasswordAction(formData: FormData) {
+  await requireSuperAdmin();
+  const userId = String(formData.get("userId") ?? "");
+  const newPassword = "Adoptame123!"; // Contraseña temporal por defecto
+
+  if (!userId) return { error: "ID de usuario requerido." };
+
+  const { createAdminClient } = await import("@/lib/supabase/admin");
+  const supabase = createAdminClient();
+
+  const { error } = await supabase.auth.admin.updateUserById(userId, {
+    password: newPassword,
+  });
+
+  if (error) return { error: error.message };
+
+  return { ok: true, message: `Contraseña reseteada a: ${newPassword}` };
 }

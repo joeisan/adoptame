@@ -38,5 +38,11 @@ alter table public.pet_listings add column if not exists badges text[] not null 
 -- 4. Add admin contact to app_settings
 insert into public.app_settings (key, value) values
 ('admin_contact_whatsapp', '"+507 6000-0000"'::jsonb),
-('admin_contact_email', '"admin@adoptamepanama.local"'::jsonb)
+('admin_contact_email', '"admin@adoptamepanama.local"'::jsonb),
+('admin_contact_phone', '"+507 6000-0000"'::jsonb),
+('social_instagram', '""'::jsonb),
+('social_facebook', '""'::jsonb),
+('social_tiktok', '""'::jsonb),
+('social_youtube', '""'::jsonb),
+('social_x', '""'::jsonb)
 on conflict (key) do nothing;

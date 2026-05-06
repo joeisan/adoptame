@@ -31,6 +31,15 @@ export type Database = {
           whatsapp: string | null;
           province: string | null;
           district: string | null;
+          description: string | null;
+          website_url: string | null;
+          facebook_url: string | null;
+          instagram_url: string | null;
+          youtube_url: string | null;
+          linkedin_url: string | null;
+          telegram_url: string | null;
+          email: string | null;
+          slug: string | null;
           created_at: string;
           updated_at: string;
           banned_until: string | null;

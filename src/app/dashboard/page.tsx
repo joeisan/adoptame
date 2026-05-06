@@ -15,11 +15,21 @@ export default async function DashboardPage() {
       <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <p className="text-sm font-bold uppercase text-primary">Dashboard</p>
-          <h1 className="mt-2 text-4xl font-black">Hola, {summary.profile?.displayName ?? "rescatista"}</h1>
+          <h1 className="mt-2 text-2xl md:text-4xl font-black">Hola, {summary.profile?.displayName ?? "rescatista"}</h1>
         </div>
-        <Button asChild>
-          <Link href="/dashboard/listings/new">Crear nueva publicación</Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          {summary.profile?.slug && (
+            <Button asChild variant="ghost">
+              <Link href={`/perfil/${summary.profile.slug}`}>Ver mi perfil</Link>
+            </Button>
+          )}
+          <Button asChild variant="outline">
+            <Link href="/dashboard/profile">Editar perfil</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/dashboard/listings/new">Crear nueva publicación</Link>
+          </Button>
+        </div>
       </div>
 
       {summary.wantsToBeOrganization && summary.profile?.role === "user" ? (

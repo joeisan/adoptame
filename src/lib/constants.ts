@@ -15,6 +15,7 @@ export const SITE_CONFIG = {
   description:
     "Plataforma panameña para conectar personas, rescatistas y organizaciones con animales en adopción.",
   supportEmail: "soporte@adoptamepanama.local",
+  supportPhone: "+507 6000-0000",
   defaultListingLimit: 10,
   defaultMaxImages: 5
 };

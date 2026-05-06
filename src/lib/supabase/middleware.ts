@@ -52,5 +52,29 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
+  if (user && (isDashboard || isFavorites) && pathname !== "/dashboard/profile") {
+    const { data: profileData } = await supabase
+      .from("profiles")
+      .select("full_name,display_name,phone,whatsapp")
+      .eq("id", user.id)
+      .maybeSingle();
+    const profile = profileData as unknown as {
+      full_name: string | null;
+      display_name: string | null;
+      phone: string | null;
+      whatsapp: string | null;
+    } | null;
+    const hasName = Boolean((profile?.display_name || profile?.full_name)?.trim());
+    const hasContact = Boolean(profile?.phone?.trim() && profile?.whatsapp?.trim());
+
+    if (!hasName || !hasContact) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/dashboard/profile";
+      redirectUrl.searchParams.set("onboarding", "1");
+      redirectUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
+
   return response;
 }

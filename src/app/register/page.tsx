@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { AuthForm } from "@/components/auth/auth-form";
+import { getCurrentUser } from "@/lib/permissions";
 
 export const metadata: Metadata = {
   title: "Registro"
@@ -10,6 +12,11 @@ export const metadata: Metadata = {
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 export default async function RegisterPage({ searchParams }: { searchParams: SearchParams }) {
+  const { user } = await getCurrentUser();
+  if (user) {
+    redirect("/dashboard");
+  }
+
   const params = await searchParams;
   const redirectTo = Array.isArray(params.redirect) ? params.redirect[0] : params.redirect;
 

@@ -57,6 +57,8 @@ export type PetCardListing = {
     isVerified: boolean;
   } | null;
   image: PetImage | null;
+  ownerName: string | null;
+  ownerSlug: string | null;
 };
 
 export type PublicPetDetail = PetCardListing & {
@@ -66,6 +68,7 @@ export type PublicPetDetail = PetCardListing & {
   adoptionRequirements: string | null;
   sector: string | null;
   ownerName: string | null;
+  ownerSlug: string | null;
   images: PetImage[];
   contactName: string | null;
   contactPhone: string | null;
@@ -102,7 +105,10 @@ export type ProfileSummary = {
   id: string;
   fullName: string | null;
   displayName: string | null;
+  slug: string | null;
   email?: string | null;
+  phone?: string | null;
+  whatsapp?: string | null;
   role: UserRole;
   status: UserStatus;
   bannedUntil: string | null;
