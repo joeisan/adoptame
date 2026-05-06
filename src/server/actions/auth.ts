@@ -60,6 +60,7 @@ export async function signUpAction(formData: FormData) {
     phone: formData.get("phone"),
     whatsapp: formData.get("whatsapp"),
     isOrganization: formData.get("isOrganization") === "on",
+    organizationType: formData.get("organizationType") ?? undefined,
     redirect: formData.get("redirect") ?? undefined
   });
 
@@ -76,7 +77,8 @@ export async function signUpAction(formData: FormData) {
     options: {
       data: {
         full_name: parsed.data.fullName,
-        wants_to_be_organization: parsed.data.isOrganization === true
+        wants_to_be_organization: parsed.data.isOrganization === true,
+        organization_type: parsed.data.organizationType
       }
     }
   });
@@ -90,6 +92,7 @@ export async function signUpAction(formData: FormData) {
       display_name: parsed.data.fullName,
       phone: parsed.data.phone,
       whatsapp: parsed.data.whatsapp,
+      organization_type: parsed.data.organizationType || null,
       role: "user",
       status: "active"
     });

@@ -35,11 +35,12 @@ export async function updateProfileAction(formData: FormData) {
   const youtube = clean(formData.get("youtube"));
   const linkedin = clean(formData.get("linkedin"));
   const telegram = clean(formData.get("telegram"));
+  const organizationType = clean(formData.get("organizationType"));
   const redirectTo = safeRedirect(formData.get("redirect"));
 
   if (displayName.length < 2) return { error: "Escribe un nombre a mostrar." };
-  if (!isValidPhone(phone)) return { error: "Ingresa un teléfono válido de 8 dígitos." };
-  if (!isValidPhone(whatsapp)) return { error: "Ingresa un WhatsApp válido de 8 dígitos." };
+  if (!phone || !isValidPhone(phone)) return { error: "Ingresa un teléfono válido de 8 dígitos (Obligatorio)." };
+  if (whatsapp && !isValidPhone(whatsapp)) return { error: "Ingresa un WhatsApp válido de 8 dígitos." };
 
   const supabase = await createClient();
   if (!supabase) return { error: "Error de conexión." };
@@ -60,6 +61,7 @@ export async function updateProfileAction(formData: FormData) {
       youtube_url: youtube || null,
       linkedin_url: linkedin || null,
       telegram_url: telegram || null,
+      organization_type: organizationType || null,
       updated_at: new Date().toISOString()
     })
     .eq("id", user.id);

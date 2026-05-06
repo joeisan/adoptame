@@ -44,8 +44,10 @@ export default async function ProfilePage({ params }: { params: Params }) {
                 {profile.name}
                 {profile.isVerified ? <VerifiedBadge /> : null}
               </h1>
-              {profile.isOrganization ? (
-                <Badge variant="outline" className="mt-2 text-primary border-primary/30">Organización</Badge>
+              {profile.isOrganization || profile.organizationType ? (
+                <Badge variant="outline" className="mt-2 text-primary border-primary/30">
+                  {profile.organizationType || "Organización"}
+                </Badge>
               ) : (
                 <Badge variant="outline" className="mt-2">Voluntario</Badge>
               )}

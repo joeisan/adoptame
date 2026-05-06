@@ -19,9 +19,10 @@ export type PublicProfile = {
   youtube?: string | null;
   linkedin?: string | null;
   telegram?: string | null;
-  province?: string | null;
-  district?: string | null;
+  province?: string;
+  district?: string;
   isVerified?: boolean;
+  organizationType?: string | null;
 };
 
 export async function getPublicProfileBySlug(slug: string): Promise<PublicProfile | null> {
@@ -48,7 +49,8 @@ export async function getPublicProfileBySlug(slug: string): Promise<PublicProfil
       website: org.website_url,
       facebook: org.facebook_url,
       instagram: org.instagram_url,
-      isVerified: org.is_verified
+      isVerified: org.is_verified,
+      organizationType: org.type || "Organización"
     };
   }
 
@@ -75,7 +77,8 @@ export async function getPublicProfileBySlug(slug: string): Promise<PublicProfil
       linkedin: profile.linkedin_url,
       telegram: profile.telegram_url,
       province: profile.province,
-      district: profile.district
+      district: profile.district,
+      organizationType: profile.organization_type
     };
   }
 

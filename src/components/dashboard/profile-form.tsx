@@ -47,6 +47,23 @@ export function ProfileForm({ profile, redirectTo }: { profile: ProfileRow; redi
         </div>
       </div>
 
+      {profile?.role === "organization" || profile?.organization_type ? (
+        <div className="space-y-2">
+          <Label htmlFor="organizationType">Tipo de Organización</Label>
+          <select
+            id="organizationType"
+            name="organizationType"
+            defaultValue={profile?.organization_type || "Organización"}
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <option value="Fundación">Fundación</option>
+            <option value="ONG">ONG</option>
+            <option value="Organización">Organización / Grupo</option>
+          </select>
+          <p className="text-xs text-muted-foreground">Define cómo aparecerás en el directorio y publicaciones.</p>
+        </div>
+      ) : null}
+
       <div className="space-y-2">
         <Label htmlFor="description">Descripción / Biografía</Label>
         <Textarea id="description" name="description" defaultValue={profile?.description || ""} className="h-32" />

@@ -22,11 +22,14 @@ type AuthValues = {
   phone?: string;
   whatsapp?: string;
   isOrganization?: boolean;
+  organizationType?: string;
 };
 
 export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string }) {
   const [pending, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
+  const [isOrgSelected, setIsOrgSelected] = useState(false);
+  const [useSameForWhatsapp, setUseSameForWhatsapp] = useState(true);
   const schema = useMemo(() => (mode === "login" ? loginSchema : registerSchema), [mode]);
   const form = useForm<AuthValues>({
     resolver: zodResolver(schema),
@@ -34,6 +37,8 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
       email: "",
       password: "",
       redirect: redirectTo,
+      isOrganization: false,
+      organizationType: "Organización",
       ...(mode === "register" ? { fullName: "", phone: "", whatsapp: "" } : {})
     }
   });
@@ -41,11 +46,20 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
   function onSubmit(values: AuthValues) {
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
-      if (value) formData.set(key, String(value));
+      if (value !== undefined && value !== null) formData.set(key, String(value));
     });
-    // Grab native checkbox value
-    const orgCheckbox = document.getElementById("isOrganization") as HTMLInputElement | null;
-    if (orgCheckbox?.checked) formData.set("isOrganization", "on");
+    
+    // Explicitly set isOrganization and organizationType if checked
+    if (isOrgSelected) {
+      formData.set("isOrganization", "on");
+      const orgType = document.getElementById("organizationType") as HTMLSelectElement | null;
+      if (orgType) formData.set("organizationType", orgType.value);
+    }
+
+    // Handle WhatsApp synchronization
+    if (mode === "register" && useSameForWhatsapp) {
+      formData.set("whatsapp", String(values.phone || ""));
+    }
 
     startTransition(async () => {
       const result = mode === "login" ? await signInAction(formData) : await signUpAction(formData);
@@ -98,16 +112,24 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
                 <Input id="fullName" {...form.register("fullName")} autoComplete="name" />
                 <p className="text-sm text-destructive">{form.formState.errors.fullName?.message}</p>
               </div>
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Teléfono</Label>
+                  <Label htmlFor="phone">Teléfono (Obligatorio)</Label>
                   <Input id="phone" placeholder="6000 0000" {...form.register("phone")} />
                   <p className="text-sm text-destructive">{form.formState.errors.phone?.message}</p>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="whatsapp">WhatsApp</Label>
-                  <Input id="whatsapp" placeholder="6000 0000" {...form.register("whatsapp")} />
-                  <p className="text-sm text-destructive">{form.formState.errors.whatsapp?.message}</p>
+                
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="useSameForWhatsapp"
+                    checked={useSameForWhatsapp}
+                    onChange={(e) => setUseSameForWhatsapp(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                  />
+                  <Label htmlFor="useSameForWhatsapp" className="text-xs font-medium cursor-pointer text-muted-foreground">
+                    Usar este mismo número para WhatsApp
+                  </Label>
                 </div>
               </div>
               <div className="space-y-3">
@@ -116,8 +138,10 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
                     type="checkbox"
                     id="isOrganization"
                     name="isOrganization"
+                    checked={isOrgSelected}
                     className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
                     onChange={(e) => {
+                      setIsOrgSelected(e.target.checked);
                       const msg = document.getElementById("org-disclaimer");
                       if (msg) msg.style.display = e.target.checked ? "block" : "none";
                     }}
@@ -126,6 +150,23 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
                     Soy una organización y deseo solicitar aprobación
                   </Label>
                 </div>
+
+                {isOrgSelected && (
+                  <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
+                    <Label htmlFor="organizationType">Tipo de organización</Label>
+                    <select
+                      id="organizationType"
+                      name="organizationType"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      defaultValue="Organización"
+                    >
+                      <option value="Fundación">Fundación</option>
+                      <option value="ONG">ONG</option>
+                      <option value="Organización">Organización / Grupo</option>
+                    </select>
+                  </div>
+                )}
+
                 <div id="org-disclaimer" className="hidden rounded-lg bg-primary/5 p-3 text-xs text-muted-foreground border border-primary/10 animate-in fade-in slide-in-from-top-1">
                   <p className="mb-2"><strong>Nota:</strong> Las cuentas de organización están sujetas a verificación. Deberás proporcionar documentación legal de la organización.</p>
                   <p>Puedes solicitar los requisitos directamente a nuestro equipo de soporte.</p>
