@@ -50,7 +50,7 @@ export async function getPublicProfileBySlug(slug: string): Promise<PublicProfil
       facebook: org.facebook_url,
       instagram: org.instagram_url,
       isVerified: org.is_verified,
-      organizationType: org.type || "Organización"
+      organizationType: (o.type as string) || "Organización"
     };
   }
 
@@ -61,10 +61,15 @@ export async function getPublicProfileBySlug(slug: string): Promise<PublicProfil
     .maybeSingle();
 
   if (profile) {
+    const publicName =
+      profile.role === "organization"
+        ? profile.organization_name ?? profile.display_name ?? profile.full_name ?? "Organización"
+        : profile.display_name ?? profile.full_name ?? "Usuario";
+
     return {
       id: profile.id,
-      isOrganization: false,
-      name: profile.display_name ?? profile.full_name ?? "Usuario",
+      isOrganization: profile.role === "organization",
+      name: publicName,
       slug: profile.slug ?? slug,
       description: profile.description,
       phone: profile.phone,
@@ -238,5 +243,34 @@ export async function getProfilesForSelect() {
   return (data ?? []).map((p) => ({
     id: p.id,
     label: p.display_name || p.full_name || "Usuario sin nombre"
+  }));
+}
+
+export async function getLatestOrganizations(limit = 6) {
+  const supabase = await createClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from("organizations")
+    .select("id, name, slug, is_verified")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error || !data || data.length === 0) {
+    return [
+      { id: "1", name: "Rescate Animal", slug: "rescate-animal", isVerified: true },
+      { id: "2", name: "Fundación Peludos", slug: "fundacion-peludos", isVerified: false },
+      { id: "3", name: "Hogares de Paso", slug: "hogares-paso", isVerified: true },
+      { id: "4", name: "Gatitos Panamá", slug: "gatitos-panama", isVerified: true },
+      { id: "5", name: "Huellitas Chiriquí", slug: "huellitas-chiriqui", isVerified: false },
+      { id: "6", name: "Amigos de los Perros", slug: "amigos-perros", isVerified: true }
+    ].slice(0, limit);
+  }
+
+  return data.map((org) => ({
+    id: org.id,
+    name: org.name,
+    slug: org.slug,
+    isVerified: org.is_verified
   }));
 }

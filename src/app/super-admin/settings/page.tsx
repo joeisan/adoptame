@@ -7,7 +7,9 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updateAppSettingsAction, createCategoryAction } from "@/server/actions/admin";
+import { Select } from "@/components/ui/select";
+import { CATEGORY_ICON_OPTIONS, getCategoryIcon } from "@/lib/category-icons";
+import { updateAppSettingsAction, createCategoryAction, updateCategoryIconAction } from "@/server/actions/admin";
 
 import { CategoryToggle } from "@/components/admin/category-toggle";
 
@@ -132,30 +134,64 @@ export default async function AdminSettingsPage() {
         </Card>
 
         <Card className="md:col-span-2 ambient-card">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <CardHeader className="flex flex-col gap-4 space-y-0 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <CardTitle>Categorías Disponibles</CardTitle>
-              <CardDescription>Activa o desactiva las categorías que aparecen en los filtros.</CardDescription>
+              <CardDescription>Activa categorías y asigna el icono visible en la página pública.</CardDescription>
             </div>
-            <div className="flex items-center gap-2">
-              <form action={formAction(createCategoryAction)} className="flex gap-2">
-                <Input name="name" placeholder="Nueva categoría..." className="h-9 w-[200px]" required />
-                <Button size="sm" type="submit">Agregar</Button>
-              </form>
-            </div>
+            <form action={formAction(createCategoryAction)} className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_160px_auto] lg:w-[520px]">
+              <Input name="name" placeholder="Nueva categoría..." className="h-9" required aria-label="Nombre de nueva categoría" />
+              <Select name="icon" className="h-9" defaultValue="paw" aria-label="Icono de nueva categoría">
+                {CATEGORY_ICON_OPTIONS.map((icon) => (
+                  <option key={icon.value} value={icon.value}>
+                    {icon.label}
+                  </option>
+                ))}
+              </Select>
+              <Button size="sm" type="submit">Agregar</Button>
+            </form>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {categories?.map((cat) => (
-                <div key={cat.id} className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
-                  <span className="font-medium">{cat.name}</span>
-                  <CategoryToggle 
-                    categoryId={cat.id} 
-                    isActive={cat.is_active} 
-                    name={cat.name} 
-                  />
-                </div>
-              ))}
+            <div className="grid gap-3">
+              {categories?.map((cat) => {
+                const Icon = getCategoryIcon(cat.icon, cat.slug);
+
+                return (
+                  <div key={cat.id} className="grid gap-3 rounded-lg border bg-muted/30 p-3 md:grid-cols-[1fr_minmax(240px,360px)_auto] md:items-center">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
+                        <Icon className="size-5" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate font-medium">{cat.name}</p>
+                        <p className="text-xs text-muted-foreground">{cat.icon ?? "Icono por defecto"}</p>
+                      </div>
+                    </div>
+                    <form action={formAction(updateCategoryIconAction)} className="grid gap-2 sm:grid-cols-[1fr_auto]">
+                      <input name="categoryId" type="hidden" value={cat.id} />
+                      <Select name="icon" defaultValue={cat.icon ?? ""} aria-label={`Icono de ${cat.name}`} className="h-9">
+                        <option value="">Icono por defecto</option>
+                        {CATEGORY_ICON_OPTIONS.map((icon) => (
+                          <option key={icon.value} value={icon.value}>
+                            {icon.label}
+                          </option>
+                        ))}
+                      </Select>
+                      <Button size="sm" type="submit" variant="secondary">Guardar</Button>
+                    </form>
+                    <div className="flex items-center justify-between gap-3 md:justify-end">
+                      <span className="text-xs font-bold uppercase text-muted-foreground">
+                        {cat.is_active ? "Activa" : "Oculta"}
+                      </span>
+                      <CategoryToggle
+                        categoryId={cat.id}
+                        isActive={cat.is_active}
+                        name={cat.name}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>

@@ -10,11 +10,11 @@ import {
 } from "lucide-react";
 
 export const SITE_CONFIG = {
-  name: "Adóptame Panamá",
-  shortName: "Adóptame",
+  name: "Huellas Pty",
+  shortName: "Huellas",
   description:
     "Plataforma panameña para conectar personas, rescatistas y organizaciones con animales en adopción.",
-  supportEmail: "soporte@adoptamepanama.local",
+  supportEmail: "soporte@huellaspty.com",
   supportPhone: "+507 6000-0000",
   defaultListingLimit: 10,
   defaultMaxImages: 5

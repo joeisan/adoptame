@@ -11,7 +11,8 @@ import {
   Search, 
   Check, 
   X,
-  Key
+  Key,
+  Trash2
 } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
@@ -23,12 +24,14 @@ import { AdminDataTable } from "./admin-data-table";
 import { 
   moderateListingAction, 
   changeUserRoleAction, 
-  banUserAction, 
-  unbanUserAction,
+  approveOrganizationRequestAction,
   setOrganizationVerificationAction,
   setOrganizationLimitAction,
   changeListingOwnerAction,
-  adminResetPasswordAction
+  adminResetPasswordAction,
+  deleteUserAction,
+  deleteOrganizationAction,
+  deleteListingPermanentlyAction
 } from "@/server/actions/admin";
 import { cn } from "@/lib/utils";
 import { StatusBadge } from "@/components/pets/status-badge";
@@ -190,6 +193,17 @@ export function ListingsTable({ data, users }: { data: AdminRow[], users: any[] 
                   <ExternalLink className="size-4" />
                 </Link>
               </Button>
+              <form action={async (fd) => {
+                if (!confirm("¿Eliminar permanentemente esta publicación? Esta acción no se puede deshacer.")) return;
+                const res = await deleteListingPermanentlyAction(fd);
+                if (res.error) toast.error(res.error);
+                else toast.success("Publicación eliminada");
+              }}>
+                <input name="listingId" type="hidden" value={text(row.original.id)} />
+                <Button size="icon" type="submit" variant="ghost" className="h-8 w-8 text-destructive">
+                  <Trash2 className="size-4" />
+                </Button>
+              </form>
             </div>
 
             <div className="flex items-center gap-2">
@@ -270,6 +284,14 @@ export function UsersTable({ data }: { data: AdminRow[] }) {
       )
     },
     {
+      header: "Publicaciones",
+      cell: ({ row }) => (
+        <span className="inline-flex min-w-10 items-center justify-center rounded-full border bg-muted/40 px-2.5 py-1 text-xs font-bold">
+          {Number(row.original.listing_count ?? 0)}
+        </span>
+      )
+    },
+    {
       header: "Rol",
       cell: ({ row }) => (
         <form action={formAction(changeUserRoleAction)} className="flex items-center gap-2">
@@ -283,38 +305,21 @@ export function UsersTable({ data }: { data: AdminRow[] }) {
       )
     },
     {
-      header: "Estado",
-      cell: ({ row }) => {
-        const status = text(row.original.status);
-        return (
-          <span className={cn(
-            "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase",
-            status === "active" ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
-          )}>
-            {status}
-          </span>
-        );
-      }
-    },
-    {
       header: "Acciones",
       cell: ({ row }) => {
         const isSuperAdmin = text(row.original.role) === "super_admin";
+        const profileSlug = text((row.original as any).public_slug);
         return (
           <div className="flex gap-2">
-            {text(row.original.status) === "active" ? (
-              <form action={formAction(banUserAction)}>
-                <input name="userId" type="hidden" value={text(row.original.id)} />
-                <Button size="sm" type="submit" variant="destructive" className="h-8" disabled={isSuperAdmin} title={isSuperAdmin ? "No se puede banear a un administrador" : ""}>Banear</Button>
-              </form>
-            ) : (
-              <form action={formAction(unbanUserAction)}>
-                <input name="userId" type="hidden" value={text(row.original.id)} />
-                <Button size="sm" type="submit" variant="outline" className="h-8">Desbanear</Button>
-              </form>
-            )}
+            {profileSlug ? (
+              <Button asChild size="sm" type="button" variant="outline" className="h-8">
+                <Link href={`/perfil/${profileSlug}`} target="_blank">
+                  Ver perfil
+                </Link>
+              </Button>
+            ) : null}
             <form action={async (fd) => {
-              if(!confirm("¿Resetear contraseña a 'Adoptame123!'?")) return;
+              if(!confirm("¿Generar una contraseña temporal aleatoria para este usuario?")) return;
               const res = await adminResetPasswordAction(fd);
               if (res.error) toast.error(res.error);
               else toast.success(res.message || "Contraseña reseteada");
@@ -322,6 +327,17 @@ export function UsersTable({ data }: { data: AdminRow[] }) {
               <input name="userId" type="hidden" value={text(row.original.id)} />
               <Button size="sm" type="submit" variant="ghost" className="h-8 w-8 p-0" title="Resetear contraseña">
                 <Key className="size-4 text-orange-500" />
+              </Button>
+            </form>
+            <form action={async (fd) => {
+              if(!confirm("¿Eliminar este usuario? También se eliminarán sus publicaciones y datos relacionados.")) return;
+              const res = await deleteUserAction(fd);
+              if (res.error) toast.error(res.error);
+              else toast.success("Usuario eliminado");
+            }}>
+              <input name="userId" type="hidden" value={text(row.original.id)} />
+              <Button size="sm" type="submit" variant="ghost" className="h-8 w-8 p-0" disabled={isSuperAdmin} title={isSuperAdmin ? "No se puede eliminar un super admin" : "Eliminar usuario"}>
+                <Trash2 className="size-4 text-destructive" />
               </Button>
             </form>
           </div>
@@ -340,13 +356,55 @@ export function OrganizationsTable({ data }: { data: AdminRow[] }) {
       cell: ({ row }) => (
         <div className="flex flex-col">
           <span className="font-bold">{text(row.original.name)}</span>
+          <span className="text-[10px] text-muted-foreground">{text(row.original.type || "Organización")}</span>
           <span className="text-[10px] text-muted-foreground">ID: {text(row.original.id).substring(0, 8)}...</span>
         </div>
       )
     },
     {
+      header: "Solicitante",
+      cell: ({ row }) => {
+        const owner = row.original.owner as { display_name?: string; full_name?: string } | undefined;
+        return (
+          <div className="flex flex-col">
+            <span className="font-medium">{owner?.display_name || owner?.full_name || "Sin nombre"}</span>
+            {"contact_email" in row.original ? (
+              <span className="text-[10px] text-muted-foreground">{text(row.original.contact_email)}</span>
+            ) : null}
+          </div>
+        );
+      }
+    },
+    {
+      header: "Estado",
+      cell: ({ row }) => (
+        (row.original.is_pending_request as boolean | undefined) ? (
+          <span className="inline-flex rounded-full bg-amber-100 px-2 py-1 text-[10px] font-bold uppercase text-amber-800">
+            Solicitud nueva
+          </span>
+        ) : (
+          <span className={cn(
+            "inline-flex rounded-full px-2 py-1 text-[10px] font-bold uppercase",
+            row.original.is_verified ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"
+          )}>
+            {row.original.is_verified ? "Verificada" : "Pendiente"}
+          </span>
+        )
+      )
+    },
+    {
       header: "Verificación",
       cell: ({ row }) => (
+        (row.original.is_pending_request as boolean | undefined) ? (
+          <form action={formAction(approveOrganizationRequestAction)} className="flex items-center gap-2">
+            <input name="userId" type="hidden" value={text(row.original.id)} />
+            <input name="organizationName" type="hidden" value={text(row.original.name)} />
+            <input name="organizationType" type="hidden" value={text(row.original.type || "Organización")} />
+            <Button size="sm" type="submit" variant="secondary" className="h-8">
+              Aprobar solicitud
+            </Button>
+          </form>
+        ) : (
         <form action={formAction(setOrganizationVerificationAction)} className="flex items-center gap-2">
           <input name="organizationId" type="hidden" value={text(row.original.id)} />
           <input name="isVerified" type="hidden" value={(!row.original.is_verified).toString()} />
@@ -354,11 +412,45 @@ export function OrganizationsTable({ data }: { data: AdminRow[] }) {
             {row.original.is_verified ? "Quitar Verificación" : "Verificar"}
           </Button>
         </form>
+        )
       )
+    },
+    {
+      header: "Perfil",
+      cell: ({ row }) => {
+        const organizationSlug = text(row.original.slug);
+        const owner = row.original.owner as { slug?: string | null } | undefined;
+        const fallbackOwnerSlug = owner?.slug || "";
+
+        if ((row.original.is_pending_request as boolean | undefined) && fallbackOwnerSlug) {
+          return (
+            <Button asChild size="sm" type="button" variant="outline" className="h-8">
+              <Link href={`/perfil/${fallbackOwnerSlug}`} target="_blank">
+                Ver perfil
+              </Link>
+            </Button>
+          );
+        }
+
+        if (!organizationSlug) {
+          return <span className="text-xs text-muted-foreground">Sin perfil público</span>;
+        }
+
+        return (
+          <Button asChild size="sm" type="button" variant="outline" className="h-8">
+            <Link href={`/perfil/${organizationSlug}`} target="_blank">
+              Ver perfil
+            </Link>
+          </Button>
+        );
+      }
     },
     {
       header: "Límite",
       cell: ({ row }) => (
+        (row.original.is_pending_request as boolean | undefined) ? (
+          <span className="text-xs text-muted-foreground">Aún sin perfil de organización</span>
+        ) : (
         <form action={formAction(setOrganizationLimitAction)} className="flex items-center gap-2">
           <input name="organizationId" type="hidden" value={text(row.original.id)} />
           <Input 
@@ -369,6 +461,28 @@ export function OrganizationsTable({ data }: { data: AdminRow[] }) {
           />
           <Button size="sm" type="submit" variant="outline" className="h-8">Fijar</Button>
         </form>
+        )
+      )
+    },
+    {
+      header: "Eliminar",
+      cell: ({ row }) => (
+        (row.original.is_pending_request as boolean | undefined) ? (
+          <span className="text-xs text-muted-foreground">Solicitud pendiente</span>
+        ) : (
+          <form action={async (fd) => {
+            if (!confirm("¿Eliminar esta organización? El usuario volverá a ser usuario normal.")) return;
+            const res = await deleteOrganizationAction(fd);
+            if (res.error) toast.error(res.error);
+            else toast.success("Organización eliminada");
+          }}>
+            <input name="organizationId" type="hidden" value={text(row.original.id)} />
+            <Button size="sm" type="submit" variant="ghost" className="h-8 text-destructive">
+              <Trash2 className="mr-1 size-4" />
+              Eliminar
+            </Button>
+          </form>
+        )
       )
     }
   ];

@@ -14,22 +14,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { ListingImageManager } from "@/components/dashboard/listing-image-manager";
 import { CATEGORY_OPTIONS, PANAMA_PROVINCES, PET_SEX_OPTIONS, PET_SIZE_OPTIONS } from "@/lib/constants";
 import { listingSchema } from "@/lib/validations/listing";
+import type { PetImage } from "@/types/app";
 
 type ListingInputValues = z.input<typeof listingSchema>;
-type ListingInitialData = Partial<ListingInputValues> & { badges?: string[] };
+type ListingInitialData = Partial<ListingInputValues> & { badges?: string[]; images?: PetImage[] };
 
 export function ListingForm({ 
   initialData, 
   listingId,
   isAdmin = false,
-  allUsers = []
+  allUsers = [],
+  maxImages
 }: { 
   initialData?: ListingInitialData; 
   listingId?: string;
   isAdmin?: boolean;
   allUsers?: { id: string, label: string }[];
+  maxImages: number;
 }) {
   const [pending, startTransition] = useTransition();
   const [userSearch, setUserSearch] = useTransition();
@@ -320,15 +324,10 @@ export function ListingForm({
             <Textarea id="adoptionRequirements" {...form.register("adoptionRequirements")} />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="images">Imágenes {listingId && "(Añadir nuevas)"}</Label>
-            <Input accept="image/png,image/jpeg,image/webp" id="images" multiple name="images" type="file" />
-            <p className="text-sm text-muted-foreground">
-              {listingId 
-                ? "Sube imágenes nuevas si deseas agregarlas a la galería actual." 
-                : "Mínimo 1, máximo configurable desde super admin."}
-            </p>
-          </div>
+          <ListingImageManager
+            existingImages={initialData?.images?.filter((image): image is PetImage & { id: string } => Boolean(image.id))}
+            maxImages={maxImages}
+          />
           <Button className="w-full md:w-fit" disabled={pending} type="submit">
             {pending 
               ? (listingId ? "Guardando..." : "Publicando...") 

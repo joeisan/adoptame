@@ -65,7 +65,7 @@ type RawPet = {
   contact_whatsapp?: string | null;
   contact_email?: string | null;
   badges?: string[] | null;
-  owner?: { display_name?: string | null; full_name?: string | null; slug?: string | null; } | null;
+  owner?: { display_name?: string | null; full_name?: string | null; organization_name?: string | null; slug?: string | null; } | null;
 };
 
 const LISTING_SELECT = `
@@ -95,7 +95,7 @@ const LISTING_SELECT = `
   pet_images(id, public_url, storage_path, alt_text, sort_order),
   categories!inner(name, slug),
   organizations(name, slug, is_verified),
-  owner:profiles!pet_listings_owner_id_fkey(display_name, full_name, slug)
+  owner:profiles!pet_listings_owner_id_fkey(display_name, full_name, organization_name, slug)
 `;
 
 function publicUrlForImage(image: RawImage | null | undefined): string {
@@ -151,7 +151,7 @@ export function mapPetCard(row: RawPet): PetCardListing {
     badges: row.badges ?? [],
     latitude: row.latitude ?? null,
     longitude: row.longitude ?? null,
-    ownerName: row.organizations?.name ?? row.owner?.display_name ?? row.owner?.full_name ?? "Publicante",
+    ownerName: row.organizations?.name ?? row.owner?.organization_name ?? row.owner?.display_name ?? row.owner?.full_name ?? "Publicante",
     ownerSlug: row.organizations?.slug ?? row.owner?.slug ?? null
   };
 }

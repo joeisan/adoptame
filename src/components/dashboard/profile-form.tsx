@@ -15,9 +15,16 @@ import { Select } from "@/components/ui/select";
 import type { Database } from "@/types/database";
 
 type ProfileRow = Partial<Database["public"]["Tables"]["profiles"]["Row"]>;
+type ProfileFormProfile = ProfileRow & { wants_to_be_organization?: boolean; contact_name?: string | null };
 
-export function ProfileForm({ profile, redirectTo }: { profile: ProfileRow; redirectTo?: string }) {
+export function ProfileForm({ profile, redirectTo }: { profile: ProfileFormProfile; redirectTo?: string }) {
   const [isPending, startTransition] = useTransition();
+  const showsOrganizationFields = Boolean(
+    profile?.role === "organization" ||
+    profile?.wants_to_be_organization ||
+    profile?.organization_type ||
+    profile?.organization_name
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,8 +45,8 @@ export function ProfileForm({ profile, redirectTo }: { profile: ProfileRow; redi
       {redirectTo ? <input type="hidden" name="redirect" value={redirectTo} /> : null}
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="displayName">Nombre a mostrar</Label>
-          <Input id="displayName" name="displayName" defaultValue={profile?.display_name || profile?.full_name || ""} />
+          <Label htmlFor="displayName">{showsOrganizationFields ? "Nombre de contacto" : "Nombre a mostrar"}</Label>
+          <Input id="displayName" name="displayName" defaultValue={profile?.contact_name || profile?.display_name || profile?.full_name || ""} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">Correo electrónico (contacto)</Label>
@@ -47,20 +54,30 @@ export function ProfileForm({ profile, redirectTo }: { profile: ProfileRow; redi
         </div>
       </div>
 
-      {profile?.role === "organization" || profile?.organization_type ? (
-        <div className="space-y-2">
-          <Label htmlFor="organizationType">Tipo de Organización</Label>
-          <select
-            id="organizationType"
-            name="organizationType"
-            defaultValue={profile?.organization_type || "Organización"}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <option value="Fundación">Fundación</option>
-            <option value="ONG">ONG</option>
-            <option value="Organización">Organización / Grupo</option>
-          </select>
-          <p className="text-xs text-muted-foreground">Define cómo aparecerás en el directorio y publicaciones.</p>
+      {showsOrganizationFields ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="organizationName">Nombre de organización / fundación</Label>
+            <Input
+              id="organizationName"
+              name="organizationName"
+              defaultValue={profile?.organization_name || profile?.display_name || ""}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="organizationType">Tipo de Organización</Label>
+            <select
+              id="organizationType"
+              name="organizationType"
+              defaultValue={profile?.organization_type || "Organización"}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <option value="Fundación">Fundación</option>
+              <option value="ONG">ONG</option>
+              <option value="Organización">Organización / Grupo</option>
+            </select>
+          </div>
+          <p className="text-xs text-muted-foreground md:col-span-2">Define cómo aparecerás en el directorio y publicaciones.</p>
         </div>
       ) : null}
 

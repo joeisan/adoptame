@@ -37,20 +37,20 @@
   --card-foreground: #1b1c1c;
   --popover: #ffffff;
   --popover-foreground: #1b1c1c;
-  --primary: #006d41;
+  --primary: #004d40;
   --primary-foreground: #ffffff;
-  --secondary: #feb246;
+  --secondary: #ffb347;
   --secondary-foreground: #2a1800;
   --muted: #efeded;
   --muted-foreground: #3e4941;
-  --accent: #94f7bb;
+  --accent: #ff7f50;
   --accent-foreground: #002110;
   --destructive: #ba1a1a;
   --border: #d7ded8;
   --input: #eae8e7;
   --ring: #4bae78;
   --sage: #4bae78;
-  --honey: #ffb95a;
+  --honey: #ffb347;
   --coral: #f17464;
   --radius: 0.85rem;
 }

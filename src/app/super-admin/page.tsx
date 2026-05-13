@@ -25,7 +25,6 @@ export default async function SuperAdminPage() {
         <AdminKpiCard label="Organizaciones" value={metrics.totalOrganizations} />
         <AdminKpiCard label="Verificadas" value={metrics.verifiedOrganizations} />
         <AdminKpiCard label="Reportes abiertos" value={metrics.openReports} />
-        <AdminKpiCard label="Usuarios baneados" value={metrics.bannedUsers} />
       </div>
       <AdminCharts metrics={metrics} />
     </AdminShell>

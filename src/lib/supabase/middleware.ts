@@ -65,7 +65,7 @@ export async function updateSession(request: NextRequest) {
       whatsapp: string | null;
     } | null;
     const hasName = Boolean((profile?.display_name || profile?.full_name)?.trim());
-    const hasContact = Boolean(profile?.phone?.trim() && profile?.whatsapp?.trim());
+    const hasContact = Boolean(profile?.phone?.trim());
 
     if (!hasName || !hasContact) {
       const redirectUrl = request.nextUrl.clone();

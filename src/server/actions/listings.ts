@@ -2,9 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 import { SITE_CONFIG } from "@/lib/constants";
-import { canCreateListing, getCurrentUser, isBanActive } from "@/lib/permissions";
+import { canCreateListing, getCurrentUser } from "@/lib/permissions";
 import { createClient } from "@/lib/supabase/server";
 import { slugify } from "@/lib/utils";
 import { listingSchema } from "@/lib/validations/listing";
@@ -17,6 +18,53 @@ function valueOrNull(value?: string | number | null) {
 function fileSafeName(file: File) {
   const extension = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
   return `${crypto.randomUUID()}.${extension.replace(/[^a-z0-9]/g, "")}`;
+}
+
+function parseStringArray(value: FormDataEntryValue | null) {
+  if (typeof value !== "string" || !value.trim()) return [] as string[];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed.map((item) => String(item ?? "")) : [];
+  } catch {
+    return [];
+  }
+}
+
+function parseExistingImagesState(value: FormDataEntryValue | null) {
+  if (typeof value !== "string" || !value.trim()) return [] as Array<{
+    id: string;
+    altText: string;
+    deleted: boolean;
+    sortOrder: number;
+  }>;
+  try {
+    const parsed = JSON.parse(value);
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map((item) => ({
+        id: String(item?.id ?? ""),
+        altText: String(item?.altText ?? ""),
+        deleted: Boolean(item?.deleted),
+        sortOrder: Number(item?.sortOrder ?? 0)
+      }))
+      .filter((item) => item.id);
+  } catch {
+    return [];
+  }
+}
+
+async function removeImagesFromStorage(paths: string[]) {
+  if (!paths.length) return;
+  const adminClient = createAdminClient();
+  if (adminClient) {
+    await adminClient.storage.from("pet-images").remove(paths);
+    return;
+  }
+
+  const supabase = await createClient();
+  if (supabase) {
+    await supabase.storage.from("pet-images").remove(paths);
+  }
 }
 
 async function maxImagesSetting() {
@@ -44,7 +92,6 @@ export async function createListingAction(formData: FormData) {
   const { user, profile } = await getCurrentUser();
 
   if (!user) return { error: "Debes iniciar sesión para publicar." };
-  if (isBanActive(profile)) return { error: "Tu cuenta está baneada temporal o permanentemente." };
 
   const parsed = listingSchema.safeParse({
     name: formData.get("name"),
@@ -78,6 +125,7 @@ export async function createListingAction(formData: FormData) {
   const files = formData
     .getAll("images")
     .filter((value): value is File => value instanceof File && value.size > 0);
+  const newImageAltTexts = parseStringArray(formData.get("newImageAltTexts"));
   const maxImages = await maxImagesSetting();
 
   if (files.length < 1) return { error: "Agrega al menos una imagen." };
@@ -155,7 +203,7 @@ export async function createListingAction(formData: FormData) {
       listing_id: listing.id,
       storage_path: storagePath,
       public_url: publicUrl,
-      alt_text: `${parsed.data.name} en adopción`,
+      alt_text: valueOrNull(newImageAltTexts[index]?.trim() || `${parsed.data.name} en adopción`) as string | null,
       sort_order: index
     });
   }
@@ -321,35 +369,81 @@ export async function updateListingAction(formData: FormData) {
   const files = formData
     .getAll("images")
     .filter((value): value is File => value instanceof File && value.size > 0);
+  const newImageAltTexts = parseStringArray(formData.get("newImageAltTexts"));
+  const existingImagesState = parseExistingImagesState(formData.get("existingImagesState"));
+
+  const { data: currentImagesData } = await supabase
+    .from("pet_images")
+    .select("id, storage_path, sort_order, alt_text")
+    .eq("listing_id", listingId)
+    .order("sort_order", { ascending: true });
+
+  const currentImages = (currentImagesData ?? []) as Array<{
+    id: string;
+    storage_path: string;
+    sort_order: number;
+    alt_text: string | null;
+  }>;
+
+  const existingStateMap = new Map(existingImagesState.map((image) => [image.id, image]));
+  const keptImages = currentImages.filter((image) => {
+    const state = existingStateMap.get(image.id);
+    return !state?.deleted;
+  });
+  const deletedImages = currentImages.filter((image) => {
+    const state = existingStateMap.get(image.id);
+    return state?.deleted;
+  });
+  const orderedKeptImages =
+    existingImagesState.length > 0
+      ? keptImages
+          .slice()
+          .sort((a, b) => (existingStateMap.get(a.id)?.sortOrder ?? a.sort_order) - (existingStateMap.get(b.id)?.sortOrder ?? b.sort_order))
+      : keptImages;
+
+  const maxImages = await maxImagesSetting();
+  if (orderedKeptImages.length + files.length < 1) {
+    return { error: "La publicación debe conservar al menos una imagen." };
+  }
+  if (orderedKeptImages.length + files.length > maxImages) {
+    return { error: `Puedes subir hasta ${maxImages} imágenes en total.` };
+  }
+
+  if (deletedImages.length) {
+    await removeImagesFromStorage(deletedImages.map((image) => image.storage_path).filter(Boolean));
+    await supabase.from("pet_images").delete().in("id", deletedImages.map((image) => image.id));
+  }
+
+  for (const [index, image] of orderedKeptImages.entries()) {
+    const state = existingStateMap.get(image.id);
+    await supabase
+      .from("pet_images")
+      .update({
+        sort_order: index,
+        alt_text: valueOrNull(state?.altText?.trim() || image.alt_text || `${parsed.data.name} en adopción`) as string | null
+      })
+      .eq("id", image.id);
+  }
 
   if (files.length > 0) {
-    const maxImages = await maxImagesSetting();
-    const { count } = await supabase
-      .from("pet_images")
-      .select("*", { count: "exact", head: true })
-      .eq("listing_id", listingId);
-    
-    if ((count || 0) + files.length > maxImages) {
-      // Solo una advertencia o error suave
-      console.warn("Exceso de imágenes en edición");
-    } else {
-      const imageRows = [];
-      for (const [index, file] of files.entries()) {
-        const storagePath = `${user.id}/${listingId}/${fileSafeName(file)}`;
-        const upload = await supabase.storage.from("pet-images").upload(storagePath, file);
-        if (upload.error) continue;
+    const imageRows = [];
+    for (const [index, file] of files.entries()) {
+      const storagePath = `${user.id}/${listingId}/${fileSafeName(file)}`;
+      const upload = await supabase.storage.from("pet-images").upload(storagePath, file);
+      if (upload.error) continue;
 
-        const { data: { publicUrl } } = supabase.storage.from("pet-images").getPublicUrl(storagePath);
-        imageRows.push({
-          listing_id: listingId,
-          storage_path: storagePath,
-          public_url: publicUrl,
-          alt_text: `${parsed.data.name} en adopción`,
-          sort_order: (count || 0) + index
-        });
-      }
-      if (imageRows.length) await supabase.from("pet_images").insert(imageRows);
+      const {
+        data: { publicUrl }
+      } = supabase.storage.from("pet-images").getPublicUrl(storagePath);
+      imageRows.push({
+        listing_id: listingId,
+        storage_path: storagePath,
+        public_url: publicUrl,
+        alt_text: valueOrNull(newImageAltTexts[index]?.trim() || `${parsed.data.name} en adopción`) as string | null,
+        sort_order: orderedKeptImages.length + index
+      });
     }
+    if (imageRows.length) await supabase.from("pet_images").insert(imageRows);
   }
 
   revalidatePath("/dashboard");

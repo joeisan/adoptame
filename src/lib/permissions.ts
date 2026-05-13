@@ -19,7 +19,7 @@ export async function getCurrentUser() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id,full_name,display_name,slug,email,phone,whatsapp,role,status,banned_until")
+    .select("id,full_name,display_name,slug,email,phone,whatsapp,role,status")
     .eq("id", user.id)
     .maybeSingle();
   const row = profile as unknown as
@@ -33,7 +33,6 @@ export async function getCurrentUser() {
         whatsapp: string | null;
         role: ProfileSummary["role"];
         status: ProfileSummary["status"];
-        banned_until: string | null;
       }
     | null;
 
@@ -49,8 +48,7 @@ export async function getCurrentUser() {
           phone: row.phone,
           whatsapp: row.whatsapp,
           role: row.role,
-          status: row.status,
-          bannedUntil: row.banned_until
+          status: row.status
         } satisfies ProfileSummary)
       : null
   };
@@ -58,13 +56,7 @@ export async function getCurrentUser() {
 
 export function isProfileComplete(profile: Pick<ProfileSummary, "displayName" | "fullName" | "phone" | "whatsapp"> | null) {
   if (!profile) return false;
-  return Boolean((profile.displayName || profile.fullName)?.trim() && profile.phone?.trim() && profile.whatsapp?.trim());
-}
-
-export function isBanActive(profile: Pick<ProfileSummary, "status" | "bannedUntil"> | null) {
-  if (!profile || profile.status !== "banned") return false;
-  if (!profile.bannedUntil) return true;
-  return new Date(profile.bannedUntil).getTime() > Date.now();
+  return Boolean((profile.displayName || profile.fullName)?.trim() && profile.phone?.trim());
 }
 
 export async function getListingLimit(userId: string) {

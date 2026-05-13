@@ -20,12 +20,43 @@ export default async function ProfilePage({ searchParams }: { searchParams: Sear
   const isOnboarding = params.onboarding === "1";
   const redirectTo = Array.isArray(params.redirect) ? params.redirect[0] : params.redirect;
   const supabase = await createClient();
-  const { data: profileData } = await supabase?.from("profiles").select("*").eq("id", user.id).maybeSingle() ?? {};
+  const [{ data: profileData }, { data: organizationData }] = await Promise.all([
+    supabase?.from("profiles").select("*").eq("id", user.id).maybeSingle() ?? Promise.resolve({ data: null }),
+    supabase?.from("organizations").select("name,type,slug").eq("owner_id", user.id).maybeSingle() ?? Promise.resolve({ data: null })
+  ]);
   const profile = profileData as Database["public"]["Tables"]["profiles"]["Row"] | null;
+  const organization = organizationData as { name: string | null; type: string | null; slug: string | null } | null;
   const profileWithAuthEmail = profile
-    ? { ...profile, email: profile.email || user.email || null }
-    : { email: user.email || null };
-  const slug = profile?.slug;
+    ? {
+        ...profile,
+        email: profile.email || user.email || null,
+        wants_to_be_organization: user.user_metadata?.wants_to_be_organization === true,
+        organization_name:
+          profile.organization_name ||
+          organization?.name ||
+          (typeof user.user_metadata?.organization_name === "string" ? user.user_metadata.organization_name : null),
+        organization_type:
+          profile.organization_type ||
+          organization?.type ||
+          (typeof user.user_metadata?.organization_type === "string" ? user.user_metadata.organization_type : null),
+        contact_name:
+          profile.display_name && profile.display_name !== profile.organization_name
+            ? profile.display_name
+            : profile.full_name || profile.display_name || null
+      }
+    : {
+        email: user.email || null,
+        wants_to_be_organization: user.user_metadata?.wants_to_be_organization === true,
+        organization_name:
+          organization?.name ||
+          (typeof user.user_metadata?.organization_name === "string" ? user.user_metadata.organization_name : null),
+        organization_type:
+          organization?.type ||
+          (typeof user.user_metadata?.organization_type === "string" ? user.user_metadata.organization_type : null),
+        contact_name:
+          typeof user.user_metadata?.full_name === "string" ? user.user_metadata.full_name : null
+      };
+  const slug = profile?.role === "organization" ? organization?.slug || profile?.slug : profile?.slug;
 
   return (
     <section className="container-shell py-10">

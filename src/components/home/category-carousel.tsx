@@ -1,19 +1,18 @@
 import Link from "next/link";
 
 import { HorizontalScroller } from "@/components/home/horizontal-scroller";
-import { CATEGORY_OPTIONS } from "@/lib/constants";
+import { getCategoryIcon } from "@/lib/category-icons";
 import type { CategorySummary } from "@/types/app";
 
 export function CategoryCard({ category }: { category: CategorySummary }) {
-  const option = CATEGORY_OPTIONS.find((item) => item.slug === category.slug);
-  const Icon = option?.icon ?? CATEGORY_OPTIONS[CATEGORY_OPTIONS.length - 1].icon;
+  const Icon = getCategoryIcon(category.icon, category.slug);
 
   return (
     <Link
       className="block h-full rounded-xl border bg-card p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
       href={`/explore?category=${category.slug}`}
     >
-      <span className="mb-4 flex size-14 items-center justify-center rounded-full bg-accent text-accent-foreground">
+      <span className="mb-4 flex size-14 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
         <Icon className="size-7" />
       </span>
       <h3 className="font-bold">{category.name}</h3>

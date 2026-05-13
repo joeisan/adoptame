@@ -60,6 +60,7 @@ export async function signUpAction(formData: FormData) {
     phone: formData.get("phone"),
     whatsapp: formData.get("whatsapp"),
     isOrganization: formData.get("isOrganization") === "on",
+    organizationName: formData.get("organizationName") ?? undefined,
     organizationType: formData.get("organizationType") ?? undefined,
     redirect: formData.get("redirect") ?? undefined
   });
@@ -75,9 +76,11 @@ export async function signUpAction(formData: FormData) {
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
+      emailRedirectTo: `${await siteOrigin()}/auth/callback`,
       data: {
         full_name: parsed.data.fullName,
         wants_to_be_organization: parsed.data.isOrganization === true,
+        organization_name: parsed.data.organizationName,
         organization_type: parsed.data.organizationType
       }
     }
@@ -92,6 +95,7 @@ export async function signUpAction(formData: FormData) {
       display_name: parsed.data.fullName,
       phone: parsed.data.phone,
       whatsapp: parsed.data.whatsapp,
+      organization_name: parsed.data.organizationName || null,
       organization_type: parsed.data.organizationType || null,
       role: "user",
       status: "active"

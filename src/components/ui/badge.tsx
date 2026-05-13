@@ -10,7 +10,7 @@ const badgeVariants = cva("inline-flex items-center gap-1 rounded-full px-2.5 py
       secondary: "bg-secondary text-secondary-foreground",
       outline: "border bg-card text-foreground",
       muted: "bg-muted text-muted-foreground",
-      verified: "bg-accent text-accent-foreground"
+      verified: "bg-sky-100 text-blue-900"
     }
   },
   defaultVariants: {

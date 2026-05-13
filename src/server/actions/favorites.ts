@@ -2,18 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 
-import { getCurrentUser, isBanActive } from "@/lib/permissions";
+import { getCurrentUser } from "@/lib/permissions";
 import { createClient } from "@/lib/supabase/server";
 
 export async function toggleFavoriteAction(formData: FormData) {
   const listingId = String(formData.get("listingId") ?? "");
   const nextState = String(formData.get("nextState") ?? "favorite");
-  const { user, profile } = await getCurrentUser();
+  const { user } = await getCurrentUser();
 
   if (!listingId || !user) return { error: "Inicia sesión para guardar favoritos." };
   if (listingId.startsWith("dummy-")) return { ok: true }; // Silent ignore for dummies
-  if (isBanActive(profile)) return { error: "Tu cuenta está baneada temporal o permanentemente." };
-
   const supabase = await createClient();
   if (!supabase) return { error: "Configura Supabase para guardar favoritos." };
 

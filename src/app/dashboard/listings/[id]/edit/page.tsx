@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ListingForm } from "@/components/dashboard/listing-form";
 import { getListingForEdit } from "@/server/queries/listings";
 import { getProfilesForSelect } from "@/server/queries/profiles";
+import { getMaxImagesPerListing } from "@/server/queries/settings";
 import { getCurrentUser } from "@/lib/permissions";
 
 export default async function EditListingPage({ params }: { params: Promise<{ id: string }> }) {
@@ -15,9 +16,10 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
   if (!user) return notFound();
 
   // El "id" en el params es en realidad el slug según nuestro Link de edición
-  const [listing, allUsers] = await Promise.all([
+  const [listing, allUsers, maxImages] = await Promise.all([
     getListingForEdit(slug),
-    profile?.role === "super_admin" ? getProfilesForSelect() : Promise.resolve([])
+    profile?.role === "super_admin" ? getProfilesForSelect() : Promise.resolve([]),
+    getMaxImagesPerListing()
   ]);
   
   if (!listing) return notFound();
@@ -58,7 +60,8 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
     contactEmail: listing.contactEmail ?? "",
     status: listing.status as any,
     ownerId: listing.ownerId,
-    badges: listing.badges ?? []
+    badges: listing.badges ?? [],
+    images: listing.images ?? []
   };
 
   return (
@@ -82,7 +85,8 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
             initialData={initialData} 
             listingId={listing.id} 
             isAdmin={isAdmin} 
-            allUsers={allUsers} 
+            allUsers={allUsers}
+            maxImages={maxImages}
           />
         </div>
       </section>

@@ -2,15 +2,18 @@ import { CategoryCarousel } from "@/components/home/category-carousel";
 import { HomeCTA } from "@/components/home/home-cta";
 import { HomeHero } from "@/components/home/home-hero";
 import { LatestPetsSection } from "@/components/home/latest-pets-section";
+import { OrganizationCarousel } from "@/components/home/organization-carousel";
 import { getCurrentUser } from "@/lib/permissions";
 import { getCategoryCounts, getFavoriteListingIds, getHomeStats, getLatestPets } from "@/server/queries/listings";
+import { getLatestOrganizations } from "@/server/queries/profiles";
 
 export default async function HomePage() {
-  const [{ user }, latest, categories, stats] = await Promise.all([
+  const [{ user }, latest, categories, stats, organizations] = await Promise.all([
     getCurrentUser(),
     getLatestPets(10),
     getCategoryCounts(),
-    getHomeStats()
+    getHomeStats(),
+    getLatestOrganizations(6)
   ]);
   const favoriteIds = await getFavoriteListingIds(user?.id);
 
@@ -19,6 +22,7 @@ export default async function HomePage() {
       <HomeHero isLoggedIn={Boolean(user)} stats={stats} />
       <LatestPetsSection canFavorite={Boolean(user)} error={latest.error} favoriteIds={favoriteIds} pets={latest.listings} />
       <CategoryCarousel categories={categories} />
+      <OrganizationCarousel organizations={organizations} />
       <HomeCTA />
     </>
   );

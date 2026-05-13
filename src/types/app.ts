@@ -1,5 +1,5 @@
 export type UserRole = "user" | "organization" | "moderator" | "super_admin";
-export type UserStatus = "active" | "banned" | "deleted";
+export type UserStatus = "active" | "deleted";
 export type PetStatus =
   | "draft"
   | "pending_review"
@@ -19,6 +19,13 @@ export type CategorySummary = {
   slug: string;
   icon?: string | null;
   activeCount: number;
+};
+
+export type OrganizationSummary = {
+  id: string;
+  name: string;
+  slug: string;
+  isVerified: boolean;
 };
 
 export type PetImage = {
@@ -111,7 +118,6 @@ export type ProfileSummary = {
   whatsapp?: string | null;
   role: UserRole;
   status: UserStatus;
-  bannedUntil: string | null;
 };
 
 export type AdminMetrics = {
@@ -124,7 +130,6 @@ export type AdminMetrics = {
   totalOrganizations: number;
   verifiedOrganizations: number;
   openReports: number;
-  bannedUsers: number;
   usersByPeriod: Array<{ label: string; users: number }>;
   listingsByCategory: Array<{ name: string; value: number }>;
   listingsByProvince: Array<{ name: string; value: number }>;

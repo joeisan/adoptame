@@ -7,6 +7,7 @@ import { BadgeScroller } from "@/components/pets/badge-scroller";
 import { ContactPanel } from "@/components/pets/contact-panels";
 import { OwnerListingActions } from "@/components/pets/owner-listing-actions";
 import { PetGallery } from "@/components/pets/pet-gallery";
+import { ShareListingButton } from "@/components/pets/share-listing-button";
 import { StatusBadge } from "@/components/pets/status-badge";
 import { VerifiedBadge } from "@/components/pets/verified-badge";
 import { Badge } from "@/components/ui/badge";
@@ -53,6 +54,8 @@ export default async function PetDetailPage({ params }: { params: Params }) {
   const isOwner = user?.id === pet.ownerId;
   const isAdmin = user?.role === "super_admin";
   const categoryColorClass = pet.category?.slug ? CATEGORY_COLORS[pet.category.slug] : "";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const listingUrl = `${siteUrl.replace(/\/$/, "")}/pets/${pet.slug}`;
 
   return (
     <section className="container-shell py-6 md:py-10 overflow-hidden">
@@ -103,6 +106,9 @@ export default async function PetDetailPage({ params }: { params: Params }) {
                       <ReportListingPopup listingId={pet.id} listingName={pet.name} />
                     </div>
                   )}
+                </div>
+                <div className="mt-4">
+                  <ShareListingButton title={`${pet.name} busca hogar en Adóptame Panamá`} url={listingUrl} />
                 </div>
                 <p className="mt-2 text-muted-foreground flex items-center gap-1.5 font-medium">
                   <MapPin className="size-4 text-primary" />

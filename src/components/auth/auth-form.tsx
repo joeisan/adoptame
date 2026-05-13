@@ -22,6 +22,7 @@ type AuthValues = {
   phone?: string;
   whatsapp?: string;
   isOrganization?: boolean;
+  organizationName?: string;
   organizationType?: string;
 };
 
@@ -38,6 +39,7 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
       password: "",
       redirect: redirectTo,
       isOrganization: false,
+      organizationName: "",
       organizationType: "Organización",
       ...(mode === "register" ? { fullName: "", phone: "", whatsapp: "" } : {})
     }
@@ -131,6 +133,14 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
                     Usar este mismo número para WhatsApp
                   </Label>
                 </div>
+
+                {!useSameForWhatsapp ? (
+                  <div className="space-y-2">
+                    <Label htmlFor="whatsapp">WhatsApp (Opcional)</Label>
+                    <Input id="whatsapp" placeholder="6000 0000" {...form.register("whatsapp")} />
+                    <p className="text-sm text-destructive">{form.formState.errors.whatsapp?.message}</p>
+                  </div>
+                ) : null}
               </div>
               <div className="space-y-3">
                 <div className="flex items-start space-x-2">
@@ -152,7 +162,16 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
                 </div>
 
                 {isOrgSelected && (
-                  <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
+                  <div className="space-y-4 animate-in fade-in slide-in-from-top-1">
+                    <div className="space-y-2">
+                      <Label htmlFor="organizationName">Nombre de organización / fundación</Label>
+                      <Input
+                        id="organizationName"
+                        placeholder="Ej. Fundación Peludos"
+                        {...form.register("organizationName")}
+                      />
+                      <p className="text-sm text-destructive">{form.formState.errors.organizationName?.message}</p>
+                    </div>
                     <Label htmlFor="organizationType">Tipo de organización</Label>
                     <select
                       id="organizationType"

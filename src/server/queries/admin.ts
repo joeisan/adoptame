@@ -12,7 +12,6 @@ const EMPTY_METRICS: AdminMetrics = {
   totalOrganizations: 0,
   verifiedOrganizations: 0,
   openReports: 0,
-  bannedUsers: 0,
   usersByPeriod: [],
   listingsByCategory: [],
   listingsByProvince: [],
@@ -42,7 +41,6 @@ export async function getAdminMetrics(): Promise<AdminMetrics> {
     organizations,
     verified,
     reports,
-    banned,
     categoryRows,
     provinceRows,
     statusRows,
@@ -61,7 +59,6 @@ export async function getAdminMetrics(): Promise<AdminMetrics> {
     supabase.from("organizations").select("id", { count: "exact", head: true }),
     supabase.from("organizations").select("id", { count: "exact", head: true }).eq("is_verified", true),
     supabase.from("reports").select("id", { count: "exact", head: true }).eq("status", "open"),
-    supabase.from("profiles").select("id", { count: "exact", head: true }).eq("status", "banned"),
     supabase.from("pet_listings").select("categories(name)").is("deleted_at", null),
     supabase.from("pet_listings").select("province").is("deleted_at", null),
     supabase.from("pet_listings").select("status").is("deleted_at", null),
@@ -93,7 +90,6 @@ export async function getAdminMetrics(): Promise<AdminMetrics> {
     totalOrganizations: organizations.count ?? 0,
     verifiedOrganizations: verified.count ?? 0,
     openReports: reports.count ?? 0,
-    bannedUsers: banned.count ?? 0,
     usersByPeriod: [
       { label: "Hace 30 días", users: Math.max((new30.count ?? 0) - (new7.count ?? 0), 0) },
       { label: "Últimos 7 días", users: new7.count ?? 0 }
@@ -111,50 +107,122 @@ export async function getAdminTableData() {
   if (!supabase) return { users: [], listings: [], reports: [], organizations: [] };
 
   // Cargamos todo con el cliente de administración para saltar RLS
-  const [usersRes, authUsersRes, listingsRes, reportsRes, organizationsRes] = await Promise.all([
-    supabase.from("profiles").select("id,display_name,full_name,role,status,created_at,banned_until").limit(200),
+  const [usersRes, authUsersRes, listingsRes, categoryRes, organizationLookupRes, ownerLookupRes, imageRes, reportsRes, organizationsRes] = await Promise.all([
+    supabase.from("profiles").select("id,display_name,full_name,role,status,created_at,organization_name,organization_type,slug").limit(200),
     supabase.auth.admin.listUsers({ perPage: 200 }),
     supabase
       .from("pet_listings")
-      .select(`
-        id,
-        name,
-        slug,
-        status,
-        province,
-        created_at,
-        owner_id,
-        category:categories(name),
-        organizations(name),
-        owner:profiles(display_name, full_name),
-        pet_images(public_url)
-      `)
+      .select("id,name,slug,status,province,created_at,owner_id,organization_id,category_id")
       .order("created_at", { ascending: false })
       .limit(200),
+    supabase.from("categories").select("id,name"),
+    supabase.from("organizations").select("id,name,slug,owner_id"),
+    supabase.from("profiles").select("id,display_name,full_name,slug"),
+    supabase.from("pet_images").select("listing_id,public_url,sort_order").order("sort_order", { ascending: true }),
     supabase.from("reports").select("id,report_type,reason,status,created_at,description,reported_listing_id,pet_listings(name,slug)").limit(100),
-    supabase.from("organizations").select("id,name,is_verified,listing_limit,created_at,owner:profiles(display_name,full_name)").limit(100)
+    supabase.from("organizations").select("id,name,slug,type,is_verified,listing_limit,created_at,owner:profiles(id,display_name,full_name,slug)").limit(100)
   ]);
 
   const authUsers = authUsersRes.data?.users || [];
-  const rawUsers = (usersRes.data ?? []) as Array<{ id: string; display_name?: string | null; full_name?: string | null; email?: string | null }>;
-  
+  const organizationRows = (organizationsRes.data ?? []) as Array<{
+    id: string;
+    name: string;
+    slug: string;
+    type: string | null;
+    is_verified: boolean;
+    listing_limit: number;
+    created_at: string;
+    owner: { id?: string; display_name?: string | null; full_name?: string | null; slug?: string | null } | null;
+  }>;
+  const rawUsers = (usersRes.data ?? []) as Array<{
+    id: string;
+    display_name?: string | null;
+    full_name?: string | null;
+    email?: string | null;
+    slug?: string | null;
+    role?: string | null;
+    status?: string | null;
+    created_at?: string;
+    organization_name?: string | null;
+    organization_type?: string | null;
+  }>;
+
+  const categories = new Map(((categoryRes.data ?? []) as Array<{ id: string; name: string | null }>).map((item) => [item.id, item]));
+  const organizations = new Map(((organizationLookupRes.data ?? []) as Array<{ id: string; name: string | null; slug: string | null; owner_id: string }>).map((item) => [item.id, item]));
+  const organizationsByOwner = new Map(
+    ((organizationLookupRes.data ?? []) as Array<{ id: string; name: string | null; slug: string | null; owner_id: string }>).map((item) => [item.owner_id, item])
+  );
+  const owners = new Map(((ownerLookupRes.data ?? []) as Array<{ id: string; display_name: string | null; full_name: string | null; slug: string | null }>).map((item) => [item.id, item]));
+  const imagesByListing = ((imageRes.data ?? []) as Array<{ listing_id: string; public_url: string | null; sort_order: number | null }>).reduce<Record<string, Array<{ public_url: string | null }>>>(
+    (acc, image) => {
+      acc[image.listing_id] ??= [];
+      acc[image.listing_id].push({ public_url: image.public_url });
+      return acc;
+    },
+    {}
+  );
+
+  const rawListings = (listingsRes.data ?? []) as Array<{
+    id: string;
+    name: string;
+    slug: string;
+    status: string;
+    province: string;
+    created_at: string;
+    owner_id: string;
+    organization_id: string | null;
+    category_id: string | null;
+  }>;
+  const listingCountByOwner = rawListings.reduce<Record<string, number>>((acc, listing) => {
+    acc[listing.owner_id] = (acc[listing.owner_id] ?? 0) + 1;
+    return acc;
+  }, {});
+
   const users = rawUsers.map(u => {
     const authUser = authUsers.find(au => au.id === u.id);
+    const organization = organizationsByOwner.get(u.id);
     return {
       ...u,
-      email: authUser?.email || "Sin correo"
+      email: authUser?.email || "Sin correo",
+      listing_count: listingCountByOwner[u.id] ?? 0,
+      wants_to_be_organization: authUser?.user_metadata?.wants_to_be_organization === true,
+      public_slug: u.role === "organization" ? organization?.slug || null : u.slug || null
     };
   });
 
-  const rawListings = (listingsRes.data ?? []) as Array<Record<string, any> & { owner_id: string }>;
+  const pendingOrganizationRequests = users
+    .filter((user) => user.role === "user" && user.wants_to_be_organization)
+    .filter((user) => !organizationRows.some((organization) => {
+      const owner = organization.owner as { id?: string } | null;
+      return owner?.id === user.id;
+    }))
+    .map((user) => ({
+      id: user.id,
+      name: (user as { organization_name?: string | null }).organization_name || `${user.display_name || user.full_name || "Usuario"} - Solicitud`,
+      type: (user as { organization_type?: string | null }).organization_type || "Organización",
+      is_verified: false,
+      listing_limit: 0,
+      created_at: (user as { created_at?: string }).created_at,
+      owner: {
+        display_name: user.display_name || user.full_name || "Usuario",
+        full_name: user.full_name || user.display_name || "Usuario",
+        slug: user.slug || null
+      },
+      contact_email: user.email,
+      is_pending_request: true
+    }));
 
-  // Unión manual usando la lista de usuarios ya cargada
-  const enrichedListings = rawListings.map(listing => {
-    // Priorizamos el dueño que viene de la relación directa, si no, buscamos en la lista de usuarios
-    const ownerData = (listing as any).owner || users.find(u => u.id === listing.owner_id);
+  const enrichedListings = rawListings.map((listing) => {
+    const ownerData = owners.get(listing.owner_id) || users.find((u) => u.id === listing.owner_id);
+    const organization = listing.organization_id ? organizations.get(listing.organization_id) : null;
+    const category = listing.category_id ? categories.get(listing.category_id) : null;
+
     return {
       ...listing,
-      owner: ownerData || { display_name: "Usuario Desconocido", id: listing.owner_id }
+      owner: ownerData || { display_name: "Usuario Desconocido", id: listing.owner_id },
+      organizations: organization ? { name: organization.name, slug: organization.slug } : null,
+      category: category ? { name: category.name } : null,
+      pet_images: imagesByListing[listing.id] ?? []
     };
   });
 
@@ -162,6 +230,6 @@ export async function getAdminTableData() {
     users: users,
     listings: enrichedListings,
     reports: reportsRes.data ?? [],
-    organizations: organizationsRes.data ?? []
+    organizations: [...pendingOrganizationRequests, ...organizationRows]
   };
 }

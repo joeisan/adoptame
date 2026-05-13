@@ -19,5 +19,14 @@ export const registerSchema = loginSchema.extend({
   phone: phoneNumber,
   whatsapp: phoneNumber.optional().or(z.literal("")),
   isOrganization: z.boolean().optional(),
-  organizationType: z.string().optional()
+  organizationType: z.string().optional(),
+  organizationName: z.string().optional()
+}).superRefine((values, ctx) => {
+  if (values.isOrganization && !values.organizationName?.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["organizationName"],
+      message: "Escribe el nombre de la organización o fundación."
+    });
+  }
 });

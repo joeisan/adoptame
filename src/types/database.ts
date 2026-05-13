@@ -32,6 +32,7 @@ export type Database = {
           province: string | null;
           district: string | null;
           description: string | null;
+          type: string | null;
           website_url: string | null;
           facebook_url: string | null;
           instagram_url: string | null;
@@ -39,6 +40,8 @@ export type Database = {
           linkedin_url: string | null;
           telegram_url: string | null;
           email: string | null;
+          organization_name: string | null;
+          organization_type: string | null;
           slug: string | null;
           created_at: string;
           updated_at: string;
@@ -56,6 +59,7 @@ export type Database = {
           name: string;
           slug: string;
           description: string | null;
+          type: string | null;
           website_url: string | null;
           instagram_url: string | null;
           facebook_url: string | null;

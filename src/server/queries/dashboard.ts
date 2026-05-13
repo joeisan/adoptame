@@ -14,10 +14,18 @@ export async function getDashboardSummary() {
   const supabase = await createClient();
   const limitState = await canCreateListing(user.id);
   const isSuperAdmin = profile?.role === "super_admin";
+  const { data: organizationData } =
+    profile?.role === "organization" && supabase
+      ? await supabase.from("organizations").select("slug").eq("owner_id", user.id).maybeSingle()
+      : { data: null };
+  const publicProfileSlug =
+    ((organizationData as { slug?: string | null } | null)?.slug && profile?.role === "organization")
+      ? (organizationData as { slug?: string | null }).slug
+      : profile?.slug ?? null;
 
   if (!supabase) {
     return {
-      profile,
+      profile: profile ? { ...profile, slug: publicProfileSlug } : profile,
       active: 0,
       adopted: 0,
       limit: limitState.limit,
@@ -60,7 +68,7 @@ export async function getDashboardSummary() {
   const adminEmail = appSettings?.find(s => s.key === "admin_contact_email")?.value as string | undefined;
 
   return {
-    profile,
+    profile: profile ? { ...profile, slug: publicProfileSlug } : profile,
     active: active ?? 0,
     adopted: adopted ?? 0,
     limit: limitState.limit,
