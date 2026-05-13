@@ -17,6 +17,7 @@ import { formatAge, formatDate } from "@/lib/utils";
 import { getFavoriteListingIds, getPublicPetContact, getPublicPetListing, requirePublicPetListing } from "@/server/queries/listings";
 import { ReportListingPopup } from "@/components/pets/report-listing-popup";
 import { CATEGORY_COLORS } from "@/lib/constants";
+import { getSiteUrl } from "@/lib/site-url";
 import { cn } from "@/lib/utils";
 import { FavoriteButton } from "@/components/pets/favorite-button";
 
@@ -54,7 +55,7 @@ export default async function PetDetailPage({ params }: { params: Params }) {
   const isOwner = user?.id === pet.ownerId;
   const isAdmin = user?.role === "super_admin";
   const categoryColorClass = pet.category?.slug ? CATEGORY_COLORS[pet.category.slug] : "";
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = getSiteUrl();
   const listingUrl = `${siteUrl.replace(/\/$/, "")}/pets/${pet.slug}`;
 
   return (
