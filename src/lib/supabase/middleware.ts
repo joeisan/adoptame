@@ -2,11 +2,19 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 import { getSupabaseBrowserConfig } from "./config";
+import { getCanonicalHost, getSiteUrl } from "../site-url";
 import type { Database } from "../../types/database";
 
 export async function updateSession(request: NextRequest) {
   const config = getSupabaseBrowserConfig();
   let response = NextResponse.next({ request });
+  const requestHost = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  const canonicalHost = getCanonicalHost();
+
+  if (process.env.NODE_ENV === "production" && requestHost && requestHost !== canonicalHost) {
+    const redirectUrl = new URL(request.nextUrl.pathname + request.nextUrl.search, getSiteUrl());
+    return NextResponse.redirect(redirectUrl, 308);
+  }
 
   if (!config) {
     return response;

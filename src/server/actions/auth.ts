@@ -1,10 +1,10 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { registerSchema, loginSchema } from "@/lib/validations/auth";
 import { createClient } from "@/lib/supabase/server";
+import { getSiteUrl } from "@/lib/site-url";
 
 function redirectTarget(value: unknown) {
   const target = typeof value === "string" && value.startsWith("/") ? value : "/dashboard";
@@ -14,18 +14,10 @@ function redirectTarget(value: unknown) {
 async function siteOrigin() {
   // En desarrollo, forzamos el uso de localhost para evitar que Supabase use el Site URL de producción
   if (process.env.NODE_ENV === "development") {
-    return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    return getSiteUrl();
   }
 
-  const requestHeaders = await headers();
-  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
-  const proto = requestHeaders.get("x-forwarded-proto") ?? "https";
-
-  if (host) {
-    return `${proto}://${host}`;
-  }
-
-  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  return getSiteUrl();
 }
 
 export async function signInAction(formData: FormData) {
