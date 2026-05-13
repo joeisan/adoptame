@@ -33,15 +33,24 @@ export function HorizontalScroller({
     const node = scrollerRef.current;
     if (!node) return;
     dragState.current = { active: true, moved: false, startX: event.clientX, scrollLeft: node.scrollLeft };
-    node.setPointerCapture(event.pointerId);
+    // Don't capture pointer here — doing so steals click events from child links.
+    // Capture is deferred to onPointerMove once a real drag is detected.
   }
 
   function onPointerMove(event: PointerEvent<HTMLDivElement>) {
     const node = scrollerRef.current;
     if (!node || !dragState.current.active) return;
     const delta = event.clientX - dragState.current.startX;
-    if (Math.abs(delta) > 5) dragState.current.moved = true;
-    node.scrollLeft = dragState.current.scrollLeft - delta;
+    if (Math.abs(delta) > 5) {
+      if (!dragState.current.moved) {
+        dragState.current.moved = true;
+        // Capture pointer only once a real drag starts, so taps/clicks still reach child links
+        node.setPointerCapture(event.pointerId);
+      }
+    }
+    if (dragState.current.moved) {
+      node.scrollLeft = dragState.current.scrollLeft - delta;
+    }
   }
 
   function endDrag(event: PointerEvent<HTMLDivElement>) {
