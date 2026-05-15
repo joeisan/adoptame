@@ -207,6 +207,35 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["app_settings"]["Row"]>;
         Relationships: [];
       };
+      site_settings: {
+        Row: {
+          id: string;
+          hero_title: string | null;
+          hero_subtitle: string | null;
+          hero_image_url: string | null;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["site_settings"]["Row"]>;
+        Update: Partial<Database["public"]["Tables"]["site_settings"]["Row"]>;
+        Relationships: [];
+      };
+      home_banners: {
+        Row: {
+          id: string;
+          image_url: string;
+          link_url: string | null;
+          title: string | null;
+          is_active: boolean;
+          display_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["home_banners"]["Row"]> & {
+          image_url: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["home_banners"]["Row"]>;
+        Relationships: [];
+      };
       user_favorites: {
         Row: {
           user_id: string;

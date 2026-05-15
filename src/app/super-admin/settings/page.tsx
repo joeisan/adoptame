@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -10,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { CATEGORY_ICON_OPTIONS, getCategoryIcon } from "@/lib/category-icons";
 import { updateAppSettingsAction, createCategoryAction, updateCategoryIconAction } from "@/server/actions/admin";
+import { getSiteSettings } from "@/server/actions/settings";
 
 import { CategoryToggle } from "@/components/admin/category-toggle";
 
@@ -17,16 +19,22 @@ function formAction(action: (formData: FormData) => Promise<unknown>) {
   return action as unknown as (formData: FormData) => void;
 }
 
-export default async function AdminSettingsPage() {
+export default async function AdminSettingsPage({
+  searchParams
+}: {
+  searchParams?: Promise<{ hero_error?: string; hero_success?: string }>;
+}) {
   const { profile } = await getCurrentUser();
   if (profile?.role !== "super_admin") redirect("/dashboard");
 
   const supabase = await createClient();
   if (!supabase) return null;
 
-  const [{ data: appSettings }, { data: categories }] = await Promise.all([
+  const params = await searchParams;
+  const [{ data: appSettings }, { data: categories }, siteSettings] = await Promise.all([
     supabase.from("app_settings").select("*"),
-    supabase.from("categories").select("*").order("name")
+    supabase.from("categories").select("*").order("name"),
+    getSiteSettings()
   ]);
 
   const getSetting = (key: string, defaultValue: string | number) => {
@@ -37,6 +45,71 @@ export default async function AdminSettingsPage() {
   return (
     <AdminShell title="Configuración">
       <div className="grid gap-6 md:grid-cols-2">
+        <Card className="ambient-card md:col-span-2">
+          <CardHeader>
+            <CardTitle>Configuración del Inicio (Hero)</CardTitle>
+            <CardDescription>Modifica la imagen, el título y el subtítulo de la página principal.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {params?.hero_error ? (
+              <div className="mb-4 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                {params.hero_error}
+              </div>
+            ) : null}
+            {params?.hero_success ? (
+              <div className="mb-4 rounded-xl border border-primary/20 bg-primary/10 px-4 py-3 text-sm text-primary">
+                {params.hero_success}
+              </div>
+            ) : null}
+
+            <form action="/api/admin/site-settings" className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" encType="multipart/form-data" method="post">
+              <div className="space-y-2 lg:col-span-2">
+                <Label htmlFor="hero_title">Título Principal</Label>
+                <Input
+                  defaultValue={siteSettings?.hero_title || "Encuentra un nuevo hogar para quienes más lo necesitan."}
+                  id="hero_title"
+                  name="hero_title"
+                  required
+                />
+              </div>
+              <div className="space-y-2 lg:col-span-2">
+                <Label htmlFor="hero_subtitle">Subtítulo</Label>
+                <Input
+                  defaultValue={siteSettings?.hero_subtitle || `${SITE_CONFIG.name} conecta personas, rescatistas y organizaciones con animales en adopción en todo Panamá.`}
+                  id="hero_subtitle"
+                  name="hero_subtitle"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="hero_image_file">Nueva Imagen de Fondo</Label>
+                <Input accept="image/*" id="hero_image_file" name="hero_image_file" type="file" />
+                <p className="text-xs text-muted-foreground">Si no subes una imagen, se mantendrá la actual.</p>
+                <input name="hero_image_url" type="hidden" value={siteSettings?.hero_image_url || "/home-img.webp"} />
+              </div>
+              <div className="space-y-2 lg:col-span-3">
+                <Label>Vista previa actual</Label>
+                <div className="relative h-40 overflow-hidden rounded-2xl border bg-muted">
+                  <Image
+                    alt="Vista previa del fondo actual del hero"
+                    className="object-cover"
+                    fill
+                    sizes="100vw"
+                    src={siteSettings?.hero_image_url || "/home-img.webp"}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/45 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 p-4 text-sm font-medium text-foreground">
+                    Así se usa la imagen de fondo del hero en el home.
+                  </div>
+                </div>
+              </div>
+              <div className="pt-4 md:col-span-2 lg:col-span-3">
+                <Button type="submit" className="font-bold">Guardar Cambios del Inicio</Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+
         <Card className="ambient-card">
           <CardHeader>
             <CardTitle>Límites del Sistema</CardTitle>

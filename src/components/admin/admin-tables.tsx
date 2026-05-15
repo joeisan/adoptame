@@ -273,6 +273,8 @@ export function ListingsTable({ data, users }: { data: AdminRow[], users: any[] 
 }
 
 export function UsersTable({ data }: { data: AdminRow[] }) {
+  const [isPending, startTransition] = useTransition();
+
   const columns: ColumnDef<AdminRow>[] = [
     {
       header: "Usuario",
@@ -309,6 +311,33 @@ export function UsersTable({ data }: { data: AdminRow[] }) {
       cell: ({ row }) => {
         const isSuperAdmin = text(row.original.role) === "super_admin";
         const profileSlug = text((row.original as any).public_slug);
+
+        const handleResetPassword = () => {
+          if (!confirm("¿Generar una contraseña temporal aleatoria para este usuario?")) return;
+
+          const formData = new FormData();
+          formData.append("userId", text(row.original.id));
+
+          startTransition(async () => {
+            const res = await adminResetPasswordAction(formData);
+            if (res.error) toast.error(res.error);
+            else toast.success(res.message || "Contraseña reseteada");
+          });
+        };
+
+        const handleDeleteUser = () => {
+          if (!confirm("¿Eliminar este usuario? También se eliminarán sus publicaciones y datos relacionados.")) return;
+
+          const formData = new FormData();
+          formData.append("userId", text(row.original.id));
+
+          startTransition(async () => {
+            const res = await deleteUserAction(formData);
+            if (res.error) toast.error(res.error);
+            else toast.success("Usuario eliminado");
+          });
+        };
+
         return (
           <div className="flex gap-2">
             {profileSlug ? (
@@ -318,28 +347,28 @@ export function UsersTable({ data }: { data: AdminRow[] }) {
                 </Link>
               </Button>
             ) : null}
-            <form action={async (fd) => {
-              if(!confirm("¿Generar una contraseña temporal aleatoria para este usuario?")) return;
-              const res = await adminResetPasswordAction(fd);
-              if (res.error) toast.error(res.error);
-              else toast.success(res.message || "Contraseña reseteada");
-            }}>
-              <input name="userId" type="hidden" value={text(row.original.id)} />
-              <Button size="sm" type="submit" variant="ghost" className="h-8 w-8 p-0" title="Resetear contraseña">
-                <Key className="size-4 text-orange-500" />
-              </Button>
-            </form>
-            <form action={async (fd) => {
-              if(!confirm("¿Eliminar este usuario? También se eliminarán sus publicaciones y datos relacionados.")) return;
-              const res = await deleteUserAction(fd);
-              if (res.error) toast.error(res.error);
-              else toast.success("Usuario eliminado");
-            }}>
-              <input name="userId" type="hidden" value={text(row.original.id)} />
-              <Button size="sm" type="submit" variant="ghost" className="h-8 w-8 p-0" disabled={isSuperAdmin} title={isSuperAdmin ? "No se puede eliminar un super admin" : "Eliminar usuario"}>
-                <Trash2 className="size-4 text-destructive" />
-              </Button>
-            </form>
+            <Button
+              size="sm"
+              type="button"
+              variant="ghost"
+              className="h-8 w-8 p-0"
+              title="Resetear contraseña"
+              disabled={isPending}
+              onClick={handleResetPassword}
+            >
+              <Key className="size-4 text-orange-500" />
+            </Button>
+            <Button
+              size="sm"
+              type="button"
+              variant="ghost"
+              className="h-8 w-8 p-0"
+              disabled={isPending || isSuperAdmin}
+              title={isSuperAdmin ? "No se puede eliminar un super admin" : "Eliminar usuario"}
+              onClick={handleDeleteUser}
+            >
+              <Trash2 className="size-4 text-destructive" />
+            </Button>
           </div>
         );
       }

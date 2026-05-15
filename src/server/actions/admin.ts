@@ -12,7 +12,7 @@ import type { Json } from "@/types/database";
 
 async function requireSuperAdmin() {
   const { user, profile } = await getCurrentUser();
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   if (!user || !profile || profile.role !== "super_admin" || profile.status !== "active" || !supabase) {
     return null;
@@ -22,7 +22,7 @@ async function requireSuperAdmin() {
 }
 
 async function audit(adminId: string, action: string, metadata: Record<string, unknown>, targetUserId?: string, targetListingId?: string) {
-  const supabase = await createClient();
+  const supabase = createAdminClient() ?? (await createClient());
   if (!supabase) return;
 
   await supabase.from("admin_actions").insert({
@@ -43,9 +43,16 @@ export async function changeUserRoleAction(formData: FormData) {
 
   if (!parsed.success || !admin) return { error: "No autorizado." };
 
-  await admin.supabase.from("profiles").update({ role: parsed.data.role }).eq("id", parsed.data.userId);
+  const updateData =
+    parsed.data.role === "super_admin"
+      ? { role: parsed.data.role, status: "active" as const }
+      : { role: parsed.data.role };
+  const { error } = await admin.supabase.from("profiles").update(updateData).eq("id", parsed.data.userId);
+  if (error) return { error: error.message };
   await audit(admin.user.id, "change_role", { role: parsed.data.role }, parsed.data.userId);
   revalidatePath("/super-admin/users");
+  revalidatePath("/super-admin", "layout");
+  revalidatePath("/dashboard", "layout");
   return { ok: true };
 }
 
@@ -56,7 +63,8 @@ export async function setOrganizationVerificationAction(formData: FormData) {
 
   if (!organizationId || !admin) return { error: "No autorizado." };
 
-  await admin.supabase.from("organizations").update({ is_verified: isVerified }).eq("id", organizationId);
+  const { error } = await admin.supabase.from("organizations").update({ is_verified: isVerified }).eq("id", organizationId);
+  if (error) return { error: error.message };
   await audit(admin.user.id, "set_organization_verification", { isVerified });
   revalidatePath("/super-admin/organizations");
   revalidatePath("/explore");
@@ -72,10 +80,11 @@ export async function setOrganizationLimitAction(formData: FormData) {
 
   if (!parsed.success || !admin) return { error: "No autorizado." };
 
-  await admin.supabase
+  const { error } = await admin.supabase
     .from("organizations")
     .update({ listing_limit: parsed.data.listingLimit })
     .eq("id", parsed.data.organizationId);
+  if (error) return { error: error.message };
   await audit(admin.user.id, "set_organization_limit", parsed.data);
   revalidatePath("/super-admin/organizations");
   return { ok: true };
@@ -168,13 +177,14 @@ export async function moderateListingAction(formData: FormData) {
     return { error: "No autorizado." };
   }
 
-  await admin.supabase
+  const { error } = await admin.supabase
     .from("pet_listings")
     .update({
       status: status as "published" | "suspended" | "adopted" | "deleted",
       deleted_at: status === "deleted" ? new Date().toISOString() : null
     })
     .eq("id", listingId);
+  if (error) return { error: error.message };
   await audit(admin.user.id, "moderate_listing", { status }, undefined, listingId);
   revalidatePath("/super-admin/listings");
   revalidatePath("/explore");

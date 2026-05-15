@@ -8,6 +8,7 @@ const adminLinks = [
   ["/super-admin/listings", "Publicaciones"],
   ["/super-admin/reports", "Reportes"],
   ["/super-admin/organizations", "Organizaciones"],
+  ["/super-admin/banners", "Banners"],
   ["/super-admin/settings", "Configuración"]
 ];
 
