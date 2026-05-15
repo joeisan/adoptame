@@ -6,6 +6,7 @@ import { PetCard } from "@/components/pets/pet-card";
 import { VerifiedBadge } from "@/components/pets/verified-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SITE_CONFIG } from "@/lib/constants";
 import { getPublicProfileBySlug, getProfileActiveListings } from "@/server/queries/profiles";
 import { panamaWhatsappUrl } from "@/lib/utils";
 
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
   return {
     title: `${profile.name} - Perfil`,
-    description: profile.description?.slice(0, 150) ?? "Perfil de usuario en Adóptame Panamá",
+    description: profile.description?.slice(0, 150) ?? `Perfil de usuario en ${SITE_CONFIG.name}`,
   };
 }
 
@@ -31,7 +32,7 @@ export default async function ProfilePage({ params }: { params: Params }) {
 
   const listings = await getProfileActiveListings(profile);
   const whatsapp = panamaWhatsappUrl(profile.whatsapp ?? profile.phone);
-  const message = encodeURIComponent(`Hola ${profile.name}, los contacto desde Adóptame Panamá.`);
+  const message = encodeURIComponent(`Hola ${profile.name}, los contacto desde ${SITE_CONFIG.name}.`);
   const waLink = whatsapp ? `${whatsapp}?text=${message}` : null;
 
   return (
