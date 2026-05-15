@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { CATEGORY_OPTIONS, PUBLIC_LISTING_STATUSES } from "@/lib/constants";
+import { PANAMA_PROVINCE_LOCATIONS } from "@/lib/panama-location";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import type {
@@ -115,7 +116,11 @@ function mapImages(images?: RawImage[] | null, fallbackName = "Mascota en adopci
     }));
 }
 
-export function mapPetCard(row: RawPet): PetCardListing {
+function getProvinceCoordinates(province: string) {
+  return PANAMA_PROVINCE_LOCATIONS.find((location) => location.province === province) ?? null;
+}
+
+function mapPetCardBase(row: RawPet): PetCardListing {
   const images = mapImages(row.pet_images, row.name);
 
   return {
@@ -153,6 +158,28 @@ export function mapPetCard(row: RawPet): PetCardListing {
     longitude: row.longitude ?? null,
     ownerName: row.organizations?.name ?? row.owner?.organization_name ?? row.owner?.display_name ?? row.owner?.full_name ?? "Publicante",
     ownerSlug: row.organizations?.slug ?? row.owner?.slug ?? null
+  };
+}
+
+export function mapPetCard(row: RawPet): PetCardListing {
+  return mapPetCardBase(row);
+}
+
+export function mapPetCardForMap(row: RawPet): PetCardListing {
+  const listing = mapPetCardBase(row);
+  if (listing.latitude !== null && listing.longitude !== null) {
+    return listing;
+  }
+
+  const provinceCoordinates = getProvinceCoordinates(listing.province);
+  if (!provinceCoordinates) {
+    return listing;
+  }
+
+  return {
+    ...listing,
+    latitude: provinceCoordinates.latitude,
+    longitude: provinceCoordinates.longitude
   };
 }
 
@@ -196,6 +223,46 @@ function applySort<T extends OrderableQuery>(query: T, sort?: string): T {
 
   sorted = sorted.order("published_at", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false });
   return sorted as T;
+}
+
+function applyExploreFilters<T>(query: T, filters: ExploreFilters) {
+  let nextQuery = query as any;
+
+  if (filters.category) nextQuery = nextQuery.eq("categories.slug", filters.category);
+  if (filters.province) nextQuery = nextQuery.eq("province", filters.province);
+  if (filters.district) nextQuery = nextQuery.ilike("district", `%${filters.district}%`);
+  if (filters.sex && ["male", "female", "unknown"].includes(filters.sex)) nextQuery = nextQuery.eq("sex", filters.sex as PetSex);
+  if (filters.size && ["small", "medium", "large", "unknown"].includes(filters.size)) nextQuery = nextQuery.eq("size", filters.size as PetSize);
+  if (filters.status && ["published", "in_process", "adopted"].includes(filters.status)) nextQuery = nextQuery.eq("status", filters.status as PetStatus);
+  if (filters.verified === "true") nextQuery = nextQuery.eq("organizations.is_verified", true);
+  if (filters.age === "baby") nextQuery = nextQuery.eq("age_unit", "months");
+  if (filters.age === "adult") nextQuery = nextQuery.gte("age_value", 1).eq("age_unit", "years");
+
+  if (filters.location === "nearby" && filters.lat && filters.lng && filters.radius) {
+    const latitude = Number(filters.lat);
+    const longitude = Number(filters.lng);
+    const radiusKm = Number(filters.radius ?? "35");
+
+    if (Number.isFinite(latitude) && Number.isFinite(longitude) && Number.isFinite(radiusKm)) {
+      const latitudeDelta = radiusKm / 111;
+      const longitudeDelta = radiusKm / Math.max(Math.cos((latitude * Math.PI) / 180) * 111, 1);
+
+      nextQuery = nextQuery
+        .gte("latitude", latitude - latitudeDelta)
+        .lte("latitude", latitude + latitudeDelta)
+        .gte("longitude", longitude - longitudeDelta)
+        .lte("longitude", longitude + longitudeDelta);
+    }
+  }
+
+  if (filters.q) {
+    const q = filters.q.replaceAll(",", " ").trim();
+    nextQuery = nextQuery.or(
+      `name.ilike.%${q}%,breed.ilike.%${q}%,species.ilike.%${q}%,description.ilike.%${q}%,province.ilike.%${q}%,district.ilike.%${q}%`
+    );
+  }
+
+  return nextQuery as T;
 }
 
 const DUMMY_LISTINGS: PetCardListing[] = [
@@ -342,37 +409,7 @@ export async function getExploreListings(filters: ExploreFilters) {
     .is("deleted_at", null)
     .range(from, to);
 
-  if (filters.category) query = query.eq("categories.slug", filters.category);
-  if (filters.province) query = query.eq("province", filters.province);
-  if (filters.district) query = query.ilike("district", `%${filters.district}%`);
-  if (filters.sex && ["male", "female", "unknown"].includes(filters.sex)) query = query.eq("sex", filters.sex as PetSex);
-  if (filters.size && ["small", "medium", "large", "unknown"].includes(filters.size)) query = query.eq("size", filters.size as PetSize);
-  if (filters.status && ["published", "in_process", "adopted"].includes(filters.status)) query = query.eq("status", filters.status as PetStatus);
-  if (filters.verified === "true") query = query.eq("organizations.is_verified", true);
-  if (filters.age === "baby") query = query.eq("age_unit", "months");
-  if (filters.age === "adult") query = query.gte("age_value", 1).eq("age_unit", "years");
-  if (filters.location === "nearby" && filters.lat && filters.lng && filters.radius) {
-    const latitude = Number(filters.lat);
-    const longitude = Number(filters.lng);
-    const radiusKm = Number(filters.radius ?? "35");
-
-    if (Number.isFinite(latitude) && Number.isFinite(longitude) && Number.isFinite(radiusKm)) {
-      const latitudeDelta = radiusKm / 111;
-      const longitudeDelta = radiusKm / Math.max(Math.cos((latitude * Math.PI) / 180) * 111, 1);
-
-      query = query
-        .gte("latitude", latitude - latitudeDelta)
-        .lte("latitude", latitude + latitudeDelta)
-        .gte("longitude", longitude - longitudeDelta)
-        .lte("longitude", longitude + longitudeDelta);
-    }
-  }
-  if (filters.q) {
-    const q = filters.q.replaceAll(",", " ").trim();
-    query = query.or(
-      `name.ilike.%${q}%,breed.ilike.%${q}%,species.ilike.%${q}%,description.ilike.%${q}%,province.ilike.%${q}%,district.ilike.%${q}%`
-    );
-  }
+  query = applyExploreFilters(query, filters);
 
   const { data, count, error } = await applySort(query, filters.sort);
   const listings = ((data ?? []) as unknown as RawPet[]).map(mapPetCard);
@@ -410,6 +447,64 @@ export async function getExploreListings(filters: ExploreFilters) {
     count: count ?? 0,
     page,
     pageSize,
+    error: error?.message ?? null
+  };
+}
+
+export async function getExploreMapListings(filters: ExploreFilters, limit = 500) {
+  const supabase = await createClient();
+
+  if (!supabase) {
+    return { listings: [] as PetCardListing[], error: null as string | null };
+  }
+
+  let query = supabase
+    .from("pet_listings")
+    .select(LISTING_SELECT)
+    .in("status", PUBLIC_LISTING_STATUSES)
+    .is("deleted_at", null)
+    .limit(limit);
+
+  query = applyExploreFilters(query, filters);
+
+  const { data, error } = await applySort(query, filters.sort);
+  const listings = ((data ?? []) as unknown as RawPet[]).map(mapPetCardForMap);
+
+  if (listings.length === 0 && !error) {
+    let dummy = DUMMY_LISTINGS.map((listing) => {
+      if (listing.latitude !== null && listing.longitude !== null) return listing;
+      const provinceCoordinates = getProvinceCoordinates(listing.province);
+      return provinceCoordinates
+        ? { ...listing, latitude: provinceCoordinates.latitude, longitude: provinceCoordinates.longitude }
+        : listing;
+    });
+
+    if (filters.category) dummy = dummy.filter((d) => d.category?.slug === filters.category);
+    if (filters.province) dummy = dummy.filter((d) => d.province === filters.province);
+    if (filters.district) dummy = dummy.filter((d) => d.district?.toLowerCase().includes(filters.district!.toLowerCase()));
+    if (filters.sex && ["male", "female", "unknown"].includes(filters.sex)) dummy = dummy.filter((d) => d.sex === filters.sex);
+    if (filters.size && ["small", "medium", "large", "unknown"].includes(filters.size)) dummy = dummy.filter((d) => d.size === filters.size);
+    if (filters.age === "baby") dummy = dummy.filter((d) => d.ageUnit === "months");
+    if (filters.age === "adult") dummy = dummy.filter((d) => d.ageUnit === "years" && (d.ageValue ?? 0) >= 1);
+    if (filters.q) {
+      const q = filters.q.toLowerCase();
+      dummy = dummy.filter(
+        (d) =>
+          d.name.toLowerCase().includes(q) ||
+          d.breed?.toLowerCase().includes(q) ||
+          d.species?.toLowerCase().includes(q) ||
+          d.province.toLowerCase().includes(q)
+      );
+    }
+
+    return {
+      listings: dummy,
+      error: null
+    };
+  }
+
+  return {
+    listings,
     error: error?.message ?? null
   };
 }

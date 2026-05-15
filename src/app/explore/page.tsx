@@ -6,7 +6,7 @@ import { PetCard } from "@/components/pets/pet-card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/permissions";
-import { getExploreListings, getFavoriteListingIds } from "@/server/queries/listings";
+import { getExploreListings, getExploreMapListings, getFavoriteListingIds } from "@/server/queries/listings";
 import type { ExploreFilters as Filters } from "@/types/app";
 import { ViewToggle } from "@/components/pets/view-toggle";
 import { ExploreMap } from "@/components/pets/explore-map";
@@ -60,8 +60,12 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
   const params = await searchParams;
   const filters = parseFilters(params);
   const view = one(params.view) || "grid";
-  
-  const [{ user }, result] = await Promise.all([getCurrentUser(), getExploreListings(filters)]);
+
+  const [{ user }, result, mapResult] = await Promise.all([
+    getCurrentUser(),
+    getExploreListings(filters),
+    view === "map" ? getExploreMapListings(filters) : Promise.resolve(null)
+  ]);
   const favoriteIds = await getFavoriteListingIds(user?.id);
   const totalPages = Math.max(Math.ceil(result.count / result.pageSize), 1);
 
@@ -90,7 +94,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
       <div className="mt-8">
         {result.listings.length ? (
           view === "map" ? (
-            <ExploreMap listings={result.listings} />
+            <ExploreMap listings={mapResult?.listings ?? result.listings} />
           ) : (
             <>
               <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">

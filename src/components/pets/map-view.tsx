@@ -43,8 +43,7 @@ export default function MapView({ listings }: { listings: PetCardListing[] }) {
 
   const handleLocate = useCallback(() => {
     if (!navigator.geolocation) return;
-    document.getElementById("mapa")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setMapView({
@@ -94,7 +93,7 @@ export default function MapView({ listings }: { listings: PetCardListing[] }) {
 
   return (
     <div className="relative h-full w-full">
-      <div className="absolute right-4 top-4 z-[400]">
+      <div className="absolute right-4 top-4 z-20">
         <Button 
           size="icon" 
           variant="secondary" 
@@ -116,7 +115,7 @@ export default function MapView({ listings }: { listings: PetCardListing[] }) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {listings.filter(p => p.latitude && p.longitude).map((pet) => (
+        {listings.filter((pet) => pet.latitude !== null && pet.longitude !== null).map((pet) => (
           <Marker 
             key={pet.id} 
             position={[pet.latitude!, pet.longitude!]}
