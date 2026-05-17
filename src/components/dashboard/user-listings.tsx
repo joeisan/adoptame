@@ -2,9 +2,10 @@ import Link from "next/link";
 
 import { markListingAdoptedAction, softDeleteListingAction } from "@/server/actions/listings";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/pets/status-badge";
 import type { PetCardListing } from "@/types/app";
+import { Translate } from "@/components/layout/translate";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 function formAction(action: (formData: FormData) => Promise<unknown>) {
   return action as unknown as (formData: FormData) => void;
@@ -12,17 +13,17 @@ function formAction(action: (formData: FormData) => Promise<unknown>) {
 
 export function UserListings({
   listings,
-  title = "Mis publicaciones",
-  emptyMessage = "Aún no tienes publicaciones."
+  title,
+  emptyMessage
 }: {
   listings: PetCardListing[];
-  title?: string;
-  emptyMessage?: string;
+  title?: React.ReactNode;
+  emptyMessage?: React.ReactNode;
 }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle>{title || <Translate id="dash.myListings" />}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         {listings.length ? (
@@ -37,29 +38,29 @@ export function UserListings({
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button asChild size="sm" variant="outline">
-                  <Link href={`/pets/${listing.slug}`}>Ver</Link>
+                  <Link href={`/pets/${listing.slug}`}><Translate id="dash.view" /></Link>
                 </Button>
                 <Button asChild size="sm" variant="outline">
-                  <Link href={`/dashboard/listings/${listing.slug}/edit`}>Editar</Link>
+                  <Link href={`/dashboard/listings/${listing.slug}/edit`}><Translate id="dash.edit" /></Link>
                 </Button>
                 <form action={formAction(markListingAdoptedAction)}>
                   <input name="id" type="hidden" value={listing.id} />
                   <input name="slug" type="hidden" value={listing.slug} />
                   <Button size="sm" type="submit" variant="secondary">
-                    Adoptado
+                    <Translate id="dash.adopted" />
                   </Button>
                 </form>
                 <form action={formAction(softDeleteListingAction)}>
                   <input name="id" type="hidden" value={listing.id} />
                   <Button size="sm" type="submit" variant="destructive">
-                    Eliminar
+                    <Translate id="dash.delete" />
                   </Button>
                 </form>
               </div>
             </div>
           ))
         ) : (
-          <p className="text-sm text-muted-foreground">{emptyMessage}</p>
+          <p className="text-sm text-muted-foreground">{emptyMessage || <Translate id="dash.noListingsUser" />}</p>
         )}
       </CardContent>
     </Card>

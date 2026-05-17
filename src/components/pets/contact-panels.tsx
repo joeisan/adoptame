@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { LockKeyhole, Mail, Phone } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,24 +14,25 @@ function formAction(action: (formData: FormData) => Promise<unknown>) {
 }
 
 export function ContactLock({ slug }: { slug: string }) {
+  const { t } = useLanguage();
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <LockKeyhole className="size-5 text-primary" />
-          Contacto protegido
+          {t("contact.protected")}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm leading-6 text-muted-foreground">
-          Inicia sesión o regístrate para ver los datos de contacto del publicante.
+          {t("contact.protectedDesc")}
         </p>
         <div className="grid gap-2 sm:grid-cols-2">
           <Button asChild variant="outline">
-            <Link href={`/login?redirect=/pets/${slug}`}>Iniciar sesión</Link>
+            <Link href={`/login?redirect=/pets/${slug}`}>{t("contact.signIn")}</Link>
           </Button>
           <Button asChild>
-            <Link href={`/register?redirect=/pets/${slug}`}>Registrarme</Link>
+            <Link href={`/register?redirect=/pets/${slug}`}>{t("contact.signUp")}</Link>
           </Button>
         </div>
       </CardContent>
@@ -37,18 +41,19 @@ export function ContactLock({ slug }: { slug: string }) {
 }
 
 export function ContactPanel({ contact, listingId, slug }: { contact: PetContact; listingId: string; slug: string }) {
-  const message = encodeURIComponent(`Estoy interesado/a en adoptar. Vi esta publicación: ${typeof window !== "undefined" ? window.location.href : ""}`);
+  const { t } = useLanguage();
+  const message = encodeURIComponent(`${t("contact.interested")} ${typeof window !== "undefined" ? window.location.href : ""}`);
   let whatsapp = panamaWhatsappUrl(contact.contactWhatsapp ?? contact.contactPhone);
   if (whatsapp) whatsapp += `?text=${message}`;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Datos de contacto</CardTitle>
+        <CardTitle>{t("contact.data")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-5">
         <div className="space-y-2 text-sm">
-          <p className="font-semibold">{contact.contactName ?? "Publicante"}</p>
+          <p className="font-semibold">{contact.contactName ?? t("pet.publisher")}</p>
           {contact.contactPhone ? (
             <p className="flex items-center gap-2">
               <Phone className="size-4 text-primary" />

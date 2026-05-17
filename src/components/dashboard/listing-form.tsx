@@ -18,6 +18,7 @@ import { ListingImageManager } from "@/components/dashboard/listing-image-manage
 import { CATEGORY_OPTIONS, PANAMA_PROVINCES, PET_SEX_OPTIONS, PET_SIZE_OPTIONS } from "@/lib/constants";
 import { listingSchema } from "@/lib/validations/listing";
 import type { PetImage } from "@/types/app";
+import { useLanguage } from "@/lib/language-context";
 
 type ListingInputValues = z.input<typeof listingSchema>;
 type ListingInitialData = Partial<ListingInputValues> & { badges?: string[]; images?: PetImage[] };
@@ -35,6 +36,7 @@ export function ListingForm({
   allUsers?: { id: string, label: string }[];
   maxImages: number;
 }) {
+  const { t } = useLanguage();
   const [pending, startTransition] = useTransition();
   const [userSearch, setUserSearch] = useTransition();
   const [searchTerm, setSearchTerm] = useState("");
@@ -81,7 +83,7 @@ export function ListingForm({
       if (result?.error) {
         toast.error(result.error);
       } else if (listingId) {
-        toast.success("Publicación actualizada con éxito.");
+        toast.success(t("listing.updatedSuccess"));
       }
     });
   }
@@ -91,11 +93,11 @@ export function ListingForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{listingId ? "Editar publicación" : "Publicar mascota"}</CardTitle>
+        <CardTitle>{listingId ? t("listing.editListing") : t("listing.publishPet")}</CardTitle>
         <CardDescription>
           {listingId 
-            ? "Modifica la información de tu publicación. Los cambios se reflejarán instantáneamente." 
-            : "Completa la información pública y al menos un método de contacto privado."}
+            ? t("listing.editDesc")
+            : t("listing.publishDesc")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -103,19 +105,19 @@ export function ListingForm({
           {listingId && <input name="id" type="hidden" value={listingId} />}
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="name">Nombre de mascota</Label>
+              <Label htmlFor="name">{t("listing.petName")}</Label>
               <Input id="name" {...form.register("name")} />
               <p className="text-sm text-destructive">{error("name")}</p>
             </div>
 
             {listingId && (
               <div className="space-y-2">
-                <Label htmlFor="status">Estado de la mascota</Label>
+                <Label htmlFor="status">{t("listing.petStatus")}</Label>
                 <Select id="status" name="status" defaultValue={form.getValues("status")}>
-                  <option value="published">Disponible para adopción</option>
-                  <option value="adopted">Ya fue adoptado</option>
+                  <option value="published">{t("listing.availableAdoption")}</option>
+                  <option value="adopted">{t("listing.alreadyAdopted")}</option>
                 </Select>
-                <p className="text-[10px] text-muted-foreground italic">Cambiar a adoptado lo ocultará de los filtros principales.</p>
+                <p className="text-[10px] text-muted-foreground italic">{t("listing.adoptedNote")}</p>
               </div>
             )}
           </div>
@@ -126,88 +128,88 @@ export function ListingForm({
                 <div className="p-1.5 bg-primary/10 rounded-lg">
                   <ShieldCheck className="size-4 text-primary" />
                 </div>
-                <h3 className="font-black text-primary uppercase text-xs tracking-widest">Control Admin: Dueño de la publicación</h3>
+                <h3 className="font-black text-primary uppercase text-xs tracking-widest">{t("listing.adminOwner")}</h3>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase opacity-60">1. Filtrar Usuarios</Label>
+                  <Label className="text-[10px] uppercase opacity-60">{t("listing.filterUsers")}</Label>
                   <Input 
-                    placeholder="Escribe nombre o email..." 
+                    placeholder={t("listing.filterPlaceholder")}
                     className="h-9"
                     value={searchTerm} 
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="ownerId" className="text-[10px] uppercase opacity-60">2. Seleccionar nuevo dueño</Label>
+                  <Label htmlFor="ownerId" className="text-[10px] uppercase opacity-60">{t("listing.selectOwner")}</Label>
                   <Select id="ownerId" name="ownerId" defaultValue={form.getValues("ownerId")}>
                     {filteredUsers.length > 0 ? (
                       filteredUsers.map(u => (
                         <option key={u.id} value={u.id}>{u.label}</option>
                       ))
                     ) : (
-                      <option disabled>No se encontraron usuarios</option>
+                      <option disabled>{t("listing.noUsersFound")}</option>
                     )}
                   </Select>
                 </div>
               </div>
-              <p className="text-[10px] text-muted-foreground">Esta acción reasignará la propiedad total de la publicación al usuario seleccionado.</p>
+              <p className="text-[10px] text-muted-foreground">{t("listing.reassignNote")}</p>
             </div>
           )}
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="categorySlug">Categoría</Label>
+              <Label htmlFor="categorySlug">{t("filter.category")}</Label>
               <Select id="categorySlug" {...form.register("categorySlug")}>
-                <option value="">Selecciona</option>
+                <option value="">{t("filter.select")}</option>
                 {CATEGORY_OPTIONS.map((category) => (
                   <option key={category.slug} value={category.slug}>
-                    {category.name}
+                    {t(`pet.${category.slug}` as any) || category.name}
                   </option>
                 ))}
               </Select>
               <p className="text-sm text-destructive">{error("categorySlug")}</p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="breed">Raza/variedad</Label>
-              <Input id="breed" placeholder="Ej. Mestizo" {...form.register("breed")} />
+              <Label htmlFor="breed">{t("listing.breed")}</Label>
+              <Input id="breed" placeholder={t("listing.breedPlaceholder")} {...form.register("breed")} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="ageValue">Edad aproximada</Label>
+              <Label htmlFor="ageValue">{t("pet.age")}</Label>
               <Input id="ageValue" min="0" type="number" {...form.register("ageValue")} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="ageUnit">Unidad edad</Label>
+              <Label htmlFor="ageUnit">{t("listing.ageUnit")}</Label>
               <Select id="ageUnit" {...form.register("ageUnit")}>
-                <option value="unknown">Desconocida</option>
-                <option value="months">Meses</option>
-                <option value="years">Años</option>
+                <option value="unknown">{t("listing.unknownAge")}</option>
+                <option value="months">{t("listing.months")}</option>
+                <option value="years">{t("listing.years")}</option>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="sex">Sexo</Label>
+              <Label htmlFor="sex">{t("filter.sex")}</Label>
               <Select id="sex" {...form.register("sex")}>
                 {PET_SEX_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(`pet.${option.value}` as any)}
                   </option>
                 ))}
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="size">Tamaño</Label>
+              <Label htmlFor="size">{t("filter.size")}</Label>
               <Select id="size" {...form.register("size")}>
                 {PET_SIZE_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(`pet.${option.value}` as any)}
                   </option>
                 ))}
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="province">Provincia</Label>
+              <Label htmlFor="province">{t("filter.province")}</Label>
               <Select id="province" {...form.register("province")}>
-                <option value="">Selecciona</option>
+                <option value="">{t("filter.select")}</option>
                 {PANAMA_PROVINCES.map((province) => (
                   <option key={province} value={province}>
                     {province}
@@ -217,31 +219,31 @@ export function ListingForm({
               <p className="text-sm text-destructive">{error("province")}</p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="district">Distrito</Label>
+              <Label htmlFor="district">{t("filter.district")}</Label>
               <Input id="district" {...form.register("district")} />
             </div>
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="sector">Corregimiento o sector</Label>
+              <Label htmlFor="sector">{t("listing.sector")}</Label>
               <Input id="sector" {...form.register("sector")} />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="description">Descripción</Label>
+            <Label htmlFor="description">{t("listing.description")}</Label>
             <Textarea id="description" {...form.register("description")} />
             <p className="text-sm text-destructive">{error("description")}</p>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="story">Historia</Label>
+              <Label htmlFor="story">{t("listing.story")}</Label>
               <Textarea id="story" {...form.register("story")} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="healthNotes">Salud, vacunas, esterilización</Label>
+              <Label htmlFor="healthNotes">{t("listing.health")}</Label>
               <Textarea id="healthNotes" {...form.register("healthNotes")} />
             </div>
           </div>
           <div className="space-y-2">
-            <Label>Características / Badges (Mín 0, Máx 4)</Label>
+            <Label>{t("listing.badges")}</Label>
             <div className="flex flex-wrap gap-3" id="badges-container">
               {["Vacunado", "Desparasitado", "Esterilizado"].map((badge) => (
                 <div key={badge} className="relative">
@@ -258,7 +260,7 @@ export function ListingForm({
                     className="flex items-center gap-1.5 rounded-full border border-input px-3 py-1 text-sm font-bold cursor-pointer transition-all peer-checked:!bg-[#10b981] peer-checked:!text-white peer-checked:!border-[#059669] hover:bg-muted"
                     style={{ borderStyle: 'solid', borderWidth: '1px' }}
                   >
-                    {badge}
+                    {badge === "Vacunado" ? t("listing.vaccinated") : badge === "Desparasitado" ? t("listing.dewormed") : badge === "Esterilizado" ? t("listing.spayed") : badge}
                   </label>
                 </div>
               ))}
@@ -286,9 +288,8 @@ export function ListingForm({
                   </button>
                 </div>
               ))}
-            </div>
-            <div className="mt-4 flex items-center gap-2">
-              <Input placeholder="Otra (ej. Juguetón, Sociable)" id="customBadge" className="max-w-[200px]" />
+            </div>            <div className="mt-4 flex items-center gap-2">
+              <Input placeholder={t("listing.customBadge")} id="customBadge" className="max-w-[200px]" />
               <Button type="button" variant="secondary" onClick={(e) => {
                 const input = document.getElementById("customBadge") as HTMLInputElement;
                 const val = input.value.trim();
@@ -296,7 +297,7 @@ export function ListingForm({
                 
                 const container = document.getElementById("badges-container");
                 if (!container || container.children.length >= 6) {
-                  toast.error("Límite de etiquetas alcanzado.");
+                  toast.error(t("listing.badgeLimit"));
                   return;
                 }
                 
@@ -320,18 +321,18 @@ export function ListingForm({
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="adoptionRequirements">Requisitos de adopción</Label>
+            <Label htmlFor="adoptionRequirements">{t("listing.adoptionReqs")}</Label>
             <Textarea id="adoptionRequirements" {...form.register("adoptionRequirements")} />
           </div>
-
+ 
           <ListingImageManager
             existingImages={initialData?.images?.filter((image): image is PetImage & { id: string } => Boolean(image.id))}
             maxImages={maxImages}
           />
           <Button className="w-full md:w-fit" disabled={pending} type="submit">
             {pending 
-              ? (listingId ? "Guardando..." : "Publicando...") 
-              : (listingId ? "Guardar cambios" : "Publicar mascota")}
+              ? (listingId ? t("listing.saving") : t("listing.publishing")) 
+              : (listingId ? t("listing.saveChanges") : t("listing.publishPet"))}
           </Button>
         </form>
       </CardContent>

@@ -13,6 +13,7 @@ import { VerifiedBadge } from "@/components/pets/verified-badge";
 import { FavoriteButton } from "@/components/pets/favorite-button";
 import { CATEGORY_COLORS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { Translate } from "@/components/layout/translate";
 
 
 
@@ -60,7 +61,7 @@ export function PetCard({
         {pet.status === "adopted" && (
           <div className="absolute bottom-0 right-0 z-30 h-16 w-16 overflow-hidden rounded-br-[calc(var(--radius)-1px)]">
             <div className="absolute bottom-[10px] right-[-18px] w-[80px] -rotate-45 bg-secondary px-1 py-0.5 text-center text-[9px] font-black uppercase tracking-tighter text-secondary-foreground shadow-sm">
-              Adoptado
+              <Translate id="pet.adopted" />
             </div>
           </div>
         )}
@@ -73,7 +74,7 @@ export function PetCard({
               {pet.name}
               <span className="shrink-0 text-xs font-semibold text-muted-foreground bg-muted px-2 py-1 rounded-full flex items-center">
                 <Calendar className="mr-1 size-3.5" />
-                Edad:{" "}
+                <Translate id="pet.age" />:{" "}
                 {formatAge(pet.ageValue, pet.ageUnit)}
               </span>
             </h3>
@@ -82,20 +83,20 @@ export function PetCard({
                 <div className="group/sex relative">
                   <Venus className="size-6 text-sage" />
                   <span className="pointer-events-none absolute bottom-full left-1/2 mb-1 w-max -translate-x-1/2 rounded bg-popover px-2 py-1 text-xs text-popover-foreground opacity-0 shadow-md transition-opacity group-hover/sex:opacity-100">
-                    Hembra
+                    <Translate id="pet.female" />
                   </span>
                 </div>
               ) : pet.sex === "male" ? (
                 <div className="group/sex relative">
                   <Mars className="size-6 text-primary" />
                   <span className="pointer-events-none absolute bottom-full left-1/2 mb-1 w-max -translate-x-1/2 rounded bg-popover px-2 py-1 text-xs text-popover-foreground opacity-0 shadow-md transition-opacity group-hover/sex:opacity-100">
-                    Macho
+                    <Translate id="pet.male" />
                   </span>
                 </div>
               ) : null}
             </div>
           </div>
-          <p className="text-base font-medium text-muted-foreground truncate">{pet.breed || pet.category?.name || "Mascota"}</p>
+          <p className="text-base font-medium text-muted-foreground truncate">{pet.breed || pet.category?.name || <Translate id="pet.pet" />}</p>
         </div>
 
         {pet.ownerSlug ? (
@@ -104,7 +105,7 @@ export function PetCard({
             className="z-20 flex w-max items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors"
           >
             <User className="size-3.5" />
-            {pet.ownerName || "Publicante"}
+            {pet.ownerName || <Translate id="pet.publisher" />}
             {pet.organization?.isVerified ? <VerifiedBadge /> : null}
           </Link>
         ) : null}
@@ -112,7 +113,7 @@ export function PetCard({
         <div className="flex flex-nowrap gap-1 py-0.5">
           <Badge variant="outline" className="flex shrink-0 items-center gap-1 whitespace-nowrap px-2 text-[10px] h-6 leading-none">
             <ArrowUpNarrowWide className="size-3.5 text-primary" />
-            {pet.size === "small" ? "Pequeño" : pet.size === "medium" ? "Mediano" : pet.size === "large" ? "Grande" : "Cnf."}
+            {pet.size === "small" ? <Translate id="pet.small" /> : pet.size === "medium" ? <Translate id="pet.medium" /> : pet.size === "large" ? <Translate id="pet.large" /> : <Translate id="pet.unknown" />}
           </Badge>
           {pet.badges?.slice(0, 2).map((badge) => (
             <Badge key={badge} variant="outline" className="flex shrink-0 items-center whitespace-nowrap px-2 text-[10px] h-6 leading-none">
@@ -142,14 +143,14 @@ export function PetCard({
         <div className="mt-auto pt-2 flex flex-col gap-3">
           <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
             <Calendar className="size-4" />
-            <span>Publicado: {formatDate(pet.publishedAt ?? pet.createdAt)}</span>
+            <span><Translate id="pet.published" />: {formatDate(pet.publishedAt ?? pet.createdAt)}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
             <MapPin className="size-4" />
             <span className="truncate">{pet.province}{pet.district ? `, ${pet.district}` : ""}</span>
           </div>
           <Button asChild className="w-full z-20 h-10 text-sm font-bold" variant="outline">
-            <Link href={`/pets/${pet.slug}`}>Ver detalles</Link>
+            <Link href={`/pets/${pet.slug}`}><Translate id="pet.viewDetails" /></Link>
           </Button>
         </div>
       </CardContent>

@@ -14,6 +14,7 @@ import { updateAppSettingsAction, createCategoryAction, updateCategoryIconAction
 import { getSiteSettings } from "@/server/actions/settings";
 
 import { CategoryToggle } from "@/components/admin/category-toggle";
+import { Translate } from "@/components/layout/translate";
 
 function formAction(action: (formData: FormData) => Promise<unknown>) {
   return action as unknown as (formData: FormData) => void;
@@ -43,12 +44,12 @@ export default async function AdminSettingsPage({
   };
 
   return (
-    <AdminShell title="Configuración">
+    <AdminShell title={<Translate id="admin.nav.settings" />}>
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="ambient-card md:col-span-2">
           <CardHeader>
-            <CardTitle>Configuración del Inicio (Hero)</CardTitle>
-            <CardDescription>Modifica la imagen, el título y el subtítulo de la página principal.</CardDescription>
+            <CardTitle><Translate id="admin.settings.heroTitle" /></CardTitle>
+            <CardDescription><Translate id="admin.settings.heroDesc" /></CardDescription>
           </CardHeader>
           <CardContent>
             {params?.hero_error ? (
@@ -64,7 +65,7 @@ export default async function AdminSettingsPage({
 
             <form action="/api/admin/site-settings" className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" encType="multipart/form-data" method="post">
               <div className="space-y-2 lg:col-span-2">
-                <Label htmlFor="hero_title">Título Principal</Label>
+                <Label htmlFor="hero_title"><Translate id="admin.settings.mainTitle" /></Label>
                 <Input
                   defaultValue={siteSettings?.hero_title || "Encuentra un nuevo hogar para quienes más lo necesitan."}
                   id="hero_title"
@@ -73,7 +74,7 @@ export default async function AdminSettingsPage({
                 />
               </div>
               <div className="space-y-2 lg:col-span-2">
-                <Label htmlFor="hero_subtitle">Subtítulo</Label>
+                <Label htmlFor="hero_subtitle"><Translate id="admin.settings.subtitle" /></Label>
                 <Input
                   defaultValue={siteSettings?.hero_subtitle || `${SITE_CONFIG.name} conecta personas, rescatistas y organizaciones con animales en adopción en todo Panamá.`}
                   id="hero_subtitle"
@@ -82,13 +83,13 @@ export default async function AdminSettingsPage({
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="hero_image_file">Nueva Imagen de Fondo</Label>
+                <Label htmlFor="hero_image_file"><Translate id="admin.settings.newBg" /></Label>
                 <Input accept="image/*" id="hero_image_file" name="hero_image_file" type="file" />
-                <p className="text-xs text-muted-foreground">Si no subes una imagen, se mantendrá la actual.</p>
+                <p className="text-xs text-muted-foreground"><Translate id="admin.settings.keepBg" /></p>
                 <input name="hero_image_url" type="hidden" value={siteSettings?.hero_image_url || "/home-img.webp"} />
               </div>
               <div className="space-y-2 lg:col-span-3">
-                <Label>Vista previa actual</Label>
+                <Label><Translate id="admin.settings.preview" /></Label>
                 <div className="relative h-40 overflow-hidden rounded-2xl border bg-muted">
                   <Image
                     alt="Vista previa del fondo actual del hero"
@@ -99,12 +100,12 @@ export default async function AdminSettingsPage({
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/45 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-4 text-sm font-medium text-foreground">
-                    Así se usa la imagen de fondo del hero en el home.
+                    <Translate id="admin.settings.heroPreviewDesc" />
                   </div>
                 </div>
               </div>
               <div className="pt-4 md:col-span-2 lg:col-span-3">
-                <Button type="submit" className="font-bold">Guardar Cambios del Inicio</Button>
+                <Button type="submit" className="font-bold"><Translate id="admin.settings.saveHero" /></Button>
               </div>
             </form>
           </CardContent>
@@ -112,8 +113,8 @@ export default async function AdminSettingsPage({
 
         <Card className="ambient-card">
           <CardHeader>
-            <CardTitle>Límites del Sistema</CardTitle>
-            <CardDescription>Valores globales para todos los usuarios.</CardDescription>
+            <CardTitle><Translate id="admin.settings.systemLimits" /></CardTitle>
+            <CardDescription><Translate id="admin.settings.limitsDesc" /></CardDescription>
           </CardHeader>
           <CardContent>
             <form action={formAction(updateAppSettingsAction)} className="space-y-4">
@@ -221,7 +222,7 @@ export default async function AdminSettingsPage({
                   </option>
                 ))}
               </Select>
-              <Button size="sm" type="submit">Agregar</Button>
+              <Button size="sm" type="submit"><Translate id="admin.settings.add" /></Button>
             </form>
           </CardHeader>
           <CardContent>
@@ -237,7 +238,7 @@ export default async function AdminSettingsPage({
                       </span>
                       <div className="min-w-0">
                         <p className="truncate font-medium">{cat.name}</p>
-                        <p className="text-xs text-muted-foreground">{cat.icon ?? "Icono por defecto"}</p>
+                        <p className="text-xs text-muted-foreground">{cat.icon ?? <Translate id="admin.settings.defaultIcon" />}</p>
                       </div>
                     </div>
                     <form action={formAction(updateCategoryIconAction)} className="grid gap-2 sm:grid-cols-[1fr_auto]">
@@ -250,7 +251,7 @@ export default async function AdminSettingsPage({
                           </option>
                         ))}
                       </Select>
-                      <Button size="sm" type="submit" variant="secondary">Guardar</Button>
+                      <Button size="sm" type="submit" variant="secondary"><Translate id="admin.settings.save" /></Button>
                     </form>
                     <div className="flex items-center justify-between gap-3 md:justify-end">
                       <span className="text-xs font-bold uppercase text-muted-foreground">

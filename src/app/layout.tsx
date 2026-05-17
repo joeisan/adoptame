@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/layout/header";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { SITE_CONFIG } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/site-url";
+import { LanguageProvider } from "@/lib/language-context";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -27,11 +28,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="es-PA">
       <body className="pb-16 md:pb-0">
-        <SiteHeader />
-        <main>{children}</main>
-        <SiteFooter />
-        <MobileBottomNav />
-        <Toaster richColors position="top-right" />
+        <LanguageProvider>
+          <SiteHeader />
+          <main>{children}</main>
+          <SiteFooter />
+          <MobileBottomNav />
+          <Toaster richColors position="top-right" />
+        </LanguageProvider>
       </body>
     </html>
   );

@@ -8,6 +8,7 @@ import { getListingForEdit } from "@/server/queries/listings";
 import { getProfilesForSelect } from "@/server/queries/profiles";
 import { getMaxImagesPerListing } from "@/server/queries/settings";
 import { getCurrentUser } from "@/lib/permissions";
+import { Translate } from "@/components/layout/translate";
 
 export default async function EditListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: slug } = await params;
@@ -29,9 +30,9 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
   if (listing.ownerId !== user.id && !isAdmin) {
     return (
       <section className="container-shell py-20 text-center">
-        <h1 className="text-2xl font-bold">No tienes permiso para editar esta publicación.</h1>
+        <h1 className="text-2xl font-bold"><Translate id="listing.noPermission" /></h1>
         <Button asChild className="mt-4" variant="ghost">
-          <Link href="/dashboard">Volver al panel</Link>
+          <Link href="/dashboard"><Translate id="dashboard.backToPanel" /></Link>
         </Button>
       </section>
     );
@@ -71,12 +72,12 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
           <Button asChild variant="ghost" className="-ml-4 text-muted-foreground hover:text-foreground">
             <Link href={`/pets/${listing.slug}`}>
               <ChevronLeft className="mr-2 size-4" />
-              Volver a la publicación
+              <Translate id="listing.backToListing" />
             </Link>
           </Button>
           <div className="mt-4">
-            <h1 className="text-3xl font-black tracking-tight">Editar Mascota</h1>
-            <p className="text-muted-foreground mt-1">Estás editando la publicación de <span className="font-bold text-foreground">{listing.name}</span></p>
+            <h1 className="text-3xl font-black tracking-tight"><Translate id="listing.editPet" /></h1>
+            <p className="text-muted-foreground mt-1"><Translate id="listing.editingListing" /> <span className="font-bold text-foreground">{listing.name}</span></p>
           </div>
         </div>
 

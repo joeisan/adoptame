@@ -9,9 +9,10 @@ import { Eye, EyeOff } from "lucide-react";
 import { signInAction, signInWithGoogleAction, signUpAction } from "@/server/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { loginSchema, registerSchema } from "@/lib/validations/auth";
+import { useLanguage } from "@/lib/language-context";
 
 type Mode = "login" | "register";
 type AuthValues = {
@@ -27,6 +28,7 @@ type AuthValues = {
 };
 
 export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string }) {
+  const { t } = useLanguage();
   const [pending, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
   const [isOrgSelected, setIsOrgSelected] = useState(false);
@@ -89,17 +91,17 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
   return (
     <Card className="mx-auto w-full max-w-md">
       <CardHeader>
-        <CardTitle>{mode === "login" ? "Iniciar sesión" : "Crear cuenta"}</CardTitle>
+        <CardTitle>{mode === "login" ? t("auth.signIn") : t("auth.signUp")}</CardTitle>
         <CardDescription>
           {mode === "login"
-            ? "Entra para ver contactos y gestionar publicaciones."
-            : "Regístrate para publicar mascotas y contactar publicantes."}
+            ? t("auth.signInDesc")
+            : t("auth.signUpDesc")}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Button className="mb-4 w-full" disabled={pending} onClick={onGoogleSignIn} type="button" variant="outline">
           <span className="mr-2 inline-flex size-4 items-center justify-center rounded-full text-xs font-black">G</span>
-          Continuar con Google
+          {t("auth.continueGoogle")}
         </Button>
         <div className="mb-4 flex items-center gap-3 text-xs font-semibold uppercase text-muted-foreground">
           <span className="h-px flex-1 bg-border" />
@@ -110,13 +112,13 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
           {mode === "register" ? (
             <>
               <div className="space-y-2">
-                <Label htmlFor="fullName">Nombre</Label>
+                <Label htmlFor="fullName">{t("auth.name")}</Label>
                 <Input id="fullName" {...form.register("fullName")} autoComplete="name" />
                 <p className="text-sm text-destructive">{form.formState.errors.fullName?.message}</p>
               </div>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Teléfono (Obligatorio)</Label>
+                  <Label htmlFor="phone">{t("auth.phone")}</Label>
                   <Input id="phone" placeholder="6000 0000" {...form.register("phone")} />
                   <p className="text-sm text-destructive">{form.formState.errors.phone?.message}</p>
                 </div>
@@ -130,13 +132,13 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
                     className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
                   />
                   <Label htmlFor="useSameForWhatsapp" className="text-xs font-medium cursor-pointer text-muted-foreground">
-                    Usar este mismo número para WhatsApp
+                    {t("auth.useSameWhatsapp")}
                   </Label>
                 </div>
 
                 {!useSameForWhatsapp ? (
                   <div className="space-y-2">
-                    <Label htmlFor="whatsapp">WhatsApp (Opcional)</Label>
+                    <Label htmlFor="whatsapp">{t("auth.whatsappOptional")}</Label>
                     <Input id="whatsapp" placeholder="6000 0000" {...form.register("whatsapp")} />
                     <p className="text-sm text-destructive">{form.formState.errors.whatsapp?.message}</p>
                   </div>
@@ -157,14 +159,14 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
                     }}
                   />
                   <Label htmlFor="isOrganization" className="font-medium cursor-pointer leading-tight">
-                    Soy una organización y deseo solicitar aprobación
+                    {t("auth.isOrg")}
                   </Label>
                 </div>
 
                 {isOrgSelected && (
                   <div className="space-y-4 animate-in fade-in slide-in-from-top-1">
                     <div className="space-y-2">
-                      <Label htmlFor="organizationName">Nombre de organización / fundación</Label>
+                      <Label htmlFor="organizationName">{t("auth.orgName")}</Label>
                       <Input
                         id="organizationName"
                         placeholder="Ej. Fundación Peludos"
@@ -172,23 +174,23 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
                       />
                       <p className="text-sm text-destructive">{form.formState.errors.organizationName?.message}</p>
                     </div>
-                    <Label htmlFor="organizationType">Tipo de organización</Label>
+                    <Label htmlFor="organizationType">{t("auth.orgType")}</Label>
                     <select
                       id="organizationType"
                       name="organizationType"
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       defaultValue="Organización"
                     >
-                      <option value="Fundación">Fundación</option>
-                      <option value="ONG">ONG</option>
-                      <option value="Organización">Organización / Grupo</option>
+                      <option value="Fundación">{t("auth.orgFoundation")}</option>
+                      <option value="ONG">{t("auth.orgNgo")}</option>
+                      <option value="Organización">{t("auth.orgGroup")}</option>
                     </select>
                   </div>
                 )}
 
                 <div id="org-disclaimer" className="hidden rounded-lg bg-primary/5 p-3 text-xs text-muted-foreground border border-primary/10 animate-in fade-in slide-in-from-top-1">
-                  <p className="mb-2"><strong>Nota:</strong> Las cuentas de organización están sujetas a verificación. Deberás proporcionar documentación legal de la organización.</p>
-                  <p>Puedes solicitar los requisitos directamente a nuestro equipo de soporte.</p>
+                  <p className="mb-2"><strong>{t("common.note")}:</strong> {t("auth.orgDisclaimer")}</p>
+                  <p>{t("auth.orgSupport")}</p>
                 </div>
               </div>
             </>
@@ -199,7 +201,7 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
             <p className="text-sm text-destructive">{form.formState.errors.email?.message}</p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Contraseña</Label>
+            <Label htmlFor="password">{t("auth.password")}</Label>
             <div className="relative">
               <Input
                 id="password"
@@ -219,7 +221,7 @@ export function AuthForm({ mode, redirectTo }: { mode: Mode; redirectTo?: string
           </div>
           <input type="hidden" {...form.register("redirect")} />
           <Button className="w-full" disabled={pending} type="submit">
-            {pending ? "Procesando..." : mode === "login" ? "Entrar" : "Registrarme"}
+            {pending ? t("auth.processing") : mode === "login" ? t("auth.enter") : t("auth.registerMe")}
           </Button>
         </form>
       </CardContent>

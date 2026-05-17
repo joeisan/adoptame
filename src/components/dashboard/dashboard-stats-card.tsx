@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export function DashboardStatsCard({ title, value, detail }: { title: string; value: string | number; detail?: string }) {
+export function DashboardStatsCard({ title, value, detail }: { title: React.ReactNode; value: string | number; detail?: string }) {
   return (
     <Card>
       <CardHeader className="pb-2">

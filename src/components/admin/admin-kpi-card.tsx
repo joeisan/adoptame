@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export function AdminKpiCard({ label, value }: { label: string; value: number | string }) {
+export function AdminKpiCard({ label, value }: { label: React.ReactNode; value: number | string }) {
   return (
     <Card>
       <CardHeader className="pb-2">

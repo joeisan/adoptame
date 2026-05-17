@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { AuthForm } from "@/components/auth/auth-form";
 import { getCurrentUser } from "@/lib/permissions";
+import { Translate } from "@/components/layout/translate";
 
 export const metadata: Metadata = {
   title: "Iniciar sesión"
@@ -25,9 +26,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
       <div className="w-full space-y-5">
         <AuthForm mode="login" redirectTo={redirectTo} />
         <p className="text-center text-sm text-muted-foreground">
-          ¿No tienes cuenta?{" "}
+          <Translate id="auth.noAccount" />{" "}
           <Link className="font-semibold text-primary" href={`/register${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`}>
-            Regístrate
+            <Translate id="auth.register" />
           </Link>
         </p>
       </div>

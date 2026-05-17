@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { createReportAction } from "@/server/actions/reports";
+import { useLanguage } from "@/lib/language-context";
 
 export function ReportListingPopup({ listingId, listingName }: { listingId: string; listingName: string }) {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +46,7 @@ export function ReportListingPopup({ listingId, listingName }: { listingId: stri
         className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 gap-2 h-8 px-2"
       >
         <Flag className="size-4" />
-        <span className="text-xs">Reportar</span>
+        <span className="text-xs">{t("report.report")}</span>
       </Button>
 
       {isOpen && (
@@ -62,39 +64,39 @@ export function ReportListingPopup({ listingId, listingName }: { listingId: stri
                 <AlertTriangle className="size-6" />
               </div>
               <div>
-                <h2 className="text-xl font-bold">Reportar publicación</h2>
-                <p className="text-sm text-muted-foreground">¿Por qué reportas a {listingName}?</p>
+                <h2 className="text-xl font-bold">{t("report.reportListing")}</h2>
+                <p className="text-sm text-muted-foreground">{t("report.whyReport")} {listingName}?</p>
               </div>
             </div>
 
             {success ? (
               <div className="py-8 text-center space-y-2">
-                <div className="text-green-500 font-bold text-lg">¡Reporte enviado!</div>
-                <p className="text-sm text-muted-foreground">Gracias por ayudarnos a mantener la comunidad segura.</p>
+                <div className="text-green-500 font-bold text-lg">{t("report.sent")}</div>
+                <p className="text-sm text-muted-foreground">{t("report.thanks")}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input type="hidden" name="listingId" value={listingId} />
                 
                 <div className="space-y-2">
-                  <Label htmlFor="reason">Motivo del reporte</Label>
+                  <Label htmlFor="reason">{t("report.reason")}</Label>
                   <Select name="reason" id="reason" required>
-                    <option value="">Selecciona un motivo</option>
-                    <option value="Inapropiado">Contenido inapropiado</option>
-                    <option value="Spam">Spam o publicidad</option>
-                    <option value="Estafa">Posible estafa / fraude</option>
-                    <option value="Maltrato">Sospecha de maltrato animal</option>
-                    <option value="Duplicado">Publicación duplicada</option>
-                    <option value="Otro">Otro motivo</option>
+                    <option value="">{t("report.selectReason")}</option>
+                    <option value="Inapropiado">{t("report.inappropriate")}</option>
+                    <option value="Spam">{t("report.spam")}</option>
+                    <option value="Estafa">{t("report.scam")}</option>
+                    <option value="Maltrato">{t("report.abuse")}</option>
+                    <option value="Duplicado">{t("report.duplicate")}</option>
+                    <option value="Otro">{t("report.other")}</option>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Detalles adicionales (opcional)</Label>
+                  <Label htmlFor="description">{t("report.details")}</Label>
                   <Textarea 
                     id="description" 
                     name="description" 
-                    placeholder="Cuéntanos más sobre el problema..."
+                    placeholder={t("report.detailsPlaceholder")}
                     className="min-h-[100px] resize-none"
                   />
                 </div>
@@ -103,10 +105,10 @@ export function ReportListingPopup({ listingId, listingName }: { listingId: stri
 
                 <div className="flex justify-end gap-3 pt-2">
                   <Button type="button" variant="ghost" onClick={() => setIsOpen(false)} disabled={isPending}>
-                    Cancelar
+                    {t("report.cancel")}
                   </Button>
                   <Button type="submit" variant="destructive" disabled={isPending}>
-                    {isPending ? "Enviando..." : "Enviar reporte"}
+                    {isPending ? t("report.sending") : t("report.send")}
                   </Button>
                 </div>
               </form>

@@ -1,18 +1,19 @@
 import Link from "next/link";
+import { Translate } from "@/components/layout/translate";
 
 import { Button } from "@/components/ui/button";
 
-const adminLinks = [
-  ["/super-admin", "KPIs"],
-  ["/super-admin/users", "Usuarios"],
-  ["/super-admin/listings", "Publicaciones"],
-  ["/super-admin/reports", "Reportes"],
-  ["/super-admin/organizations", "Organizaciones"],
-  ["/super-admin/banners", "Banners"],
-  ["/super-admin/settings", "Configuración"]
+const adminLinks: [string, React.ReactNode][] = [
+  ["/super-admin", <Translate key="nav-kpis" id="admin.nav.kpis" />],
+  ["/super-admin/users", <Translate key="nav-users" id="admin.nav.users" />],
+  ["/super-admin/listings", <Translate key="nav-listings" id="admin.nav.listings" />],
+  ["/super-admin/reports", <Translate key="nav-reports" id="admin.nav.reports" />],
+  ["/super-admin/organizations", <Translate key="nav-orgs" id="admin.nav.organizations" />],
+  ["/super-admin/banners", <Translate key="nav-banners" id="admin.nav.banners" />],
+  ["/super-admin/settings", <Translate key="nav-settings" id="admin.nav.settings" />]
 ];
 
-export function AdminShell({ title, children }: { title: string; children: React.ReactNode }) {
+export function AdminShell({ title, children }: { title: React.ReactNode; children: React.ReactNode }) {
   return (
     <section className="container-shell py-10">
       <div className="mb-8">

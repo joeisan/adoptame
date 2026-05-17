@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, HeartHandshake, Search } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
 
 import { Button } from "@/components/ui/button";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -14,10 +17,9 @@ export function HomeHero({
   stats: { adoptions: number; volunteers: number; totalListings: number };
   settings?: { hero_title?: string | null; hero_subtitle?: string | null; hero_image_url?: string | null } | null;
 }) {
-  const title = settings?.hero_title || "Encuentra un nuevo hogar para quienes más lo necesitan.";
-  const subtitle =
-    settings?.hero_subtitle ||
-    `${SITE_CONFIG.name} conecta personas, rescatistas y organizaciones con animales en adopción en todo Panamá.`;
+  const { t } = useLanguage();
+  const title = settings?.hero_title || t("hero.defaultTitle");
+  const subtitle = settings?.hero_subtitle || `${SITE_CONFIG.name} ${t("hero.defaultSubtitle")}`;
   const bgImage = settings?.hero_image_url || "/home-img.webp";
 
   return (
@@ -38,7 +40,7 @@ export function HomeHero({
         <div className="max-w-3xl space-y-8 animate-in fade-in slide-in-from-left-8 duration-1000">
           <div className="inline-flex items-center gap-2 rounded-full border bg-background/50 backdrop-blur-md px-4 py-2 text-sm font-semibold text-primary shadow-sm border-primary/20">
             <HeartHandshake className="size-4" />
-            Red de adopción responsable en Panamá
+            {t("hero.badge")}
           </div>
           <div className="space-y-5">
             <h1 className="text-4xl font-black leading-[1.05] text-foreground drop-shadow-sm sm:text-6xl lg:text-7xl">{title}</h1>
@@ -48,21 +50,21 @@ export function HomeHero({
             <Button asChild size="lg" className="rounded-full shadow-lg shadow-primary/20 px-8 h-14">
               <Link href="/explore">
                 <Search className="size-5 mr-2" />
-                Buscar mascotas
+                {t("hero.searchPets")}
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="rounded-full bg-background/70 backdrop-blur-md border-primary/20 px-8 h-14 hover:bg-background/90">
               <Link href={isLoggedIn ? "/dashboard/listings/new" : "/register"}>
-                Publicar en adopción
+                {t("hero.postAdoption")}
                 <ArrowRight className="size-5 ml-2" />
               </Link>
             </Button>
           </div>
           <dl className="grid max-w-lg grid-cols-3 gap-3 pt-4">
             {[
-              [stats.adoptions, "adopciones"],
-              [stats.volunteers, "voluntarios"],
-              [stats.totalListings, "publicaciones"]
+              [stats.adoptions, t("hero.adoptions")],
+              [stats.volunteers, t("hero.volunteers")],
+              [stats.totalListings, t("hero.listings")]
             ].map(([value, label]) => (
               <div className="rounded-2xl border border-primary/10 bg-background/60 p-4 text-center shadow-sm backdrop-blur-md transition-transform hover:scale-105" key={label}>
                 <dt className="text-2xl font-black text-primary drop-shadow-sm">{value}</dt>

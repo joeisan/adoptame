@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { AuthForm } from "@/components/auth/auth-form";
 import { getCurrentUser } from "@/lib/permissions";
+import { Translate } from "@/components/layout/translate";
 
 export const metadata: Metadata = {
   title: "Registro"
@@ -25,9 +26,9 @@ export default async function RegisterPage({ searchParams }: { searchParams: Sea
       <div className="w-full space-y-5">
         <AuthForm mode="register" redirectTo={redirectTo} />
         <p className="text-center text-sm text-muted-foreground">
-          ¿Ya tienes cuenta?{" "}
+          <Translate id="auth.hasAccount" />{" "}
           <Link className="font-semibold text-primary" href={`/login${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`}>
-            Inicia sesión
+            <Translate id="auth.loginLink" />
           </Link>
         </p>
       </div>

@@ -4,13 +4,15 @@ import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 import { HorizontalScroller } from "@/components/home/horizontal-scroller";
 import type { OrganizationSummary } from "@/types/app";
+import { useLanguage } from "@/lib/language-context";
 
 export function OrganizationCarousel({ organizations }: { organizations: OrganizationSummary[] }) {
+  const { t } = useLanguage();
   return (
     <section className="container-shell py-8" id="organizaciones">
       <div className="mb-6">
-        <p className="text-sm font-bold uppercase text-primary">Nuestra Comunidad</p>
-        <h2 className="mt-2 text-2xl font-black">Fundaciones / Organizaciones registradas</h2>
+        <p className="text-sm font-bold uppercase text-primary">{t("home.community")}</p>
+        <h2 className="mt-2 text-2xl font-black">{t("home.orgsRegistered")}</h2>
       </div>
       
       <HorizontalScroller 

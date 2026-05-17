@@ -9,6 +9,7 @@ import { getCurrentUser } from "@/lib/permissions";
 import { ProfileForm } from "@/components/dashboard/profile-form";
 import { PasswordForm } from "@/components/dashboard/password-form";
 import type { Database } from "@/types/database";
+import { Translate } from "@/components/layout/translate";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -63,18 +64,18 @@ export default async function ProfilePage({ searchParams }: { searchParams: Sear
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-4">
           <div>
-            <CardTitle>{isOnboarding ? "Completa tu perfil" : "Perfil Público"}</CardTitle>
+            <CardTitle>{isOnboarding ? <Translate id="profile.completeProfile" /> : <Translate id="profile.publicProfile" />}</CardTitle>
             <CardDescription>
               {isOnboarding
-                ? "Antes de publicar o contactar, necesitamos tu nombre y datos de contacto."
-                : "Estos datos serán visibles para los usuarios que visiten tus publicaciones."}
+                ? <Translate id="profile.onboardingDesc" />
+                : <Translate id="profile.publicDesc" />}
             </CardDescription>
           </div>
           {slug ? (
             <Button asChild variant="outline" size="sm">
               <Link href={`/perfil/${slug}`}>
                 <ExternalLink className="size-4 mr-1.5" />
-                Ver mi perfil
+                <Translate id="dashboard.viewMyProfile" />
               </Link>
             </Button>
           ) : null}
@@ -86,9 +87,9 @@ export default async function ProfilePage({ searchParams }: { searchParams: Sear
 
       <Card className="mt-8">
         <CardHeader>
-          <CardTitle>Seguridad</CardTitle>
+          <CardTitle><Translate id="profile.security" /></CardTitle>
           <CardDescription>
-            Actualiza tu contraseña para mantener tu cuenta segura.
+            <Translate id="profile.securityDesc" />
           </CardDescription>
         </CardHeader>
         <CardContent>

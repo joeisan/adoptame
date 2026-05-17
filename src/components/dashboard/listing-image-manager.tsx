@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/lib/language-context";
 
 type ExistingImage = {
   id: string;
@@ -40,6 +41,7 @@ export function ListingImageManager({
   maxImages: number;
   existingImages?: ExistingImage[];
 }) {
+  const { t } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const dragRef = useRef<{ section: "existing" | "new"; index: number } | null>(null);
   const latestNewImagesRef = useRef<NewImageState[]>([]);
@@ -78,14 +80,14 @@ export function ListingImageManager({
     if (!fileArray.length) return;
 
     if (remainingSlots <= 0) {
-      toast.error(`Ya alcanzaste el máximo de ${maxImages} imágenes.`);
+      toast.error(t("listing.maxImagesReached").replace("{maxImages}", String(maxImages)));
       return;
     }
 
     const accepted = fileArray.slice(0, remainingSlots);
     const skipped = fileArray.length - accepted.length;
     if (skipped > 0) {
-      toast.error(`Solo puedes añadir ${remainingSlots} imagen${remainingSlots === 1 ? "" : "es"} más.`);
+      toast.error(t("listing.canOnlyAddMore").replace("{remainingSlots}", String(remainingSlots)));
     }
 
     setNewImages((current) => [
@@ -130,9 +132,9 @@ export function ListingImageManager({
     <div className="space-y-5">
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-3">
-          <Label>Imágenes</Label>
+          <Label>{t("listing.images")}</Label>
           <span className="text-xs text-muted-foreground">
-            {totalImages} de {maxImages} cargadas
+            {totalImages} {t("listing.of")} {maxImages} {t("listing.loaded")}
           </span>
         </div>
 
@@ -156,8 +158,8 @@ export function ListingImageManager({
             <div className="rounded-full border bg-background p-3">
               <Upload className="size-5 text-primary" />
             </div>
-            <p className="text-sm font-medium">Arrastra y suelta imágenes aquí o toca para seleccionarlas</p>
-            <p className="text-xs text-muted-foreground">Formatos permitidos: JPG, PNG, WEBP. Máximo total: {maxImages}.</p>
+            <p className="text-sm font-medium">{t("listing.dragDropImages")}</p>
+            <p className="text-xs text-muted-foreground">{t("listing.allowedFormats").replace("{maxImages}", String(maxImages))}</p>
           </div>
           <input
             ref={fileInputRef}
@@ -198,8 +200,8 @@ export function ListingImageManager({
       {existing.length ? (
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <h3 className="text-sm font-semibold">Imágenes actuales</h3>
-            <span className="text-xs text-muted-foreground">Puedes arrastrarlas para reordenar, editar el texto o quitarlas.</span>
+            <h3 className="text-sm font-semibold">{t("listing.currentImages")}</h3>
+            <span className="text-xs text-muted-foreground">{t("listing.currentImagesDesc")}</span>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {existing.map((image, index) => (
@@ -214,7 +216,7 @@ export function ListingImageManager({
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <GripVertical className="size-4" />
-                    Imagen {index + 1}
+                    {t("listing.imageX").replace("{index}", String(index + 1))}
                   </div>
                   <Button
                     type="button"
@@ -231,11 +233,11 @@ export function ListingImageManager({
                   </Button>
                 </div>
                 <div className="overflow-hidden rounded-md border bg-muted/20">
-                  <img alt={image.altText || `Imagen ${index + 1}`} className="aspect-[4/3] w-full object-cover" src={image.publicUrl} />
+                  <img alt={image.altText || t("listing.imageX").replace("{index}", String(index + 1))} className="aspect-[4/3] w-full object-cover" src={image.publicUrl} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor={`existing-alt-${image.id}`} className="text-xs">
-                    Texto alternativo
+                    {t("listing.altText")}
                   </Label>
                   <Input
                     id={`existing-alt-${image.id}`}
@@ -257,8 +259,8 @@ export function ListingImageManager({
       {newImages.length ? (
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <h3 className="text-sm font-semibold">Imágenes nuevas</h3>
-            <span className="text-xs text-muted-foreground">También puedes arrastrarlas para definir el orden antes de guardar.</span>
+            <h3 className="text-sm font-semibold">{t("listing.newImages")}</h3>
+            <span className="text-xs text-muted-foreground">{t("listing.newImagesDesc")}</span>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {newImages.map((image, index) => (
@@ -273,7 +275,7 @@ export function ListingImageManager({
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <GripVertical className="size-4" />
-                    Nueva {index + 1}
+                    {t("listing.newX").replace("{index}", String(index + 1))}
                   </div>
                   <Button
                     type="button"
@@ -296,7 +298,7 @@ export function ListingImageManager({
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor={`new-alt-${image.id}`} className="text-xs">
-                    Texto alternativo
+                    {t("listing.altText")}
                   </Label>
                   <Input
                     id={`new-alt-${image.id}`}
@@ -316,7 +318,7 @@ export function ListingImageManager({
         <div className="rounded-lg border bg-muted/10 px-4 py-3 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <ImagePlus className="size-4" />
-            Aún no has agregado imágenes nuevas.
+            {t("listing.noNewImages")}
           </div>
         </div>
       )}

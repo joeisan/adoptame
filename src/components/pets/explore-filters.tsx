@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import type { ExploreFilters } from "@/types/app";
+import { useLanguage } from "@/lib/language-context";
 
 const preservedMainFilterKeys = ["district", "sex", "age", "size", "status", "verified", "location", "lat", "lng"] as const;
 
@@ -33,18 +34,19 @@ function HiddenPreservedFilters({ filters }: { filters: ExploreFilters }) {
 }
 
 function FieldGrid({ filters, includeMainFields = false }: { filters: ExploreFilters; includeMainFields?: boolean }) {
+  const { t } = useLanguage();
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {includeMainFields ? (
         <>
           <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="modal-q">Búsqueda</Label>
-            <Input defaultValue={filters.q ?? ""} id="modal-q" name="q" placeholder="Nombre, raza, descripción o ubicación" />
+            <Label htmlFor="modal-q">{t("filter.search")}</Label>
+            <Input defaultValue={filters.q ?? ""} id="modal-q" name="q" placeholder={t("filter.searchPlaceholderFull")} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="modal-category">Categoría</Label>
+            <Label htmlFor="modal-category">{t("filter.category")}</Label>
             <Select defaultValue={filters.category ?? ""} id="modal-category" name="category">
-              <option value="">Todas</option>
+              <option value="">{t("filter.all")}</option>
               {CATEGORY_OPTIONS.map((category) => (
                 <option key={category.slug} value={category.slug}>
                   {category.name}
@@ -53,9 +55,9 @@ function FieldGrid({ filters, includeMainFields = false }: { filters: ExploreFil
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="modal-province">Provincia</Label>
+            <Label htmlFor="modal-province">{t("filter.province")}</Label>
             <Select defaultValue={filters.province ?? ""} id="modal-province" name="province">
-              <option value="">Todas</option>
+              <option value="">{t("filter.all")}</option>
               {PANAMA_PROVINCES.map((province) => (
                 <option key={province} value={province}>
                   {province}
@@ -72,55 +74,55 @@ function FieldGrid({ filters, includeMainFields = false }: { filters: ExploreFil
         </>
       )}
       <div className="space-y-2">
-        <Label htmlFor="district">Distrito</Label>
+        <Label htmlFor="district">{t("filter.district")}</Label>
         <Input defaultValue={filters.district ?? ""} id="district" name="district" placeholder="Ej. San Miguelito" />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="sex">Sexo</Label>
+        <Label htmlFor="sex">{t("filter.sex")}</Label>
         <Select defaultValue={filters.sex ?? ""} id="sex" name="sex">
-          <option value="">Todos</option>
+          <option value="">{t("filter.allMasc")}</option>
           {PET_SEX_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
-              {option.label}
+              {t(`pet.${option.value}` as any)}
             </option>
           ))}
         </Select>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="age">Edad</Label>
+        <Label htmlFor="age">{t("filter.age")}</Label>
         <Select defaultValue={filters.age ?? ""} id="age" name="age">
-          <option value="">Todas</option>
-          <option value="baby">Bebé o cachorro</option>
-          <option value="adult">Adulto</option>
+          <option value="">{t("filter.all")}</option>
+          <option value="baby">{t("filter.babyPuppy")}</option>
+          <option value="adult">{t("filter.adult")}</option>
         </Select>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="size">Tamaño</Label>
+        <Label htmlFor="size">{t("filter.size")}</Label>
         <Select defaultValue={filters.size ?? ""} id="size" name="size">
-          <option value="">Todos</option>
+          <option value="">{t("filter.allMasc")}</option>
           {PET_SIZE_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
-              {option.label}
+              {t(`pet.${option.value}` as any)}
             </option>
           ))}
         </Select>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="status">Estado</Label>
+        <Label htmlFor="status">{t("filter.status")}</Label>
         <Select defaultValue={filters.status ?? ""} id="status" name="status">
-          <option value="">Todos</option>
+          <option value="">{t("filter.allMasc")}</option>
           {PET_STATUS_OPTIONS.slice(0, 3).map((option) => (
             <option key={option.value} value={option.value}>
-              {option.label}
+              {t(`status.${option.value}` as any)}
             </option>
           ))}
         </Select>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="verified">Organización</Label>
+        <Label htmlFor="verified">{t("filter.organization")}</Label>
         <Select defaultValue={filters.verified ?? ""} id="verified" name="verified">
-          <option value="">Todas</option>
-          <option value="true">Solo verificadas</option>
+          <option value="">{t("filter.all")}</option>
+          <option value="true">{t("filter.verifiedOnly")}</option>
         </Select>
       </div>
       {filters.location ? <input name="location" type="hidden" value={filters.location} /> : null}
@@ -131,6 +133,7 @@ function FieldGrid({ filters, includeMainFields = false }: { filters: ExploreFil
 }
 
 export function ExploreFilters({ filters }: { filters: ExploreFilters }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [pendingLocation, startLocationTransition] = useTransition();
   const router = useRouter();
@@ -139,7 +142,7 @@ export function ExploreFilters({ filters }: { filters: ExploreFilters }) {
 
   function useCurrentLocation() {
     if (!navigator.geolocation) {
-      toast.error("Tu navegador no permite detectar ubicación.");
+      toast.error(t("filter.locationError"));
       return;
     }
 
@@ -162,10 +165,10 @@ export function ExploreFilters({ filters }: { filters: ExploreFilters }) {
           setTimeout(() => {
             document.getElementById("mapa")?.scrollIntoView({ behavior: "smooth", block: "start" });
           }, 250);
-          toast.success(`Mostrando mascotas cerca de ${nearest.province}.`);
+          toast.success(`${t("filter.locationSuccess")} ${nearest.province}.`);
         },
         () => {
-          toast.error("No pude obtener tu ubicación. Revisa permisos del navegador.");
+          toast.error(t("filter.locationFail"));
         },
         { enableHighAccuracy: false, maximumAge: 300000, timeout: 10000 }
       );
@@ -178,7 +181,7 @@ export function ExploreFilters({ filters }: { filters: ExploreFilters }) {
         <form action="/explore" className="grid gap-3 md:grid-cols-[minmax(240px,1fr)_180px_180px_170px_auto_auto]" method="get">
           <div className="relative">
             <Label className="sr-only" htmlFor="q">
-              Búsqueda
+              {t("filter.search")}
             </Label>
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -186,15 +189,15 @@ export function ExploreFilters({ filters }: { filters: ExploreFilters }) {
               defaultValue={filters.q ?? ""}
               id="q"
               name="q"
-              placeholder="Buscar por nombre, raza o lugar"
+              placeholder={t("filter.searchPlaceholder")}
             />
           </div>
           <div className="hidden md:block">
             <Label className="sr-only" htmlFor="province">
-              Provincia
+              {t("filter.province")}
             </Label>
             <Select className="h-12 rounded-full bg-muted" defaultValue={filters.province ?? ""} id="province" name="province">
-              <option value="">Provincia</option>
+              <option value="">{t("filter.selectProvince")}</option>
               {PANAMA_PROVINCES.map((province) => (
                 <option key={province} value={province}>
                   {province}
@@ -204,21 +207,21 @@ export function ExploreFilters({ filters }: { filters: ExploreFilters }) {
           </div>
           <div>
             <Label className="sr-only" htmlFor="main-sort">
-              Ordenar
+              {t("filter.sort")}
             </Label>
             <Select className="h-12 rounded-full bg-muted" defaultValue={filters.sort ?? "recent"} id="main-sort" name="sort">
-              <option value="recent">Más reciente</option>
-              <option value="oldest">Más antiguo</option>
+              <option value="recent">{t("filter.mostRecent")}</option>
+              <option value="oldest">{t("filter.oldest")}</option>
               <option value="az">A-Z</option>
               <option value="za">Z-A</option>
             </Select>
           </div>
           <div className="hidden md:block">
             <Label className="sr-only" htmlFor="category">
-              Categoría
+              {t("filter.category")}
             </Label>
             <Select className="h-12 rounded-full bg-muted" defaultValue={filters.category ?? ""} id="category" name="category">
-              <option value="">Categoría</option>
+              <option value="">{t("filter.category")}</option>
               {CATEGORY_OPTIONS.map((category) => (
                 <option key={category.slug} value={category.slug}>
                   {category.name}
@@ -229,27 +232,27 @@ export function ExploreFilters({ filters }: { filters: ExploreFilters }) {
           <HiddenPreservedFilters filters={filters} />
           <Button className="h-12" type="submit">
             <Search className="size-4" />
-            Buscar
+            {t("filter.searchBtn")}
           </Button>
           <Button className="h-12" disabled={pendingLocation} onClick={useCurrentLocation} type="button" variant="outline">
             <LocateFixed className="size-4" />
-            {pendingLocation ? "Ubicando..." : "Mi ubicación"}
+            {pendingLocation ? t("filter.locating") : t("filter.myLocation")}
           </Button>
         </form>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button className="h-10" onClick={() => setOpen(true)} type="button" variant="outline">
             <SlidersHorizontal className="size-4" />
-            Más filtros{extraCount ? ` (${extraCount})` : ""}
+            {t("filter.moreFilters")}{extraCount ? ` (${extraCount})` : ""}
           </Button>
           <Button asChild className="h-10" variant="ghost">
             <Link href="/explore">
               <X className="size-4" />
-              Limpiar
+              {t("filter.clear")}
             </Link>
           </Button>
           {filters.location === "nearby" && filters.province ? (
             <span className="inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-semibold text-accent-foreground">
-              Cerca de {filters.province}
+              {t("filter.nearBy")} {filters.province}
             </span>
           ) : null}
         </div>
@@ -261,20 +264,20 @@ export function ExploreFilters({ filters }: { filters: ExploreFilters }) {
             <div className="flex items-center justify-between border-b p-5">
               <div className="flex items-center gap-2">
                 <Filter className="size-5 text-primary" />
-                <h2 className="text-lg font-bold">Filtros de exploración</h2>
+                <h2 className="text-lg font-bold">{t("filter.exploreFilters")}</h2>
               </div>
-              <Button aria-label="Cerrar filtros" onClick={() => setOpen(false)} size="icon" type="button" variant="ghost">
+              <Button aria-label={t("filter.closeFilters")} onClick={() => setOpen(false)} size="icon" type="button" variant="ghost">
                 <X className="size-5" />
               </Button>
             </div>
             <form action="/explore" className="overflow-y-auto p-5" method="get">
               <FieldGrid filters={filters} includeMainFields />
               <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                <Button type="submit">Aplicar filtros</Button>
+                <Button type="submit">{t("filter.applyFilters")}</Button>
                 <Button asChild variant="outline">
                   <Link href="/explore">
                     <X className="size-4" />
-                    Limpiar filtros
+                    {t("filter.clearFilters")}
                   </Link>
                 </Button>
               </div>

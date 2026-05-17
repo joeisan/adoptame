@@ -10,6 +10,7 @@ import { getExploreListings, getExploreMapListings, getFavoriteListingIds } from
 import type { ExploreFilters as Filters } from "@/types/app";
 import { ViewToggle } from "@/components/pets/view-toggle";
 import { ExploreMap } from "@/components/pets/explore-map";
+import { Translate } from "@/components/layout/translate";
 
 export const metadata: Metadata = {
   title: "Explorar mascotas",
@@ -73,10 +74,10 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
     <section className="container-shell py-10">
       <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <p className="text-sm font-bold uppercase text-primary">Catálogo</p>
-          <h1 className="mt-2 text-2xl md:text-4xl font-black">Explorar mascotas</h1>
+          <p className="text-sm font-bold uppercase text-primary"><Translate id="explore.catalog" /></p>
+          <h1 className="mt-2 text-2xl md:text-4xl font-black"><Translate id="explore.explorePets" /></h1>
           <p className="mt-2 text-muted-foreground">
-            {result.count} resultado{result.count === 1 ? "" : "s"} encontrado{result.count === 1 ? "" : "s"}
+            {result.count} <Translate id={result.count === 1 ? "explore.results" : "explore.resultsPlural"} /> <Translate id={result.count === 1 ? "explore.found" : "explore.foundPlural"} />
           </p>
         </div>
         <ViewToggle />
@@ -86,7 +87,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
       
       {result.error ? (
         <Alert className="mt-6 border-destructive/30">
-          <AlertTitle>No pudimos cargar el catálogo</AlertTitle>
+          <AlertTitle><Translate id="explore.errorCatalog" /></AlertTitle>
           <AlertDescription>{result.error}</AlertDescription>
         </Alert>
       ) : null}
@@ -105,12 +106,12 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
               <div className="mt-8 flex justify-center gap-3">
                 {result.page > 1 ? (
                   <Button asChild variant="outline">
-                    <a href={pageHref(filters, result.page - 1, view)}>Anterior</a>
+                    <a href={pageHref(filters, result.page - 1, view)}><Translate id="explore.previous" /></a>
                   </Button>
                 ) : null}
                 {result.page < totalPages ? (
                   <Button asChild variant="outline">
-                    <a href={pageHref(filters, result.page + 1, view)}>Siguiente</a>
+                    <a href={pageHref(filters, result.page + 1, view)}><Translate id="explore.next" /></a>
                   </Button>
                 ) : null}
               </div>
@@ -118,8 +119,8 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
           )
         ) : (
           <EmptyState
-            description="Prueba limpiar filtros o vuelve más tarde. Las publicaciones aparecerán aquí con Supabase conectado."
-            title="No hay mascotas para esos filtros"
+            description={<Translate id="explore.noResultsDesc" />}
+            title={<Translate id="explore.noResults" />}
           />
         )}
       </div>

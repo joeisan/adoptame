@@ -7,6 +7,8 @@ import { AdminShell } from "@/components/admin/admin-shell";
 import { getCurrentUser } from "@/lib/permissions";
 import { getAdminMetrics } from "@/server/queries/admin";
 
+import { Translate } from "@/components/layout/translate";
+
 export default async function SuperAdminPage() {
   const { profile } = await getCurrentUser();
   if (profile?.role !== "super_admin") redirect("/dashboard");
@@ -14,17 +16,17 @@ export default async function SuperAdminPage() {
   const metrics = await getAdminMetrics();
 
   return (
-    <AdminShell title="Panel global">
+    <AdminShell title={<Translate id="admin.globalPanel" />}>
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <AdminKpiCard label="Total usuarios" value={metrics.totalUsers} />
-        <AdminKpiCard label="Nuevos 7 días" value={metrics.newUsers7d} />
-        <AdminKpiCard label="Nuevos 30 días" value={metrics.newUsers30d} />
-        <AdminKpiCard label="Publicaciones" value={metrics.totalListings} />
-        <AdminKpiCard label="Activas" value={metrics.activeListings} />
-        <AdminKpiCard label="Adoptadas" value={metrics.adoptedListings} />
-        <AdminKpiCard label="Organizaciones" value={metrics.totalOrganizations} />
-        <AdminKpiCard label="Verificadas" value={metrics.verifiedOrganizations} />
-        <AdminKpiCard label="Reportes abiertos" value={metrics.openReports} />
+        <AdminKpiCard label={<Translate id="admin.totalUsers" />} value={metrics.totalUsers} />
+        <AdminKpiCard label={<Translate id="admin.new7d" />} value={metrics.newUsers7d} />
+        <AdminKpiCard label={<Translate id="admin.new30d" />} value={metrics.newUsers30d} />
+        <AdminKpiCard label={<Translate id="admin.listings" />} value={metrics.totalListings} />
+        <AdminKpiCard label={<Translate id="admin.active" />} value={metrics.activeListings} />
+        <AdminKpiCard label={<Translate id="admin.adopted" />} value={metrics.adoptedListings} />
+        <AdminKpiCard label={<Translate id="admin.organizations" />} value={metrics.totalOrganizations} />
+        <AdminKpiCard label={<Translate id="admin.verified" />} value={metrics.verifiedOrganizations} />
+        <AdminKpiCard label={<Translate id="admin.openReports" />} value={metrics.openReports} />
       </div>
       <AdminCharts metrics={metrics} />
     </AdminShell>

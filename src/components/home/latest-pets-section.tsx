@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useLanguage } from "@/lib/language-context";
 
 import { EmptyState } from "@/components/pets/empty-state";
 import { HorizontalScroller } from "@/components/home/horizontal-scroller";
@@ -17,22 +18,23 @@ export function LatestPetsSection({
   canFavorite?: boolean;
   favoriteIds?: Set<string>;
 }) {
+  const { t } = useLanguage();
   return (
     <section className="container-shell py-14">
       <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <p className="text-sm font-bold uppercase text-primary">Últimas mascotas</p>
-          <h2 className="mt-2 text-3xl font-black">Recién publicadas</h2>
+          <p className="text-sm font-bold uppercase text-primary">{t("home.latestPets")}</p>
+          <h2 className="mt-2 text-3xl font-black">{t("home.recentlyPosted")}</h2>
           <p className="mt-2 max-w-2xl text-muted-foreground">
-            Publicaciones activas ordenadas por fecha, con las más recientes primero.
+            {t("home.recentlyPostedDesc")}
           </p>
         </div>
         <Button asChild variant="outline">
-          <Link href="/explore">Ver todas las mascotas</Link>
+          <Link href="/explore">{t("home.viewAllPets")}</Link>
         </Button>
       </div>
       {error ? (
-        <EmptyState description={error} title="No pudimos cargar las últimas publicaciones" />
+        <EmptyState description={error} title={t("home.errorLoading")} />
       ) : pets.length ? (
         <HorizontalScroller ariaLabel="mascotas recién publicadas" itemClassName="w-[82vw] sm:w-[360px] lg:w-[340px]">
           {pets.map((pet) => (
@@ -41,8 +43,8 @@ export function LatestPetsSection({
         </HorizontalScroller>
       ) : (
         <EmptyState
-          description="Cuando conectes Supabase y cargues el seed, aquí aparecerán las mascotas publicadas."
-          title="Aún no hay mascotas publicadas"
+          description={t("home.noPetsYetDesc")}
+          title={t("home.noPetsYet")}
         />
       )}
     </section>

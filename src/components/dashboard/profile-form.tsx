@@ -13,11 +13,13 @@ import { updateProfileAction } from "@/server/actions/profile";
 import { PANAMA_PROVINCES } from "@/lib/constants";
 import { Select } from "@/components/ui/select";
 import type { Database } from "@/types/database";
+import { useLanguage } from "@/lib/language-context";
 
 type ProfileRow = Partial<Database["public"]["Tables"]["profiles"]["Row"]>;
 type ProfileFormProfile = ProfileRow & { wants_to_be_organization?: boolean; contact_name?: string | null };
 
 export function ProfileForm({ profile, redirectTo }: { profile: ProfileFormProfile; redirectTo?: string }) {
+  const { t } = useLanguage();
   const [isPending, startTransition] = useTransition();
   const showsOrganizationFields = Boolean(
     profile?.role === "organization" ||
@@ -35,7 +37,7 @@ export function ProfileForm({ profile, redirectTo }: { profile: ProfileFormProfi
       if (result?.error) {
         toast.error(result.error);
       } else {
-        toast.success("Perfil actualizado");
+        toast.success(t("profile.updated"));
       }
     });
   };
@@ -45,11 +47,11 @@ export function ProfileForm({ profile, redirectTo }: { profile: ProfileFormProfi
       {redirectTo ? <input type="hidden" name="redirect" value={redirectTo} /> : null}
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="displayName">{showsOrganizationFields ? "Nombre de contacto" : "Nombre a mostrar"}</Label>
+          <Label htmlFor="displayName">{showsOrganizationFields ? t("profile.contactName") : t("profile.displayName")}</Label>
           <Input id="displayName" name="displayName" defaultValue={profile?.contact_name || profile?.display_name || profile?.full_name || ""} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="email">Correo electrónico (contacto)</Label>
+          <Label htmlFor="email">{t("profile.contactEmail")}</Label>
           <Input id="email" name="email" type="email" defaultValue={profile?.email || ""} />
         </div>
       </div>
@@ -57,7 +59,7 @@ export function ProfileForm({ profile, redirectTo }: { profile: ProfileFormProfi
       {showsOrganizationFields ? (
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="organizationName">Nombre de organización / fundación</Label>
+            <Label htmlFor="organizationName">{t("profile.orgNameLabel")}</Label>
             <Input
               id="organizationName"
               name="organizationName"
@@ -65,59 +67,59 @@ export function ProfileForm({ profile, redirectTo }: { profile: ProfileFormProfi
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="organizationType">Tipo de Organización</Label>
+            <Label htmlFor="organizationType">{t("profile.orgTypeLabel")}</Label>
             <select
               id="organizationType"
               name="organizationType"
               defaultValue={profile?.organization_type || "Organización"}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <option value="Fundación">Fundación</option>
-              <option value="ONG">ONG</option>
-              <option value="Organización">Organización / Grupo</option>
+              <option value="Fundación">{t("auth.orgFoundation")}</option>
+              <option value="ONG">{t("auth.orgNgo")}</option>
+              <option value="Organización">{t("auth.orgGroup")}</option>
             </select>
           </div>
-          <p className="text-xs text-muted-foreground md:col-span-2">Define cómo aparecerás en el directorio y publicaciones.</p>
+          <p className="text-xs text-muted-foreground md:col-span-2">{t("profile.orgDirectoryNote")}</p>
         </div>
       ) : null}
 
       <div className="space-y-2">
-        <Label htmlFor="description">Descripción / Biografía</Label>
+        <Label htmlFor="description">{t("profile.bio")}</Label>
         <Textarea id="description" name="description" defaultValue={profile?.description || ""} className="h-32" />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="province">Provincia</Label>
+          <Label htmlFor="province">{t("filter.province")}</Label>
           <Select name="province" defaultValue={profile?.province || ""}>
-            <option value="">Selecciona provincia</option>
+            <option value="">{t("filter.selectProvince")}</option>
             {PANAMA_PROVINCES.map((prov) => (
               <option key={prov} value={prov}>{prov}</option>
             ))}
           </Select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="district">Distrito / Ciudad</Label>
+          <Label htmlFor="district">{t("filter.district")}</Label>
           <Input id="district" name="district" defaultValue={profile?.district || ""} />
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="phone">Teléfono de Contacto</Label>
+          <Label htmlFor="phone">{t("profile.phone")}</Label>
           <Input id="phone" name="phone" defaultValue={profile?.phone || ""} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="whatsapp">WhatsApp</Label>
+          <Label htmlFor="whatsapp">{t("profile.whatsapp")}</Label>
           <Input id="whatsapp" name="whatsapp" defaultValue={profile?.whatsapp || ""} />
         </div>
       </div>
 
       <div className="space-y-4">
-        <h3 className="font-semibold text-lg border-b pb-2">Redes Sociales</h3>
+        <h3 className="font-semibold text-lg border-b pb-2">{t("profile.socialMedia")}</h3>
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="website">Sitio web</Label>
+            <Label htmlFor="website">{t("profile.website")}</Label>
             <Input id="website" name="website" type="url" placeholder="https://" defaultValue={profile?.website_url || ""} />
           </div>
           <div className="space-y-2">
@@ -144,7 +146,7 @@ export function ProfileForm({ profile, redirectTo }: { profile: ProfileFormProfi
       </div>
 
       <Button type="submit" disabled={isPending} className="w-full md:w-auto">
-        {isPending ? "Guardando..." : "Guardar Cambios"}
+        {isPending ? t("profile.saving") : t("profile.saveChanges")}
         <Save className="ml-2 size-4" />
       </Button>
     </form>

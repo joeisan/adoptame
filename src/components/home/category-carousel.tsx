@@ -1,10 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { useLanguage } from "@/lib/language-context";
 
 import { HorizontalScroller } from "@/components/home/horizontal-scroller";
 import { getCategoryIcon } from "@/lib/category-icons";
 import type { CategorySummary } from "@/types/app";
 
 export function CategoryCard({ category }: { category: CategorySummary }) {
+  const { t } = useLanguage();
   const Icon = getCategoryIcon(category.icon, category.slug);
 
   return (
@@ -16,17 +20,18 @@ export function CategoryCard({ category }: { category: CategorySummary }) {
         <Icon className="size-7" />
       </span>
       <h3 className="font-bold">{category.name}</h3>
-      <p className="mt-1 text-sm text-muted-foreground">{category.activeCount} disponibles</p>
+      <p className="mt-1 text-sm text-muted-foreground">{category.activeCount} {t("home.available")}</p>
     </Link>
   );
 }
 
 export function CategoryCarousel({ categories }: { categories: CategorySummary[] }) {
+  const { t } = useLanguage();
   return (
     <section className="container-shell py-10" id="categorias">
       <div className="mb-6">
-        <p className="text-sm font-bold uppercase text-primary">Categorías</p>
-        <h2 className="mt-2 text-3xl font-black">Explora por tipo de animal</h2>
+        <p className="text-sm font-bold uppercase text-primary">{t("home.categories")}</p>
+        <h2 className="mt-2 text-3xl font-black">{t("home.exploreByType")}</h2>
       </div>
       <HorizontalScroller ariaLabel="categorías" itemClassName="w-[180px]">
         {categories.map((category) => (

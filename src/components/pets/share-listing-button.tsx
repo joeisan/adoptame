@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Copy, Share2, X } from "lucide-react";
 import { toast } from "sonner";
+import { useLanguage } from "@/lib/language-context";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -46,6 +47,7 @@ const shareTargets = [
 ] as const;
 
 export function ShareListingButton({ title, url }: ShareListingButtonProps) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -70,25 +72,25 @@ export function ShareListingButton({ title, url }: ShareListingButtonProps) {
     };
   }, []);
 
-  async function copyLink() {
-    try {
-      await navigator.clipboard.writeText(url);
-      toast.success("Enlace copiado");
-    } catch {
-      toast.error("No se pudo copiar el enlace");
+    async function copyLink() {
+      try {
+        await navigator.clipboard.writeText(url);
+        toast.success(t("share.linkCopied"));
+      } catch {
+        toast.error(t("share.copyFail"));
+      }
     }
-  }
 
   return (
     <div className="relative" ref={ref}>
       <Button onClick={() => setOpen((current) => !current)} type="button" variant="outline">
-        <Share2 className="size-4" />
-        Compartir
+        <Share2 className="size-4 mr-2" />
+        {t("share.share")}
       </Button>
       {open ? (
         <div className="absolute right-0 top-full z-30 mt-2 w-72 rounded-xl border bg-card p-3 shadow-xl">
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-sm font-bold">Compartir publicación</p>
+            <p className="text-sm font-bold">{t("share.shareListing")}</p>
             <button className="rounded-full p-1 text-muted-foreground transition hover:bg-muted hover:text-foreground" onClick={() => setOpen(false)} type="button">
               <X className="size-4" />
             </button>
@@ -111,8 +113,8 @@ export function ShareListingButton({ title, url }: ShareListingButtonProps) {
             })}
           </div>
           <Button className="mt-3 w-full" onClick={copyLink} type="button" variant="ghost">
-            <Copy className="size-4" />
-            Copiar enlace
+            <Copy className="size-4 mr-2" />
+            {t("share.copyLink")}
           </Button>
         </div>
       ) : null}
