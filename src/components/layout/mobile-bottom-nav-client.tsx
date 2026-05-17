@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Heart, Home, Search, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/lib/language-context";
 
@@ -12,6 +13,14 @@ export function MobileBottomNavClient({
   role?: string | null;
 }) {
   const { t } = useLanguage();
+  const pathname = usePathname();
+
+  const handleLinkClick = (href: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (href === "/" && pathname === "/") {
+      e.preventDefault();
+      window.location.href = "/";
+    }
+  };
 
   const guestItems = [
     { href: "/", label: t("nav.home"), icon: Home },
@@ -37,6 +46,7 @@ export function MobileBottomNavClient({
               className="flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-lg text-[10px] font-bold leading-none text-muted-foreground transition hover:bg-muted hover:text-primary"
               href={item.href}
               key={item.href}
+              onClick={handleLinkClick(item.href)}
             >
               <Icon className="size-4" />
               <span>{item.label}</span>

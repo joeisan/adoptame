@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Menu, Plus, UserRound, Heart, ShieldCheck } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useLanguage } from "@/lib/language-context";
 
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,14 @@ type HeaderClientProps = {
 
 export function HeaderClient({ isLoggedIn, profileName, role, signOutAction }: HeaderClientProps) {
   const { t } = useLanguage();
+  const pathname = usePathname();
+
+  const handleLinkClick = (href: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (href === "/" && pathname === "/") {
+      e.preventDefault();
+      window.location.href = "/";
+    }
+  };
 
   const links = [
     { href: "/", label: t("nav.home") },
@@ -31,7 +40,7 @@ export function HeaderClient({ isLoggedIn, profileName, role, signOutAction }: H
         <Logo />
         <nav className="hidden items-center gap-7 md:flex" aria-label={t("nav.mainNav")}>
           {links.map((link) => (
-            <Link className="text-sm font-semibold text-muted-foreground hover:text-foreground" href={link.href} key={link.href}>
+            <Link className="text-sm font-semibold text-muted-foreground hover:text-foreground" href={link.href} key={link.href} onClick={handleLinkClick(link.href)}>
               {link.label}
             </Link>
           ))}
@@ -98,7 +107,7 @@ export function HeaderClient({ isLoggedIn, profileName, role, signOutAction }: H
             </summary>
             <div className="absolute right-0 mt-3 w-72 z-50 rounded-xl border bg-card p-3 shadow-xl">
               {links.map((link) => (
-                <Link className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-muted" href={link.href} key={link.href}>
+                <Link className="block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-muted" href={link.href} key={link.href} onClick={handleLinkClick(link.href)}>
                   {link.label}
                 </Link>
               ))}
