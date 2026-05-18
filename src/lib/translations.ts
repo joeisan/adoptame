@@ -24,7 +24,7 @@ const translations = {
   "auth.registerMe": { es: "Registrarme", en: "Sign up" },
   "auth.processing": { es: "Procesando...", en: "Processing..." },
   "auth.name": { es: "Nombre", en: "Name" },
-  "auth.phone": { es: "Teléfono (Obligatorio)", en: "Phone (Required)" },
+  "auth.phone": { es: "Teléfono (Opcional)", en: "Phone (Optional)" },
   "auth.useSameWhatsapp": { es: "Usar este mismo número para WhatsApp", en: "Use this same number for WhatsApp" },
   "auth.whatsappOptional": { es: "WhatsApp (Opcional)", en: "WhatsApp (Optional)" },
   "auth.isOrg": { es: "Soy una organización y deseo solicitar aprobación", en: "I am an organization and wish to request approval" },
