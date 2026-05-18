@@ -44,13 +44,20 @@ export async function GET(request: NextRequest) {
       user.email?.split("@")[0] ??
       null;
     const avatarUrl = typeof user.user_metadata.avatar_url === "string" ? user.user_metadata.avatar_url : null;
+    const phone = typeof user.user_metadata.phone === "string" ? user.user_metadata.phone : null;
+    const whatsapp = typeof user.user_metadata.whatsapp === "string" ? user.user_metadata.whatsapp : null;
 
-    await supabase.from("profiles").upsert({
+    const { createAdminClient } = await import("@/lib/supabase/admin");
+    const client = createAdminClient() ?? supabase;
+
+    await client.from("profiles").upsert({
       id: user.id,
       full_name: fullName,
       display_name: displayName,
       avatar_url: avatarUrl,
-      email: user.email ?? null
+      email: user.email ?? null,
+      phone: phone,
+      whatsapp: whatsapp
     });
   }
 
