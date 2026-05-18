@@ -54,9 +54,9 @@ export async function getCurrentUser() {
   };
 }
 
-export function isProfileComplete(profile: Pick<ProfileSummary, "displayName" | "fullName" | "phone" | "whatsapp"> | null) {
+export function isProfileComplete(profile: Pick<ProfileSummary, "displayName" | "fullName"> | null) {
   if (!profile) return false;
-  return Boolean((profile.displayName || profile.fullName)?.trim() && profile.phone?.trim());
+  return Boolean((profile.displayName || profile.fullName)?.trim());
 }
 
 export async function getListingLimit(userId: string) {

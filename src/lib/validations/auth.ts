@@ -24,7 +24,7 @@ export const loginSchema = z.object({
 
 export const registerSchema = loginSchema.extend({
   fullName: z.string().min(2, "Escribe tu nombre.").max(120, "Usa un nombre más corto."),
-  phone: signUpPhone,
+  phone: phoneNumber.optional().or(z.literal("")),
   whatsapp: phoneNumber.optional().or(z.literal("")),
   isOrganization: z.boolean().optional(),
   organizationType: z.string().optional(),
