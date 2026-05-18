@@ -10,13 +10,28 @@ export function LanguageSwitcher() {
     <button
       type="button"
       onClick={() => setLocale(locale === "es" ? "en" : "es")}
-      className="inline-flex items-center gap-1.5 rounded-full border bg-card px-3 py-1.5 text-xs font-bold transition-all hover:border-primary hover:text-primary active:scale-95"
+      className="inline-flex items-center gap-1 rounded-full border bg-card p-1 text-xs font-bold transition-all hover:border-primary active:scale-95"
       aria-label="Switch language"
     >
-      <Globe className="size-3.5" />
-      <span className={locale === "es" ? "text-primary" : "text-muted-foreground"}>ES</span>
-      <span className="text-muted-foreground/50">|</span>
-      <span className={locale === "en" ? "text-primary" : "text-muted-foreground"}>EN</span>
+      <Globe className="size-3.5 ml-1.5 text-muted-foreground" />
+      <span
+        className={`rounded-full px-2 py-1 transition-all duration-200 ${
+          locale === "es"
+            ? "bg-primary text-primary-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        }`}
+      >
+        ES
+      </span>
+      <span
+        className={`rounded-full px-2 py-1 transition-all duration-200 ${
+          locale === "en"
+            ? "bg-primary text-primary-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        }`}
+      >
+        EN
+      </span>
     </button>
   );
 }
