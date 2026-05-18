@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { registerSchema, loginSchema } from "@/lib/validations/auth";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getSiteUrl } from "@/lib/site-url";
 
 function redirectTarget(value: unknown) {
@@ -73,7 +74,9 @@ export async function signUpAction(formData: FormData) {
         full_name: parsed.data.fullName,
         wants_to_be_organization: parsed.data.isOrganization === true,
         organization_name: parsed.data.organizationName,
-        organization_type: parsed.data.organizationType
+        organization_type: parsed.data.organizationType,
+        phone: parsed.data.phone,
+        whatsapp: parsed.data.whatsapp
       }
     }
   });
@@ -81,17 +84,26 @@ export async function signUpAction(formData: FormData) {
   if (error) return { error: error.message };
 
   if (data.user) {
-    await supabase.from("profiles").upsert({
-      id: data.user.id,
-      full_name: parsed.data.fullName,
-      display_name: parsed.data.fullName,
-      phone: parsed.data.phone,
-      whatsapp: parsed.data.whatsapp,
-      organization_name: parsed.data.organizationName || null,
-      organization_type: parsed.data.organizationType || null,
-      role: "user",
-      status: "active"
-    });
+    const adminClient = createAdminClient();
+    if (adminClient) {
+      const { error: upsertError } = await adminClient.from("profiles").upsert({
+        id: data.user.id,
+        full_name: parsed.data.fullName,
+        display_name: parsed.data.fullName,
+        phone: parsed.data.phone,
+        whatsapp: parsed.data.whatsapp,
+        organization_name: parsed.data.organizationName || null,
+        organization_type: parsed.data.organizationType || null,
+        role: "user",
+        status: "active"
+      });
+
+      if (upsertError) {
+        console.error("Error upserting profile with Admin client:", upsertError);
+      }
+    } else {
+      console.error("Failed to create Supabase Admin client for profile upsert");
+    }
   }
 
   redirect(redirectTarget(parsed.data.redirect));

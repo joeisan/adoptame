@@ -69,7 +69,7 @@ export async function updateProfileAction(formData: FormData) {
   const redirectTo = safeRedirect(formData.get("redirect"));
 
   if (displayName.length < 2) return { error: "Escribe un nombre a mostrar." };
-  if (!phone || !isValidPhone(phone)) return { error: "Ingresa un teléfono válido de 8 dígitos (Obligatorio)." };
+  if (phone && !isValidPhone(phone)) return { error: "Ingresa un teléfono válido de 8 dígitos." };
   if (normalizedWhatsapp && !isValidPhone(normalizedWhatsapp)) return { error: "Ingresa un WhatsApp válido de 8 dígitos." };
 
   const supabase = await createClient();
