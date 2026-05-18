@@ -44,21 +44,28 @@ export async function GET(request: NextRequest) {
       user.email?.split("@")[0] ??
       null;
     const avatarUrl = typeof user.user_metadata.avatar_url === "string" ? user.user_metadata.avatar_url : null;
-    const phone = typeof user.user_metadata.phone === "string" ? user.user_metadata.phone : null;
-    const whatsapp = typeof user.user_metadata.whatsapp === "string" ? user.user_metadata.whatsapp : null;
+    const phone = typeof user.user_metadata.phone === "string" && user.user_metadata.phone.trim() ? user.user_metadata.phone.trim() : null;
+    const whatsapp = typeof user.user_metadata.whatsapp === "string" && user.user_metadata.whatsapp.trim() ? user.user_metadata.whatsapp.trim() : null;
 
     const { createAdminClient } = await import("@/lib/supabase/admin");
     const client = createAdminClient() ?? supabase;
 
-    await client.from("profiles").upsert({
+    const profileDataToUpsert: Record<string, any> = {
       id: user.id,
       full_name: fullName,
       display_name: displayName,
       avatar_url: avatarUrl,
-      email: user.email ?? null,
-      phone: phone,
-      whatsapp: whatsapp
-    });
+      email: user.email ?? null
+    };
+
+    if (phone) {
+      profileDataToUpsert.phone = phone;
+    }
+    if (whatsapp) {
+      profileDataToUpsert.whatsapp = whatsapp;
+    }
+
+    await client.from("profiles").upsert(profileDataToUpsert);
   }
 
   return NextResponse.redirect(redirectUrl);
