@@ -17,9 +17,26 @@ export function HomeHero({
   stats: { adoptions: number; volunteers: number; totalListings: number };
   settings?: { hero_title?: string | null; hero_subtitle?: string | null; hero_image_url?: string | null } | null;
 }) {
-  const { t } = useLanguage();
-  const title = settings?.hero_title || t("hero.defaultTitle");
-  const subtitle = settings?.hero_subtitle || `${SITE_CONFIG.name} ${t("hero.defaultSubtitle")}`;
+  const { t, locale } = useLanguage();
+  let title = settings?.hero_title || t("hero.defaultTitle");
+  let subtitle = settings?.hero_subtitle || `${SITE_CONFIG.name} ${t("hero.defaultSubtitle")}`;
+
+  if (locale === "en") {
+    if (!settings?.hero_title || settings.hero_title === "Encuentra un nuevo hogar para quienes más lo necesitan.") {
+      title = t("hero.defaultTitle");
+    }
+    const cleanSubtitle = (settings?.hero_subtitle ?? "").trim();
+    if (
+      !cleanSubtitle ||
+      cleanSubtitle === "conecta personas, rescatistas y organizaciones con animales en adopción en todo Panamá." ||
+      cleanSubtitle === "conecta personas, rescatistas y organizaciones con animales en adopción en todo Panamá" ||
+      cleanSubtitle === "Huellas Pty conecta personas, rescatistas y organizaciones con animales en adopción en todo Panamá." ||
+      cleanSubtitle === "Huellas Pty conecta personas, rescatistas y organizaciones con animales en adopción en todo Panamá"
+    ) {
+      subtitle = `${SITE_CONFIG.name} ${t("hero.defaultSubtitle")}`;
+    }
+  }
+
   const bgImage = settings?.hero_image_url || "/home-img.webp";
 
   return (

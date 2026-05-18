@@ -20,7 +20,7 @@ export function FooterClient({ contactEmail, contactPhone, socialLinks }: Footer
         <div className="space-y-4">
           <Logo />
           <p className="max-w-md text-sm leading-6 text-muted-foreground">
-            {SITE_CONFIG.description} {t("home.platformFocused")}
+            {t("footer.description")} {t("home.platformFocused")}
           </p>
         </div>
         <div>

@@ -67,6 +67,7 @@ const translations = {
   "home.ctaSearch": { es: "Buscar", en: "Search" },
   "home.ctaPublish": { es: "Publicar / Registrarme", en: "Post / Sign up" },
   "home.platformFocused": { es: "Plataforma enfocada en Panamá.", en: "Platform focused on Panama." },
+  "footer.description": { es: "Plataforma panameña para conectar personas, rescatistas y organizaciones con animales en adopción.", en: "Panamanian platform to connect people, rescuers and organizations with animals for adoption." },
 
   // Explore
   "explore.catalog": { es: "Catálogo", en: "Catalog" },
